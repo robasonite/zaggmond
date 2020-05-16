@@ -10,6 +10,9 @@ gameConfig = {
 // Make an array of balls.
 let balls = [];
 
+// Make an array of bricks
+let bricks = [];
+
 // Make an array of buttons.
 let buttons = [];
 
@@ -64,7 +67,7 @@ function setup() {
 
   // Make bricks
   for (let i = 0; i < gameConfig.brickRowLength; i++) {
-    balls.push(makeBrick(4 + 8 + (i * (90 + gameConfig.brickSpacing)), 4, 30));
+    bricks.push(makeBrick(4 + 8 + (i * (90 + gameConfig.brickSpacing)), 4, 30));
   }
 }
 
@@ -99,6 +102,19 @@ function draw() {
     balls[x].move(gameConfig.scale);
     balls[x].draw(gameConfig.scale);
   }
+  
+  // Iterate over bricks
+  for (let x = 0; x < bricks.length; x++) {
+    bricks[x].boundsCheck(
+      0,
+      0,
+      gameConfig.areaWidth,
+      gameConfig.areaHeight
+    );
+    bricks[x].move(gameConfig.scale);
+    bricks[x].draw(gameConfig.scale);
+  }
+
 }
 
 function changeBG() {
