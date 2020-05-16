@@ -3,7 +3,8 @@ gameConfig = {
   areaWidth: 720,
   areaHeight: 1280,
   buttonFontHeight: 16,
-  padding: 8
+  brickRowLength: 7,
+  brickSpacing: 10
 }
 
 // Make an array of balls.
@@ -62,10 +63,8 @@ function setup() {
   balls.push(makeBall(10, 10, 30));
 
   // Make bricks
-  let spacing = 10;
-  let brickCount = 7;
-  for (let i = 0; i < brickCount; i++) {
-    balls.push(makeBrick(4 + 8 + (i * (90 + spacing)), 4, 30));
+  for (let i = 0; i < gameConfig.brickRowLength; i++) {
+    balls.push(makeBrick(4 + 8 + (i * (90 + gameConfig.brickSpacing)), 4, 30));
   }
 }
 
