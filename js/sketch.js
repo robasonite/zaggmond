@@ -63,7 +63,7 @@ function setup() {
   buttons.push(fsBtn);
 
   // Make a ball
-  balls.push(makeBall(10, 10, 30));
+  balls.push(makeBall(300, 300, 30));
 
   // Make bricks
   for (let i = 0; i < gameConfig.brickRowLength; i++) {
@@ -107,13 +107,23 @@ function draw() {
     78 * gameConfig.scale
   );
 
+  // Bottom bar
+  rect(
+    0,
+    (gameConfig.areaHeight - 100) * gameConfig.scale,
+    gameConfig.areaWidth * gameConfig.scale,
+    100 * gameConfig.scale
+  );
+
   // Iterate over balls.
   for (let x = 0; x < balls.length; x++) {
+
+    // Take top and bottom bars into account
     balls[x].boundsCheck(
       0,
-      0,
+      78,
       gameConfig.areaWidth,
-      gameConfig.areaHeight
+      gameConfig.areaHeight - (78 + 100)
     );
     balls[x].move(gameConfig.scale);
     balls[x].draw(gameConfig.scale);
