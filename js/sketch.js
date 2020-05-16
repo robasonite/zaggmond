@@ -67,7 +67,8 @@ function setup() {
 
   // Make bricks
   for (let i = 0; i < gameConfig.brickRowLength; i++) {
-    bricks.push(makeBrick(4 + 8 + (i * (90 + gameConfig.brickSpacing)), 4, 30));
+    // Need to make room for top bar
+    bricks.push(makeBrick(4 + 8 + (i * (90 + gameConfig.brickSpacing)), 84, 30));
   }
 }
 
@@ -85,13 +86,28 @@ function draw() {
   }
   ellipse(mouseX, mouseY, 80, 80);*/
 
-  // Draw the game area
+  // Draw the game area.
   fill(255);
-  strokeWeight(4);
-  stroke(0,0,200);
-  rect(0, 0, gameConfig.areaWidth * gameConfig.scale, gameConfig.areaHeight * gameConfig.scale);
+  //strokeWeight(4);
+  //stroke(0,0,200);
+  rect(
+    0,
+    0,
+    gameConfig.areaWidth * gameConfig.scale,
+    gameConfig.areaHeight * gameConfig.scale
+  );
 
-  // Iterate over balls
+  // Top bar
+  fill(0);
+  noStroke();
+  rect(
+    0,
+    0,
+    gameConfig.areaWidth * gameConfig.scale,
+    78 * gameConfig.scale
+  );
+
+  // Iterate over balls.
   for (let x = 0; x < balls.length; x++) {
     balls[x].boundsCheck(
       0,
