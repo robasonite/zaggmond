@@ -68,12 +68,21 @@ function setup() {
   // Make bricks
   let rows = 9;
   let yOffset = 84;
+  let brickHeight = 40;
+  let brickWidth = 90;
   for (let r = 0; r < rows; r++) {
     for (let i = 0; i < gameConfig.brickRowLength; i++) {
       // Need to make room for top bar
-      bricks.push(makeBrick(4 + 8 + (i * (90 + gameConfig.brickSpacing)), yOffset, 30));
+      bricks.push(
+        makeBrick(
+          4 + 8 + (i * (90 + gameConfig.brickSpacing)),
+          yOffset,
+          brickWidth,
+          brickHeight
+        )
+      );
     }
-    yOffset += 36;
+    yOffset += brickHeight + gameConfig.brickSpacing;
   }
 }
 
@@ -139,17 +148,14 @@ function draw() {
         bricks[b].visible = false;
 
         // Decide how to bounce the ball
-        //balls[x].vy *= -1;
+        let ballMidX = balls[x].x + (balls[x].height / 2);
+        let brickMidX= bricks[b].x + (bricks[b].height / 2);
 
-        // For X axis manipulation, find the center points of the ball.
-        let ballXCenter = balls[x].x + (balls[x].height / 2);
-        if (ballXCenter >= bricks[b].x && ballXCenter < bricks[b].x + bricks[b].width) {
-          // The center of ball is somewhere along the length of the brick.
-          balls[x].vy *= -1;
-        }
-
-        // The center of the ball is outside the length of the brick.
-        else {
+        balls[x].vy *= -1;
+        if (
+            balls[x].vx > 0 && ballMidX < brickMidX ||
+            balls[x].vx < 0 && ballMidX > brickMidX
+          ) {
           balls[x].vx *= -1;
         }
       }
@@ -321,8 +327,8 @@ function makeBall(x, y, s) {
   return myball;
 }
 
-function makeBrick(x,y, s) {
-  let mybrick = makeBall(x, y, s);
+function makeBrick(x,y,w,h) {
+  let mybrick = makeBall(x, y, w);
 
   // Bricks do not move by default.
   mybrick.vx = 0;
@@ -330,9 +336,7 @@ function makeBrick(x,y, s) {
 
   // Bricks have to be visible
   mybrick.visible = true;
-
-  // Bricks are wider than they are tall.
-  mybrick.width = mybrick.height * 3;
+  mybrick.height = h;
 
   // Draw rectangles instead of circles.
   mybrick.draw = function (scale) {
