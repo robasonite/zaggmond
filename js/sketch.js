@@ -344,11 +344,26 @@ function makeBrick(x,y,w,h) {
 
     // Let's make them red
     fill(255,0,0);
-    rect(
+    
+    // Draw a diamond
+    quad(
+
+      // Left corner XY
       mybrick.x * scale,
+      (mybrick.y + (mybrick.height / 2)) * scale,
+
+      // Top center XY
+      (mybrick.x + (mybrick.width / 2)) * scale,
       mybrick.y * scale,
-      mybrick.width * scale,
-      mybrick.height * scale
+
+      // Right corner XY
+      (mybrick.x + mybrick.width) * scale,
+      (mybrick.y + (mybrick.height / 2)) * scale,
+
+
+      // Lower center XY
+      (mybrick.x + (mybrick.width / 2)) * scale,
+      (mybrick.y + mybrick.height) * scale,
     );
     noFill();
   }
