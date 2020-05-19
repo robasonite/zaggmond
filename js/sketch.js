@@ -24,7 +24,7 @@ function setup() {
   );
 
   // Set the inital scale.
-  gameConfig.scale = (window.innerHeight - 50) / gameConfig.areaHeight;
+  gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
 
   // Set initial background and fill colors.
   background(0);
@@ -98,7 +98,7 @@ function draw() {
   );
 
   // Top bar
-  fill(0);
+  fill(100);
   noStroke();
   rect(
     0,
@@ -131,14 +131,17 @@ function draw() {
   
   // Iterate over bricks
   for (let x = 0; x < bricks.length; x++) {
-    bricks[x].boundsCheck(
-      0,
-      0,
-      gameConfig.areaWidth,
-      gameConfig.areaHeight
-    );
-    bricks[x].move(gameConfig.scale);
-    bricks[x].draw(gameConfig.scale);
+    // Check if a brick is visible first
+    if (bricks[x].visible) {
+      bricks[x].boundsCheck(
+        0,
+        0,
+        gameConfig.areaWidth,
+        gameConfig.areaHeight
+      );
+      bricks[x].move(gameConfig.scale);
+      bricks[x].draw(gameConfig.scale);
+    }
   }
 
 }
@@ -148,28 +151,11 @@ function changeBG() {
   background(val);
 }
 
-function toggleFS() {
+function toggleFS(forceExit) {
   let fs = fullscreen();
-  if (fs) {
-    // Exit fullscreen mode
-    fullscreen(false);
 
-    // Resize canvas to match the window dimensions.
-    resizeCanvas(
-      window.innerWidth,
-      window.innerHeight
-    );
-
-    // Give the window a bit of time to unmaximize.
-    setTimeout(() => {
-      // Then adjust the scale value.
-      gameConfig.scale = (window.innerHeight - 50) / gameConfig.areaHeight;
-    }, 500);
-  }
-  else {
-    // Enter fullscreen mode.
-    fullscreen(true);
-
+  // Allow for forcing fullscreen exit
+  if (forceExit) {
     // Resize canvas to match screen dimensions.
     resizeCanvas(
       window.screen.width,
@@ -178,8 +164,52 @@ function toggleFS() {
    
     // Same thing again, but with the screen height.
     setTimeout(() => {
-      gameConfig.scale = window.screen.height / gameConfig.areaHeight;
+      //gameConfig.scale = window.screen.height / gameConfig.areaHeight;
+      gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
+      /*console.log("Fullscreen scale: " + gameConfig.scale);
+      console.log("Fullscreen height: " + gameConfig.areaHeight * gameConfig.scale);
+      console.log("Screen height: " + window.screen.height);*/
     }, 500);
+  }
+
+  // Normal toggling with button
+  else {
+    if (fs) {
+      // Exit fullscreen mode
+      fullscreen(false);
+
+      // Resize canvas to match the window dimensions.
+      resizeCanvas(
+        window.innerWidth,
+        window.innerHeight
+      );
+
+      // Give the window a bit of time to unmaximize.
+      setTimeout(() => {
+        // Then adjust the scale value.
+        //gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
+        gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
+      }, 500);
+    }
+    else {
+      // Enter fullscreen mode.
+      fullscreen(true);
+
+      // Resize canvas to match screen dimensions.
+      resizeCanvas(
+        window.screen.width,
+        window.screen.height
+      );
+     
+      // Same thing again, but with the screen height.
+      setTimeout(() => {
+        //gameConfig.scale = window.screen.height / gameConfig.areaHeight;
+        gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
+        console.log("Fullscreen scale: " + gameConfig.scale);
+        console.log("Fullscreen height: " + gameConfig.areaHeight * gameConfig.scale);
+        console.log("Screen height: " + window.screen.height);
+      }, 500);
+    }
   }
 
   // After getting the new scale, resize and reposition all buttons to match
@@ -198,6 +228,11 @@ function toggleFS() {
   }, 600);
 }
 
+// Run this function when the user exits fullscreen mode through a method other than by pressing the button.
+function windowResized() {
+  toggleFS(true);
+}
+
 
 // Ball making function
 function makeBall(x, y, s) {
@@ -214,6 +249,7 @@ function makeBall(x, y, s) {
     let b = random(0,256);
     noStroke();
     fill(0,0,b);
+    ellipseMode(CORNER);
     ellipse(
       myball.x * scale,
       myball.y * scale,
@@ -228,16 +264,16 @@ function makeBall(x, y, s) {
   }
 
   myball.boundsCheck = function (x, y, width, height) {
-    if (myball.x + myball.vx > x + width) {
+    if (myball.x + myball.width > x + width) {
       myball.vx *= -1;
     }
-    else if (myball.x + myball.vx < x) {
+    else if (myball.x < x) {
       myball.vx *= -1;
     }
-    else if (myball.y + myball.vy > y + height) {
+    else if (myball.y + myball.height > y + height) {
       myball.vy *= -1;
     }
-    else if (myball.y + myball.vy < y) {
+    else if (myball.y < y) {
       myball.vy *= -1;
     }
   }
@@ -251,6 +287,9 @@ function makeBrick(x,y, s) {
   // Bricks do not move by default.
   mybrick.vx = 0;
   mybrick.vy = 0;
+
+  // Bricks have to be visible
+  mybrick.visible = true;
 
   // Bricks are wider than they are tall.
   mybrick.width = mybrick.height * 3;
