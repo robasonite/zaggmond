@@ -66,9 +66,14 @@ function setup() {
   balls.push(makeBall(300, 300, 30));
 
   // Make bricks
-  for (let i = 0; i < gameConfig.brickRowLength; i++) {
-    // Need to make room for top bar
-    bricks.push(makeBrick(4 + 8 + (i * (90 + gameConfig.brickSpacing)), 84, 30));
+  let rows = 9;
+  let yOffset = 84;
+  for (let r = 0; r < rows; r++) {
+    for (let i = 0; i < gameConfig.brickRowLength; i++) {
+      // Need to make room for top bar
+      bricks.push(makeBrick(4 + 8 + (i * (90 + gameConfig.brickSpacing)), yOffset, 30));
+    }
+    yOffset += 36;
   }
 }
 
@@ -125,6 +130,30 @@ function draw() {
       gameConfig.areaWidth,
       gameConfig.areaHeight - (78 + 100)
     );
+
+    // Ball and brick collisions
+    for (let b = 0; b < bricks.length; b++) {
+      if (collider(balls[x], bricks[b]) && bricks[b].visible) {
+
+        // Brick is "destroyed"
+        bricks[b].visible = false;
+
+        // Decide how to bounce the ball
+        //balls[x].vy *= -1;
+
+        // For X axis manipulation, find the center points of the ball.
+        let ballXCenter = balls[x].x + (balls[x].height / 2);
+        if (ballXCenter >= bricks[b].x && ballXCenter < bricks[b].x + bricks[b].width) {
+          // The center of ball is somewhere along the length of the brick.
+          balls[x].vy *= -1;
+        }
+
+        // The center of the ball is outside the length of the brick.
+        else {
+          balls[x].vx *= -1;
+        }
+      }
+    }
     balls[x].move(gameConfig.scale);
     balls[x].draw(gameConfig.scale);
   }
@@ -144,6 +173,17 @@ function draw() {
     }
   }
 
+}
+
+function collider(a,b) {
+  if (a.x < b.x + b.width &&
+     a.x + a.width > b.x &&
+     a.y < b.y + b.height &&
+     a.y + a.height > b.y) {
+    return true;
+  }
+
+  return false;
 }
 
 function changeBG() {
@@ -239,8 +279,8 @@ function makeBall(x, y, s) {
   let myball = {};
   myball.x = x;
   myball.y = y;
-  myball.vx = random(0,10)
-  myball.vy = random(0,10)
+  myball.vx = 4
+  myball.vy = 8
   myball.width = s;
   myball.height = s;
   myball.draw = function (scale) {
