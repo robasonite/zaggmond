@@ -88,9 +88,8 @@ function setup() {
   }
 }
 
-function draw() {
-  // put drawing code here
-
+// The main game loop
+function gameLoop() {
   // Set background
   background(0);
   
@@ -181,6 +180,13 @@ function draw() {
     }
   }
 
+}
+
+function draw() {
+  // put drawing code here
+  if (gameConfig.mode == 'play') {
+    gameLoop();
+  }
 }
 
 function collider(a,b) {
