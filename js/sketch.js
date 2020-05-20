@@ -100,6 +100,8 @@ function setup() {
     70
   );
   
+  startBtn.mousePressed(switchScreenStart);
+  
   buttons.push(startBtn);
   
   // Make a ball
@@ -220,6 +222,22 @@ function gameLoop() {
       bricks[x].draw(gameConfig.scale);
     }
   }
+}
+
+// Need a screen switching function to show and hide buttons
+function switchScreenStart() {
+  // First hide all buttons
+  for (let i = 0; i < buttons.length; i++) {
+    if (buttons[i].screen != 'all') {
+      buttons[i].hide();
+    }
+    else if (buttons[i].screen == 'play') {
+      buttons[i].show();
+    }
+  }
+
+  // Change the screen
+  gameConfig.mode = 'play';
 }
 
 function titleScreen() {
