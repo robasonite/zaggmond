@@ -18,6 +18,14 @@ let bricks = [];
 // Make an array of buttons.
 let buttons = [];
 
+let soundEffects = {};
+
+function preload() {
+  // Need to load sound files before trying to use them
+  soundEffects.ballHitWall = loadSound('sounds/hitWall.ogg');
+  soundEffects.ballHitBrick = loadSound('sounds/hitBrick.ogg');
+}
+
 function setup() {
   // put setup code here
   createCanvas(
@@ -165,6 +173,9 @@ function gameLoop() {
 
         // Brick is "destroyed"
         bricks[b].visible = false;
+
+        // Play the sound effect
+        soundEffects.ballHitBrick.play();
 
         // Decide how to bounce the ball
         let ballMidX = balls[x].x + (balls[x].height / 2);
@@ -351,21 +362,31 @@ function makeBall(x, y, s) {
   }
 
   myball.boundsCheck = function (x, y, width, height) {
+    let hitWall = false;
     if (myball.x + myball.width > x + width) {
       myball.x = x + width - myball.width - 1;
       myball.vx *= -1;
+      hitWall = true;
     }
     else if (myball.x < x) {
       myball.x = x + 1;
       myball.vx *= -1;
+      hitWall = true;
     }
     else if (myball.y + myball.height > y + height) {
       myball.y = y + height - myball.height -1;
       myball.vy *= -1;
+      hitWall = true;
     }
     else if (myball.y < y) {
       myball.y = y + 1;
       myball.vy *= -1;
+      hitWall = true;
+    }
+
+    // If the ball hit a wall, play the sound effect.
+    if (hitWall) {
+      soundEffects.ballHitWall.play();
     }
   }
 
