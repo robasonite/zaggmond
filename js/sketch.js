@@ -313,15 +313,19 @@ function makeBall(x, y, s) {
 
   myball.boundsCheck = function (x, y, width, height) {
     if (myball.x + myball.width > x + width) {
+      myball.x = x + width - myball.width - 1;
       myball.vx *= -1;
     }
     else if (myball.x < x) {
+      myball.x = x + 1;
       myball.vx *= -1;
     }
     else if (myball.y + myball.height > y + height) {
+      myball.y = y + height - myball.height -1;
       myball.vy *= -1;
     }
     else if (myball.y < y) {
+      myball.y = y + 1;
       myball.vy *= -1;
     }
   }
