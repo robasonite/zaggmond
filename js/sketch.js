@@ -4,7 +4,9 @@ gameConfig = {
   areaHeight: 1280,
   buttonFontHeight: 16,
   brickRowLength: 7,
-  brickSpacing: 10
+  brickSpacing: 10,
+  mode: 'play',
+  uiBarHeight: 100
 }
 
 // Make an array of balls.
@@ -67,7 +69,7 @@ function setup() {
 
   // Make bricks
   let rows = 9;
-  let yOffset = 84;
+  let yOffset = gameConfig.uiBarHeight + gameConfig.brickSpacing;
   let brickHeight = 40;
   let brickWidth = 90;
   for (let r = 0; r < rows; r++) {
@@ -118,15 +120,15 @@ function draw() {
     0,
     0,
     gameConfig.areaWidth * gameConfig.scale,
-    78 * gameConfig.scale
+    gameConfig.uiBarHeight * gameConfig.scale
   );
 
   // Bottom bar
   rect(
     0,
-    (gameConfig.areaHeight - 100) * gameConfig.scale,
+    (gameConfig.areaHeight - gameConfig.uiBarHeight) * gameConfig.scale,
     gameConfig.areaWidth * gameConfig.scale,
-    100 * gameConfig.scale
+    gameConfig.uiBarHeight * gameConfig.scale
   );
 
   // Iterate over balls.
@@ -135,9 +137,9 @@ function draw() {
     // Take top and bottom bars into account
     balls[x].boundsCheck(
       0,
-      78,
+      gameConfig.uiBarHeight,
       gameConfig.areaWidth,
-      gameConfig.areaHeight - (78 + 100)
+      gameConfig.areaHeight - (gameConfig.uiBarHeight * 2)
     );
 
     // Ball and brick collisions
