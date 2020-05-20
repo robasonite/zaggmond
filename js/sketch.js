@@ -32,6 +32,7 @@ function setup() {
   background(0);
   fill(255);
 
+  /*
   // Create the fullscreen button.
   fsBtn = createButton('fs');
 
@@ -41,6 +42,10 @@ function setup() {
   fsBtn.initWidth = 80;
   fsBtn.initHeight = 60;
   fsBtn.initFontSize = 34;
+
+  // Every button has a screen.
+  // 'all' appears on every screen
+  fsBtn.screen = 'all';
 
   // Set initial position and size.
   fsBtn.position(
@@ -60,6 +65,19 @@ function setup() {
   // Add the action and default class.
   fsBtn.mousePressed(toggleFS);
   fsBtn.class('buttons');
+  */
+
+  // makeUiButton(label, x, y, w, h, screen)
+  let fsBtn = makeUiButton(
+    'fs',
+    19,
+    1200,
+    80,
+    60,
+    'all'
+  );
+  
+  fsBtn.mousePressed(toggleFS);
 
   // Add button to array
   buttons.push(fsBtn);
@@ -179,7 +197,18 @@ function gameLoop() {
       bricks[x].draw(gameConfig.scale);
     }
   }
+}
 
+function titleScreen() {
+  fill(0);
+  //strokeWeight(4);
+  //stroke(0,0,200);
+  rect(
+    0,
+    0,
+    gameConfig.areaWidth * gameConfig.scale,
+    gameConfig.areaHeight * gameConfig.scale
+  );
 }
 
 function draw() {
@@ -187,8 +216,12 @@ function draw() {
   if (gameConfig.mode == 'play') {
     gameLoop();
   }
+  else if (gameConfig.mode == 'title') {
+    titleScreen();
+  }
 }
 
+// Simple overlap collision test
 function collider(a,b) {
   if (a.x < b.x + b.width &&
      a.x + a.width > b.x &&
@@ -381,4 +414,32 @@ function makeBrick(x,y,w,h) {
   }
 
   return mybrick;
+}
+
+function makeUiButton(label, x, y, w, h, screen) {
+  mybutton = createButton(label);
+  mybutton.initX = x;
+  mybutton.initY = y;
+  mybutton.initWidth = w;
+  mybutton.initHeight = h;
+  mybutton.screen = screen;
+  mybutton.initFontSize = 34;
+
+  // Set position and size based on game scale
+  mybutton.position(
+    mybutton.initX * gameConfig.scale,
+    mybutton.initY * gameConfig.scale
+  );
+  mybutton.size(
+    mybutton.initWidth * gameConfig.scale,
+    mybutton.initHeight * gameConfig.scale
+  );
+  
+  // Font size, family, and style
+  mybutton.style('font-size', (mybutton.initFontSize * gameConfig.scale) + 'px');
+  mybutton.style('font-family', 'monospace');
+  mybutton.style('font-weight', 'bold');
+  mybutton.class('buttons');
+
+  return mybutton;
 }
