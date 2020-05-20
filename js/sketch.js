@@ -5,7 +5,7 @@ gameConfig = {
   buttonFontHeight: 16,
   brickRowLength: 7,
   brickSpacing: 10,
-  mode: 'play',
+  mode: 'title',
   uiBarHeight: 100
 }
 
@@ -89,7 +89,19 @@ function setup() {
 
   // Add button to array
   buttons.push(fsBtn);
-
+  
+  let startBtn = makeUiButton(
+    'START',
+    (gameConfig.areaWidth / 2) - 125,
+    gameConfig.areaHeight * 0.4,
+    250,
+    140,
+    'title',
+    70
+  );
+  
+  buttons.push(startBtn);
+  
   // Make a ball
   balls.push(makeBall(300, 300, 30));
 
@@ -211,7 +223,8 @@ function gameLoop() {
 }
 
 function titleScreen() {
-  fill(0);
+  background(0);
+  fill(90,90,200);
   //strokeWeight(4);
   //stroke(0,0,200);
   rect(
@@ -219,6 +232,14 @@ function titleScreen() {
     0,
     gameConfig.areaWidth * gameConfig.scale,
     gameConfig.areaHeight * gameConfig.scale
+  );
+  fill(0);
+  textAlign(CENTER);
+  textSize(140 * gameConfig.scale);
+  text(
+    "Title here",
+    (gameConfig.areaWidth / 2) * gameConfig.scale,
+    (gameConfig.areaHeight * 0.2) * gameConfig.scale
   );
 }
 
@@ -437,14 +458,21 @@ function makeBrick(x,y,w,h) {
   return mybrick;
 }
 
-function makeUiButton(label, x, y, w, h, screen) {
+function makeUiButton(label, x, y, w, h, screen, fs) {
   mybutton = createButton(label);
   mybutton.initX = x;
   mybutton.initY = y;
   mybutton.initWidth = w;
   mybutton.initHeight = h;
   mybutton.screen = screen;
-  mybutton.initFontSize = 34;
+
+  // Optional font size
+  if (fs) {
+    mybutton.initFontSize = fs;
+  }
+  else {
+    mybutton.initFontSize = 34;
+  }
 
   // Set position and size based on game scale
   mybutton.position(
