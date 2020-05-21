@@ -18,6 +18,10 @@ let bricks = [];
 // Make an array of buttons.
 let buttons = [];
 
+// The player should be global
+let player;
+
+// Preload sound effects into their own object
 let soundEffects = {};
 
 function preload() {
@@ -100,7 +104,9 @@ function setup() {
     70
   );
   
-  startBtn.mousePressed(switchScreenStart);
+  startBtn.mousePressed(function() {
+    switchScreen('play');
+  });
   
   buttons.push(startBtn);
   
@@ -225,13 +231,13 @@ function gameLoop() {
 }
 
 // Need a screen switching function to show and hide buttons
-function switchScreenStart() {
+function switchScreen(screenName) {
   // First hide all buttons
   for (let i = 0; i < buttons.length; i++) {
     if (buttons[i].screen != 'all') {
       buttons[i].hide();
     }
-    else if (buttons[i].screen == 'play') {
+    else if (buttons[i].screen == screenName) {
       buttons[i].show();
     }
   }
