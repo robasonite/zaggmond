@@ -192,6 +192,13 @@ var breakout = function(sketch) {
         gameConfig.areaHeight - (gameConfig.uiBarHeight * 2)
       );
 
+      // Check for paddle collisions
+      if (collider(balls[x], player)) {
+        if (balls[x].vy > 0) {
+          balls[x].vy *= -1;
+        }
+      }
+
       // Ball and brick collisions
       for (let b = 0; b < bricks.length; b++) {
         if (collider(balls[x], bricks[b]) && bricks[b].visible) {
@@ -423,11 +430,11 @@ var breakout = function(sketch) {
     myball.width = s;
     myball.height = s;
     myball.draw = function (scale) {
-      let r = sketch.random(0,256);
+      /*let r = sketch.random(0,256);
       let g = sketch.random(0,256);
-      let b = sketch.random(0,256);
+      let b = sketch.random(0,256);*/
       sketch.noStroke();
-      sketch.fill(0,0,b);
+      sketch.fill(0,0,200);
       sketch.ellipseMode(sketch.CORNER);
       sketch.ellipse(
         myball.x * scale,
