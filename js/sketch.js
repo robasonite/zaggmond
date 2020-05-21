@@ -133,6 +133,9 @@ var breakout = function(sketch) {
       }
       yOffset += brickHeight + gameConfig.brickSpacing;
     }
+
+    // Need to create the player's paddle
+    player = makePaddle();
   }
 
   // The main game loop
@@ -229,6 +232,11 @@ var breakout = function(sketch) {
         bricks[x].draw(gameConfig.scale);
       }
     }
+
+    // Draw the player
+    player.boundsCheck(0, gameConfig.areaWidth);
+    player.move(gameConfig.scale);
+    player.draw(gameConfig.scale);
   }
 
   // Need a screen switching function to show and hide buttons
@@ -476,6 +484,48 @@ var breakout = function(sketch) {
     }
 
     return mybrick;
+  }
+
+  function makePaddle() {
+    // Borrow some functions from the Ball.
+    // Paddles wil always spawn in the middle of the playing field, towards the bottom.
+    let mypaddle = makeBall(
+      (gameConfig.areaWidth / 2) - 70,
+      1100,
+      20
+    );
+    mypaddle.vx = 8
+    mypaddle.vy = 0
+
+    // Need to adjust the width
+    mypaddle.width = 140;
+
+    // Paddles are rectangles
+    mypaddle.draw = function (scale) {
+      sketch.noStroke();
+      sketch.fill(0);
+      sketch.rect(
+        mypaddle.x * scale,
+        mypaddle.y * scale,
+        mypaddle.width * scale,
+        mypaddle.height * scale
+      );
+      sketch.noFill();
+    }
+
+    // Because the paddle is player controlled, this needs an overhaul.
+    // The paddle only moves left and right.
+    mypaddle.boundsCheck = function (x, width) {
+      if (mypaddle.x < x) {
+        mypaddle.x = x + 1;
+      }
+
+      else if (mypaddle.x + mypaddle.width > x + width) {
+        mypaddle.x = x + width - mypaddle.width - 1;
+      }
+    }
+
+    return mypaddle;
   }
 
   function makeUiButton(label, x, y, w, h, screen, fs) {
