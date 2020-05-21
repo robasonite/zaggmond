@@ -254,8 +254,18 @@ var breakout = function(sketch) {
         player.vx = player.speed;
       }
     }
+    
+    // Same thing for the arrow keys
+    else if (sketch.keyIsPressed) {
+      if (sketch.keyCode === sketch.LEFT_ARROW) {
+        player.vx = player.speed * -1;
+      }
+      else if (sketch.keyCode === sketch.RIGHT_ARROW) {
+        player.vx = player.speed;
+      }
+    }
 
-    // If the player isn't holding the mouse button down, don't move the paddle
+    // If the player isn't holding the mouse button or a key down, don't move the paddle.
     else {
       player.vx = 0;
     }
