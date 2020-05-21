@@ -140,6 +140,7 @@ var breakout = function(sketch) {
 
   // The main game loop
   function gameLoop() {
+    
     // Set background
     sketch.background(0);
     
@@ -237,6 +238,27 @@ var breakout = function(sketch) {
     player.boundsCheck(0, gameConfig.areaWidth);
     player.move(gameConfig.scale);
     player.draw(gameConfig.scale);
+
+    // Input handling
+    if (sketch.mouseIsPressed) {
+      //sketch.stroke(150);
+      //sketch.line(sketch.mouseX, 0, sketch.mouseX, gameConfig.areaHeight);
+      //console.log("Mouse down: " + sketch.mouseX);
+      //console.log((gameConfig.areaWidth * gameConfig.scale / 2));
+      if (sketch.mouseX < (gameConfig.areaWidth * gameConfig.scale) / 2) {
+        //console.log("LEFT");
+        player.vx = player.speed * -1;
+      }
+      else {
+        //console.log("RIGHT");
+        player.vx = player.speed;
+      }
+    }
+
+    // If the player isn't holding the mouse button down, don't move the paddle
+    else {
+      player.vx = 0;
+    }
   }
 
   // Need a screen switching function to show and hide buttons
@@ -494,8 +516,11 @@ var breakout = function(sketch) {
       1100,
       20
     );
-    mypaddle.vx = 8
+    mypaddle.vx = 0
     mypaddle.vy = 0
+
+    // Set a separate speed variable
+    mypaddle.speed = 10;
 
     // Need to adjust the width
     mypaddle.width = 140;
