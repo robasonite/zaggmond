@@ -3,3 +3,5 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 2020-05-22:
 
 - Added a crude FPS counter that turns red whenever the FPS drops below 50. CPU usage consistantly reads between 65% and 70%.
+- The paddle, ball, and bricks are now all pre-rendered. No noticable increase in performance. FPS counter flash red about as much as it did before.
+
