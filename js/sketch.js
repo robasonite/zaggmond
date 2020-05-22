@@ -22,6 +22,9 @@ var breakout = function(sketch) {
   // The player should be global
   let player;
 
+  // Shape buffers to store pre-rendered stuff
+  let shapeBuffers = {};
+
   // Preload sound effects into their own object
   let soundEffects = {};
 
@@ -33,6 +36,8 @@ var breakout = function(sketch) {
 
   sketch.setup = function() {
     // put setup code here
+
+    // Create the canvas
     sketch.createCanvas(
       window.innerWidth,
       window.innerHeight
@@ -40,6 +45,12 @@ var breakout = function(sketch) {
 
     // Set the inital scale.
     gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
+
+    // Before we draw ANYTHING, create shape buffers for the bricks
+    let demoBrick = makeBrick(0,0);
+    shapeBuffers.redBrick = sketch.createGraphics(demoBrick.width, demoBrick.height);
+    demoBrick.makeShape(shapeBuffers.redBrick);
+
 
     // Set initial background and fill colors.
     sketch.background(0);
@@ -125,9 +136,7 @@ var breakout = function(sketch) {
         bricks.push(
           makeBrick(
             4 + 8 + (i * (90 + gameConfig.brickSpacing)),
-            yOffset,
-            brickWidth,
-            brickHeight
+            yOffset
           )
         );
       }
@@ -264,7 +273,7 @@ var breakout = function(sketch) {
           gameConfig.areaHeight
         );
         bricks[x].move(gameConfig.scale);
-        bricks[x].draw(gameConfig.scale);
+        bricks[x].draw(gameConfig.scale, shapeBuffers.redBrick);
       }
     }
 
@@ -509,8 +518,10 @@ var breakout = function(sketch) {
     return myball;
   }
 
-  function makeBrick(x,y,w,h) {
-    let mybrick = makeBall(x, y, w);
+  function makeBrick(x,y) {
+    //let mybrick = makeBall(x, y, w);
+    // Decided that 90 was perfect
+    let mybrick = makeBall(x, y, 90);
 
     // Bricks do not move by default.
     mybrick.vx = 0;
@@ -518,36 +529,44 @@ var breakout = function(sketch) {
 
     // Bricks have to be visible
     mybrick.visible = true;
-    mybrick.height = h;
+    mybrick.height = 40;
 
     // Draw rectangles instead of circles.
-    mybrick.draw = function (scale) {
-      sketch.noStroke();
+    mybrick.makeShape = function (buffer) {
+      buffer.noStroke();
 
       // Let's make them red
-      sketch.fill(255,0,0);
+      buffer.fill(255,0,0);
       
       // Draw a diamond
-      sketch.quad(
+      buffer.quad(
 
         // Left corner XY
-        mybrick.x * scale,
-        (mybrick.y + (mybrick.height / 2)) * scale,
+        mybrick.x,
+        mybrick.y + (mybrick.height / 2),
 
         // Top center XY
-        (mybrick.x + (mybrick.width / 2)) * scale,
-        mybrick.y * scale,
+        mybrick.x + (mybrick.width / 2),
+        mybrick.y,
 
         // Right corner XY
-        (mybrick.x + mybrick.width) * scale,
-        (mybrick.y + (mybrick.height / 2)) * scale,
-
+        mybrick.x + mybrick.width,
+        mybrick.y + (mybrick.height / 2),
 
         // Lower center XY
-        (mybrick.x + (mybrick.width / 2)) * scale,
-        (mybrick.y + mybrick.height) * scale,
+        mybrick.x + (mybrick.width / 2),
+        mybrick.y + mybrick.height,
       );
-      sketch.noFill();
+    }
+
+    mybrick.draw = function (scale, buffer) {
+      sketch.image(
+        buffer,
+        mybrick.x * scale,
+        mybrick.y * scale,
+        mybrick.width * scale,
+        mybrick.height * scale
+      );
     }
 
     return mybrick;
