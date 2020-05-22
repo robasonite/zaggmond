@@ -43,14 +43,14 @@ var breakout = function(sketch) {
   sketch.setup = function() {
     // put setup code here
 
-    // Create the canvas
-    sketch.createCanvas(
-      window.innerWidth,
-      window.innerHeight
-    );
-
     // Set the inital scale.
     gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
+
+    // Create the canvas
+    sketch.createCanvas(
+      gameConfig.areaWidth * gameConfig.scale,
+      gameConfig.areaHeight * gameConfig.scale
+    );
 
     // Before we draw ANYTHING, create shape buffers for the bricks
     shapeBlueprints.push(makeBrick(0,0));
@@ -422,19 +422,20 @@ var breakout = function(sketch) {
 
     // Allow for forcing fullscreen exit
     if (forceExit) {
-      // Resize canvas to match screen dimensions.
-      sketch.resizeCanvas(
-        window.screen.width,
-        window.screen.height
-      );
-     
-      // Same thing again, but with the screen height.
+      
+      // Need to give the window a bit of time to un-fullscreen.
       setTimeout(() => {
         //gameConfig.scale = window.screen.height / gameConfig.areaHeight;
         gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
         /*console.log("Fullscreen scale: " + gameConfig.scale);
         console.log("Fullscreen height: " + gameConfig.areaHeight * gameConfig.scale);
         console.log("Screen height: " + window.screen.height);*/
+        
+        // Resize canvas to match screen dimensions.
+        sketch.resizeCanvas(
+          gameConfig.areaWidth * gameConfig.scale,
+          gameConfig.areaHeight * gameConfig.scale
+        );
       }, 500);
     }
 
@@ -444,33 +445,34 @@ var breakout = function(sketch) {
         // Exit fullscreen mode
         sketch.fullscreen(false);
 
-        // Resize canvas to match the window dimensions.
-        sketch.resizeCanvas(
-          window.innerWidth,
-          window.innerHeight
-        );
-
         // Give the window a bit of time to unmaximize.
         setTimeout(() => {
           // Then adjust the scale value.
           //gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
           gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
+        
+          // Resize canvas to match the window dimensions.
+          sketch.resizeCanvas(
+            gameConfig.areaWidth * gameConfig.scale,
+            gameConfig.areaHeight * gameConfig.scale
+          );
         }, 500);
       }
       else {
         // Enter fullscreen mode.
         sketch.fullscreen(true);
 
-        // Resize canvas to match screen dimensions.
-        sketch.resizeCanvas(
-          window.screen.width,
-          window.screen.height
-        );
-       
         // Same thing again, but with the screen height.
         setTimeout(() => {
           //gameConfig.scale = window.screen.height / gameConfig.areaHeight;
           gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
+          
+          // Resize canvas to match screen dimensions.
+          sketch.resizeCanvas(
+            gameConfig.areaWidth * gameConfig.scale,
+            gameConfig.areaHeight * gameConfig.scale
+          );
+       
           console.log("Fullscreen scale: " + gameConfig.scale);
           console.log("Fullscreen height: " + gameConfig.areaHeight * gameConfig.scale);
           console.log("Screen height: " + window.screen.height);
