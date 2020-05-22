@@ -1,1 +1,5 @@
 The purpose of this branch is to see if pre-rendered graphics perform better. The general approach will be to create P5 buffers with createGraphics() for every graphical element in the game. Then all rendering will be done with image().
+
+2020-05-22:
+
+- Added a crude FPS counter that turns red whenever the FPS drops below 50. CPU usage consistantly reads between 65% and 70%.
