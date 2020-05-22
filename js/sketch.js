@@ -25,6 +25,12 @@ var breakout = function(sketch) {
   // Shape buffers to store pre-rendered stuff
   let shapeBuffers = {};
 
+  // Blueprint objects
+  // This array contains a collection of shape objects that are
+  // never drawn to the screen. Instead, their attributes are
+  // user to make pre-rendered shape buffers.
+  let shapeBlueprints = [];
+
   // Preload sound effects into their own object
   let soundEffects = {};
 
@@ -51,6 +57,7 @@ var breakout = function(sketch) {
     shapeBuffers.redBrick = sketch.createGraphics(demoBrick.width, demoBrick.height);
     demoBrick.makeShape(shapeBuffers.redBrick);
 
+    // And normal balls
     let demoBall = makeBall(0,0);
     shapeBuffers.blueBall = sketch.createGraphics(demoBall.width, demoBall.height);
     demoBall.makeShape(shapeBuffers.blueBall);
@@ -147,14 +154,14 @@ var breakout = function(sketch) {
       yOffset += brickHeight + gameConfig.brickSpacing;
     }
 
-    // Need to create the player's paddle
+    // Need to create the player's paddle.
     player = makePaddle();
   }
 
-  // The main game loop
+  // The main game loop.
   function gameLoop() {
     
-    // Set background
+    // Set background.
     sketch.background(0);
     
     /*if (mouseIsPressed) {
@@ -355,6 +362,8 @@ var breakout = function(sketch) {
     );
   }
 
+  // Needed to report FPS
+  let lastLoop = new Date();
   sketch.draw = function() {
     // put drawing code here
     if (gameConfig.mode == 'play') {
@@ -363,6 +372,24 @@ var breakout = function(sketch) {
     else if (gameConfig.mode == 'title') {
       titleScreen();
     }
+
+    // Show FPS
+    let thisLoop = new Date();
+    let fps = 1000 / (thisLoop - lastLoop);
+    lastLoop = thisLoop;
+    if (fps < 50) {
+      sketch.fill(200,0,0);
+    }
+    else {
+      sketch.fill(0,200,0);
+    }
+    sketch.textAlign(sketch.LEFT);
+    sketch.textSize(50 * gameConfig.scale);
+    sketch.text(
+      "FPS: " + Math.floor(fps),
+      40 * gameConfig.scale,
+      50 * gameConfig.scale
+    );
   }
 
   // Simple overlap collision test
@@ -472,6 +499,8 @@ var breakout = function(sketch) {
     myball.speed = 8;
     myball.width = 30;
     myball.height = 30;
+
+    myball.shapeName = 'blueBall';
     myball.makeShape = function(buffer) {
       buffer.noStroke();
       buffer.fill(0,0,200);
@@ -544,8 +573,10 @@ var breakout = function(sketch) {
     mybrick.height = 40;
     mybrick.width = 90;
 
+    mybrick.shapeName = 'redBrick';
+
     // Draw rectangles instead of circles.
-    mybrick.makeShape = function (buffer) {
+    mybrick.makeShape = function(buffer) {
       buffer.noStroke();
 
       // Let's make them red
