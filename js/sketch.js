@@ -194,8 +194,35 @@ var breakout = function(sketch) {
 
       // Check for paddle collisions
       if (collider(balls[x], player)) {
+        // Send the ball back up.
         if (balls[x].vy > 0) {
           balls[x].vy *= -1;
+        }
+
+        // Get the absolute distance between ball and paddle midpoints.
+        let ballMidX = balls[x].x + (balls[x].width / 2);
+        let paddleMidX = player.x + (player.width / 2);
+        let midpointDistance = sketch.abs(ballMidX - paddleMidX);
+
+        // Convert value to percentage
+        let midpointPercent = midpointDistance / sketch.abs(paddleMidX - player.x);
+
+        // Flatten and convert percentage,
+        // round to nearest hundredth
+        let multiplier = sketch.pow(10,2);
+        midpointPercent = sketch.round(midpointPercent * multiplier) / multiplier;
+
+        // Floor if over 1
+        if (midpointPercent > 1.0) {
+          midpointPercent = sketch.floor(midpointPercent);
+        }
+          
+        // Adjust the X velocity of the ball.
+        balls[x].vx = balls[x].speed * midpointPercent;
+
+        // Bounce left or right
+        if (ballMidX < paddleMidX) {
+          balls[x].vx *= -1;
         }
       }
 
@@ -425,8 +452,9 @@ var breakout = function(sketch) {
     let myball = {};
     myball.x = x;
     myball.y = y;
-    myball.vx = 4
-    myball.vy = 8
+    myball.vx = 8;
+    myball.vy = 8;
+    myball.speed = 8;
     myball.width = s;
     myball.height = s;
     myball.draw = function (scale) {
