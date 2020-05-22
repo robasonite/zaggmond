@@ -51,6 +51,10 @@ var breakout = function(sketch) {
     shapeBuffers.redBrick = sketch.createGraphics(demoBrick.width, demoBrick.height);
     demoBrick.makeShape(shapeBuffers.redBrick);
 
+    let demoBall = makeBall(0,0);
+    shapeBuffers.blueBall = sketch.createGraphics(demoBall.width, demoBall.height);
+    demoBall.makeShape(shapeBuffers.blueBall);
+
 
     // Set initial background and fill colors.
     sketch.background(0);
@@ -123,7 +127,7 @@ var breakout = function(sketch) {
     buttons.push(startBtn);
     
     // Make a ball
-    balls.push(makeBall(300, 300, 30));
+    balls.push(makeBall(300, 300));
 
     // Make bricks
     let rows = 9;
@@ -259,7 +263,7 @@ var breakout = function(sketch) {
         }
       }
       balls[x].move(gameConfig.scale);
-      balls[x].draw(gameConfig.scale);
+      balls[x].draw(gameConfig.scale, shapeBuffers.blueBall);
     }
     
     // Iterate over bricks
@@ -457,6 +461,8 @@ var breakout = function(sketch) {
 
 
   // Ball making function
+  //function makeBall(x, y, s) {
+  // Decided to set ball size to 30px.
   function makeBall(x, y, s) {
     let myball = {};
     myball.x = x;
@@ -464,23 +470,20 @@ var breakout = function(sketch) {
     myball.vx = 8;
     myball.vy = 8;
     myball.speed = 8;
-    myball.width = s;
-    myball.height = s;
-    myball.draw = function (scale) {
-      /*let r = sketch.random(0,256);
-      let g = sketch.random(0,256);
-      let b = sketch.random(0,256);*/
-      sketch.noStroke();
-      sketch.fill(0,0,200);
-      sketch.ellipseMode(sketch.CORNER);
-      sketch.ellipse(
-        myball.x * scale,
-        myball.y * scale,
-        myball.width * scale,
-        myball.height * scale
+    myball.width = 30;
+    myball.height = 30;
+    myball.makeShape = function(buffer) {
+      buffer.noStroke();
+      buffer.fill(0,0,200);
+      buffer.ellipseMode(buffer.CORNER);
+      buffer.ellipse(
+        myball.x,
+        myball.y,
+        myball.width,
+        myball.height
       );
-      sketch.noFill();
     }
+
     myball.move = function (scale) {
       myball.x += myball.vx;
       myball.y += myball.vy;
@@ -514,14 +517,23 @@ var breakout = function(sketch) {
         soundEffects.ballHitWall.play();
       }
     }
+    
+    myball.draw = function (scale, buffer) {
+      sketch.image(
+        buffer,
+        myball.x * scale,
+        myball.y * scale,
+        myball.width * scale,
+        myball.height * scale
+      );
+    }
 
     return myball;
   }
 
   function makeBrick(x,y) {
     //let mybrick = makeBall(x, y, w);
-    // Decided that 90 was perfect
-    let mybrick = makeBall(x, y, 90);
+    let mybrick = makeBall(x, y);
 
     // Bricks do not move by default.
     mybrick.vx = 0;
@@ -530,6 +542,7 @@ var breakout = function(sketch) {
     // Bricks have to be visible
     mybrick.visible = true;
     mybrick.height = 40;
+    mybrick.width = 90;
 
     // Draw rectangles instead of circles.
     mybrick.makeShape = function (buffer) {
@@ -559,15 +572,6 @@ var breakout = function(sketch) {
       );
     }
 
-    mybrick.draw = function (scale, buffer) {
-      sketch.image(
-        buffer,
-        mybrick.x * scale,
-        mybrick.y * scale,
-        mybrick.width * scale,
-        mybrick.height * scale
-      );
-    }
 
     return mybrick;
   }
