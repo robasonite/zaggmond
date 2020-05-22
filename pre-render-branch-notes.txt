@@ -1,0 +1,1 @@
+The purpose of this branch is to see if pre-rendered graphics perform better. The general approach will be to create P5 buffers with createGraphics() for every graphical element in the game. Then all rendering will be done with image().
