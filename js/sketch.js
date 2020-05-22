@@ -55,6 +55,7 @@ var breakout = function(sketch) {
     // Before we draw ANYTHING, create shape buffers for the bricks
     shapeBlueprints.push(makeBrick(0,0));
     shapeBlueprints.push(makeBall(0,0));
+    shapeBlueprints.push(makePaddle(0,0));
     for (let i = 0; i < shapeBlueprints.length; i++) {
       // Make the buffer
       shapeBuffers[shapeBlueprints[i].shapeName] = sketch.createGraphics(shapeBlueprints[i].width, shapeBlueprints[i].height);
@@ -164,7 +165,10 @@ var breakout = function(sketch) {
     }
 
     // Need to create the player's paddle.
-    player = makePaddle();
+    player = makePaddle(
+      (gameConfig.areaWidth / 2) - 70,
+      1100
+    );
   }
 
   // The main game loop.
@@ -300,7 +304,7 @@ var breakout = function(sketch) {
     // Draw the player
     player.boundsCheck(0, gameConfig.areaWidth);
     player.move(gameConfig.scale);
-    player.draw(gameConfig.scale);
+    player.draw(gameConfig.scale, shapeBuffers.normalPaddle);
 
     // Input handling
     if (sketch.mouseIsPressed) {
@@ -499,7 +503,7 @@ var breakout = function(sketch) {
   // Ball making function
   //function makeBall(x, y, s) {
   // Decided to set ball size to 30px.
-  function makeBall(x, y, s) {
+  function makeBall(x, y) {
     let myball = {};
     myball.x = x;
     myball.y = y;
@@ -522,7 +526,7 @@ var breakout = function(sketch) {
       );
     }
 
-    myball.move = function (scale) {
+    myball.move = function(scale) {
       myball.x += myball.vx;
       myball.y += myball.vy;
     }
@@ -556,7 +560,7 @@ var breakout = function(sketch) {
       }
     }
     
-    myball.draw = function (scale, buffer) {
+    myball.draw = function(scale, buffer) {
       sketch.image(
         buffer,
         myball.x * scale,
@@ -616,34 +620,34 @@ var breakout = function(sketch) {
     return mybrick;
   }
 
-  function makePaddle() {
+  function makePaddle(x, y) {
     // Borrow some functions from the Ball.
     // Paddles wil always spawn in the middle of the playing field, towards the bottom.
-    let mypaddle = makeBall(
-      (gameConfig.areaWidth / 2) - 70,
-      1100,
-      20
-    );
+    let mypaddle = makeBall(x,y);
+    
+    mypaddle.shapeName = 'normalPaddle';
+
+    // Paddle doesn't move until the player tells it to.
     mypaddle.vx = 0
     mypaddle.vy = 0
 
     // Set a separate speed variable
     mypaddle.speed = 10;
 
-    // Need to adjust the width
+    // Need to adjust the width and height
     mypaddle.width = 140;
+    mypaddle.height = 20;
 
     // Paddles are rectangles
-    mypaddle.draw = function (scale) {
-      sketch.noStroke();
-      sketch.fill(0);
-      sketch.rect(
-        mypaddle.x * scale,
-        mypaddle.y * scale,
-        mypaddle.width * scale,
-        mypaddle.height * scale
+    mypaddle.makeShape = function(buffer) {
+      buffer.noStroke();
+      buffer.fill(0);
+      buffer.rect(
+        mypaddle.x,
+        mypaddle.y,
+        mypaddle.width,
+        mypaddle.height
       );
-      sketch.noFill();
     }
 
     // Because the paddle is player controlled, this needs an overhaul.
