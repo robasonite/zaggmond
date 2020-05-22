@@ -53,14 +53,23 @@ var breakout = function(sketch) {
     gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
 
     // Before we draw ANYTHING, create shape buffers for the bricks
-    let demoBrick = makeBrick(0,0);
+    shapeBlueprints.push(makeBrick(0,0));
+    shapeBlueprints.push(makeBall(0,0));
+    for (let i = 0; i < shapeBlueprints.length; i++) {
+      // Make the buffer
+      shapeBuffers[shapeBlueprints[i].shapeName] = sketch.createGraphics(shapeBlueprints[i].width, shapeBlueprints[i].height);
+
+      // Draw to the buffer
+      shapeBlueprints[i].makeShape(shapeBuffers[shapeBlueprints[i].shapeName]);
+    }
+    /*let demoBrick = makeBrick(0,0);
     shapeBuffers.redBrick = sketch.createGraphics(demoBrick.width, demoBrick.height);
     demoBrick.makeShape(shapeBuffers.redBrick);
 
     // And normal balls
     let demoBall = makeBall(0,0);
     shapeBuffers.blueBall = sketch.createGraphics(demoBall.width, demoBall.height);
-    demoBall.makeShape(shapeBuffers.blueBall);
+    demoBall.makeShape(shapeBuffers.blueBall); */
 
 
     // Set initial background and fill colors.
