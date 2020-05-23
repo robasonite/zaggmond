@@ -4,4 +4,10 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 - Added a crude FPS counter that turns red whenever the FPS drops below 50. CPU usage consistantly reads between 65% and 70%.
 - The paddle, ball, and bricks are now all pre-rendered. No noticable increase in performance. FPS counter flash red about as much as it did before.
-- Adjusted things so that the canvas no longer takes up the entire page. There's no reason for it to consume the entire page because nothing is drawn outside the play area. Changed page background to black in index.html.
+- Adjusted things so that the canvas no longer takes up the entire page. There's no reason for it to consume the entire page because nothing is drawn outside the play area. Changed page background to black in index.html. FPS counter seems to turn red less often.
+
+
+2020-05-23:
+
+- Made several non-rendering specific changes to the code. I added a score counter and the Fira Mona font.
+- Decided to merge this branch back into master and rename this file to 'devlog.txt'.
