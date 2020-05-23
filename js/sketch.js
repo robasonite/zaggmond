@@ -25,6 +25,9 @@ var breakout = function(sketch) {
   // The player should be global
   let player;
 
+  // Player score value
+  let playerScore = 0;
+
   // Shape buffers to store pre-rendered stuff
   let shapeBuffers = {};
 
@@ -283,14 +286,24 @@ var breakout = function(sketch) {
       // Ball and brick collisions
       for (let b = 0; b < bricks.length; b++) {
         if (collider(balls[x], bricks[b]) && bricks[b].visible) {
-
-          // Brick is "destroyed"
+         
+          // Damage the brick.
           bricks[b].hp -= 1;
 
           if (bricks[b].hp < 1) {
+            // Brick is "destroyed"
             bricks[b].visible = false;
+            
             // Play the sound effect
             soundEffects.ballHitBrick.play();
+            
+            // Award points
+            playerScore += bricks[b].points;
+          }
+
+          // If the brick is not destroyed, play the normal wall hit sound.
+          else {
+            soundEffects.ballHitWall.play();
           }
 
           // Decide how to bounce the ball
@@ -390,6 +403,16 @@ var breakout = function(sketch) {
 
     // Draw the player.
     player.draw(gameConfig.scale, shapeBuffers.normalPaddle);
+
+    // Draw the player's score
+    sketch.fill(255);
+    sketch.textAlign(sketch.LEFT);
+    sketch.textSize(40 * gameConfig.scale);
+    sketch.text(
+      "Score: " + playerScore,
+      20 * gameConfig.scale,
+      50 * gameConfig.scale
+    );
 
     // Input handling
     if (sketch.mouseIsPressed) {
@@ -510,7 +533,7 @@ var breakout = function(sketch) {
     sketch.textSize(50 * gameConfig.scale);
     sketch.text(
       "FPS: " + Math.floor(fps),
-      40 * gameConfig.scale,
+      500 * gameConfig.scale,
       50 * gameConfig.scale
     );
   }
@@ -732,7 +755,7 @@ var breakout = function(sketch) {
     mybrick.points = 10;
 
     // And they may take multiple hits
-    mybrick.hp = 3;
+    mybrick.hp = 1;
 
 
     return mybrick;
