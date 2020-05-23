@@ -285,10 +285,13 @@ var breakout = function(sketch) {
         if (collider(balls[x], bricks[b]) && bricks[b].visible) {
 
           // Brick is "destroyed"
-          bricks[b].visible = false;
+          bricks[b].hp -= 1;
 
-          // Play the sound effect
-          soundEffects.ballHitBrick.play();
+          if (bricks[b].hp < 1) {
+            bricks[b].visible = false;
+            // Play the sound effect
+            soundEffects.ballHitBrick.play();
+          }
 
           // Decide how to bounce the ball
           let ballMidX = balls[x].x + (balls[x].height / 2);
@@ -697,7 +700,7 @@ var breakout = function(sketch) {
 
     mybrick.shapeName = 'redBrick';
 
-    // Draw rectangles instead of circles.
+    // Draw diamonds instead of circles.
     mybrick.makeShape = function(buffer) {
       buffer.noStroke();
 
@@ -724,6 +727,12 @@ var breakout = function(sketch) {
         mybrick.y + mybrick.height,
       );
     }
+
+    // And bricks award points to the player!
+    mybrick.points = 10;
+
+    // And they may take multiple hits
+    mybrick.hp = 3;
 
 
     return mybrick;
