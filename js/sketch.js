@@ -147,6 +147,25 @@ var breakout = function(sketch) {
     
     buttons.push(startBtn);
     
+    // makeUiButton(label, x, y, w, h, screen, fontSize)
+    let pauseBtn = makeUiButton(
+      //'&#9613;&#9613;',
+      '&#10074;&#10074;',
+      gameConfig.areaWidth - 90,
+      gameConfig.areaHeight - gameConfig.uiBarHeight,
+      90,
+      gameConfig.uiBarHeight,
+      'play',
+      40
+    );
+
+    pauseBtn.mousePressed(function() {
+      gamePaused = true;
+    });
+
+    // Add button to array
+    buttons.push(pauseBtn);
+    
     // Make a ball
     balls.push(makeBall(300, 300));
 
@@ -173,6 +192,9 @@ var breakout = function(sketch) {
       (gameConfig.areaWidth / 2) - 70,
       1100
     );
+
+    // Make sure that the right buttons are showing
+    switchScreen('title');
   }
 
   // The main game loop.
@@ -309,8 +331,10 @@ var breakout = function(sketch) {
       gameConfig.uiBarHeight * gameConfig.scale
     );
 
-    // Update positions of balls, paddle, and bricks
-    simUpdate();
+    // Update positions of balls, paddle, and bricks, BUT only if the game is NOT paused.
+    if (!gamePaused) {
+      simUpdate();
+    }
 
     // Draw the balls.
     for (let x = 0; x < balls.length; x++) {
@@ -362,18 +386,19 @@ var breakout = function(sketch) {
 
   // Need a screen switching function to show and hide buttons
   function switchScreen(screenName) {
-    // First hide all buttons
+    // Hide and show the right buttons
     for (let i = 0; i < buttons.length; i++) {
-      if (buttons[i].screen != 'all') {
-        buttons[i].hide();
-      }
-      else if (buttons[i].screen == screenName) {
+      buttons[i].hide();
+    }
+    
+    for (let i = 0; i < buttons.length; i++) {
+      if (buttons[i].screen == screenName || buttons[i].screen == 'all') {
         buttons[i].show();
       }
     }
 
     // Change the screen
-    gameConfig.mode = 'play';
+    gameConfig.mode = screenName;
   }
 
   function titleScreen() {
