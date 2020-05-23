@@ -147,6 +147,39 @@ var breakout = function(sketch) {
     
     buttons.push(startBtn);
     
+    let quitBtn = makeUiButton(
+      'QUIT',
+      (gameConfig.areaWidth / 2) - (280 / 2),
+      gameConfig.areaHeight * 0.3,
+      280,
+      140,
+      'pause',
+      70
+    );
+    
+    quitBtn.mousePressed(function() {
+      switchScreen('title');
+    });
+    
+    buttons.push(quitBtn);
+    
+    let resumeBtn = makeUiButton(
+      'RESUME',
+      (gameConfig.areaWidth / 2) - (280 / 2),
+      gameConfig.areaHeight * 0.5,
+      280,
+      140,
+      'pause',
+      70
+    );
+    
+    resumeBtn.mousePressed(function() {
+      switchScreen('play');
+      gamePaused = false;
+    });
+    
+    buttons.push(resumeBtn);
+    
     // makeUiButton(label, x, y, w, h, screen, fontSize)
     let pauseBtn = makeUiButton(
       //'&#9613;&#9613;',
@@ -160,11 +193,9 @@ var breakout = function(sketch) {
     );
 
     pauseBtn.mousePressed(function() {
-      if (gamePaused) {
-        gamePaused = false;
-      }
-      else {
+      if (!gamePaused) {
         gamePaused = true;
+        switchScreen('pause');
       }
     });
 
@@ -426,6 +457,27 @@ var breakout = function(sketch) {
       (gameConfig.areaHeight * 0.2) * gameConfig.scale
     );
   }
+  
+  function pauseScreen() {
+    sketch.background(0);
+    sketch.fill(90,90,200);
+    //strokeWeight(4);
+    //stroke(0,0,200);
+    sketch.rect(
+      0,
+      0,
+      gameConfig.areaWidth * gameConfig.scale,
+      gameConfig.areaHeight * gameConfig.scale
+    );
+    sketch.fill(0);
+    sketch.textAlign(sketch.CENTER);
+    sketch.textSize(140 * gameConfig.scale);
+    sketch.text(
+      "Pause",
+      (gameConfig.areaWidth / 2) * gameConfig.scale,
+      (gameConfig.areaHeight * 0.2) * gameConfig.scale
+    );
+  }
 
   // Needed to report FPS
   let lastLoop = new Date();
@@ -436,6 +488,9 @@ var breakout = function(sketch) {
     }
     else if (gameConfig.mode == 'title') {
       titleScreen();
+    }
+    else if (gameConfig.mode == 'pause') {
+      pauseScreen();
     }
 
     // Show FPS
