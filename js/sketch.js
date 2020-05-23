@@ -10,6 +10,9 @@ var breakout = function(sketch) {
     uiBarHeight: 100
   }
 
+  // Global pause variable
+  let gamePaused = false;
+
   // Make an array of balls.
   let balls = [];
 
@@ -173,49 +176,8 @@ var breakout = function(sketch) {
   }
 
   // The main game loop.
-  function gameLoop() {
-    
-    // Set background.
-    sketch.background(0);
-    
-    /*if (mouseIsPressed) {
-      fill(0);
-    }
-    else {
-      fill(255);
-    }
-    ellipse(mouseX, mouseY, 80, 80);*/
-
-    // Draw the game area.
-    sketch.fill(255);
-    //strokeWeight(4);
-    //stroke(0,0,200);
-    sketch.rect(
-      0,
-      0,
-      gameConfig.areaWidth * gameConfig.scale,
-      gameConfig.areaHeight * gameConfig.scale
-    );
-
-    // Top bar
-    sketch.fill(100);
-    sketch.noStroke();
-    sketch.rect(
-      0,
-      0,
-      gameConfig.areaWidth * gameConfig.scale,
-      gameConfig.uiBarHeight * gameConfig.scale
-    );
-
-    // Bottom bar
-    sketch.rect(
-      0,
-      (gameConfig.areaHeight - gameConfig.uiBarHeight) * gameConfig.scale,
-      gameConfig.areaWidth * gameConfig.scale,
-      gameConfig.uiBarHeight * gameConfig.scale
-    );
-
-    // Iterate over balls.
+  // Updating function
+  function simUpdate() {
     for (let x = 0; x < balls.length; x++) {
 
       // Take top and bottom bars into account
@@ -284,7 +246,6 @@ var breakout = function(sketch) {
         }
       }
       balls[x].move(gameConfig.scale);
-      balls[x].draw(gameConfig.scale, shapeBuffers.blueBall);
     }
     
     // Iterate over bricks
@@ -298,13 +259,73 @@ var breakout = function(sketch) {
           gameConfig.areaHeight
         );
         bricks[x].move(gameConfig.scale);
+      }
+    }
+
+    // Update the player
+    player.boundsCheck(0, gameConfig.areaWidth);
+    player.move(gameConfig.scale);
+  }
+  
+  function gameLoop() {
+    
+    // Set background to a dark blue color
+    //sketch.background(0,0,90);
+    
+    /*if (mouseIsPressed) {
+      fill(0);
+    }
+    else {
+      fill(255);
+    }
+    ellipse(mouseX, mouseY, 80, 80);*/
+
+    // Draw the game area.
+    sketch.fill(50,190,50);
+    //strokeWeight(4);
+    //stroke(0,0,200);
+    sketch.rect(
+      0,
+      0,
+      gameConfig.areaWidth * gameConfig.scale,
+      gameConfig.areaHeight * gameConfig.scale
+    );
+
+    // Top bar
+    sketch.fill(100);
+    sketch.noStroke();
+    sketch.rect(
+      0,
+      0,
+      gameConfig.areaWidth * gameConfig.scale,
+      gameConfig.uiBarHeight * gameConfig.scale
+    );
+
+    // Bottom bar
+    sketch.rect(
+      0,
+      (gameConfig.areaHeight - gameConfig.uiBarHeight) * gameConfig.scale,
+      gameConfig.areaWidth * gameConfig.scale,
+      gameConfig.uiBarHeight * gameConfig.scale
+    );
+
+    // Update positions of balls, paddle, and bricks
+    simUpdate();
+
+    // Draw the balls.
+    for (let x = 0; x < balls.length; x++) {
+      balls[x].draw(gameConfig.scale, shapeBuffers.blueBall);
+    }
+    
+    // Draw the brick.
+    for (let x = 0; x < bricks.length; x++) {
+      // Check if a brick is visible first
+      if (bricks[x].visible) {
         bricks[x].draw(gameConfig.scale, shapeBuffers.redBrick);
       }
     }
 
-    // Draw the player
-    player.boundsCheck(0, gameConfig.areaWidth);
-    player.move(gameConfig.scale);
+    // Draw the player.
     player.draw(gameConfig.scale, shapeBuffers.normalPaddle);
 
     // Input handling
