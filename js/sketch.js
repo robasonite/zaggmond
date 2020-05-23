@@ -35,23 +35,13 @@ var breakout = function(sketch) {
   let soundEffects = {};
 
   sketch.preload = function() {
-    // Need to load sound files before trying to use them
-    soundEffects.ballHitWall = sketch.loadSound('sounds/hitWall.ogg');
-    soundEffects.ballHitBrick = sketch.loadSound('sounds/hitBrick.ogg');
-  }
-
-  sketch.setup = function() {
-    // put setup code here
-
     // Set the inital scale.
     gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
 
-    // Create the canvas
-    sketch.createCanvas(
-      gameConfig.areaWidth * gameConfig.scale,
-      gameConfig.areaHeight * gameConfig.scale
-    );
-
+    // Need to load sound files before trying to use them
+    soundEffects.ballHitWall = sketch.loadSound('sounds/hitWall.ogg');
+    soundEffects.ballHitBrick = sketch.loadSound('sounds/hitBrick.ogg');
+    
     // Before we draw ANYTHING, create shape buffers for the bricks
     shapeBlueprints.push(makeBrick(0,0));
     shapeBlueprints.push(makeBall(0,0));
@@ -63,6 +53,17 @@ var breakout = function(sketch) {
       // Draw to the buffer
       shapeBlueprints[i].makeShape(shapeBuffers[shapeBlueprints[i].shapeName]);
     }
+  }
+
+  sketch.setup = function() {
+    // put setup code here
+
+    // Create the canvas
+    sketch.createCanvas(
+      gameConfig.areaWidth * gameConfig.scale,
+      gameConfig.areaHeight * gameConfig.scale
+    );
+
     /*let demoBrick = makeBrick(0,0);
     shapeBuffers.redBrick = sketch.createGraphics(demoBrick.width, demoBrick.height);
     demoBrick.makeShape(shapeBuffers.redBrick);
