@@ -7,7 +7,9 @@ var breakout = function(sketch) {
     brickRowLength: 7,
     brickSpacing: 10,
     mode: 'title',
-    uiBarHeight: 100
+    uiBarHeight: 100,
+    font: '',
+    fontName: ''
   }
 
   // Global pause variable
@@ -47,6 +49,10 @@ var breakout = function(sketch) {
     // Need to load sound files before trying to use them
     soundEffects.ballHitWall = sketch.loadSound('sounds/hitWall.ogg');
     soundEffects.ballHitBrick = sketch.loadSound('sounds/hitBrick.ogg');
+
+    // Also preload the base font
+    gameConfig.font = sketch.loadFont('fonts/FiraMono-Medium.otf');
+    gameConfig.fontName = 'FiraMono-Medium';
     
     // Before we draw ANYTHING, create shape buffers for the bricks
     shapeBlueprints.push(makeBrick(0,0));
@@ -69,6 +75,9 @@ var breakout = function(sketch) {
       gameConfig.areaWidth * gameConfig.scale,
       gameConfig.areaHeight * gameConfig.scale
     );
+
+    // Set the font
+    sketch.textFont(gameConfig.font);
 
     /*let demoBrick = makeBrick(0,0);
     shapeBuffers.redBrick = sketch.createGraphics(demoBrick.width, demoBrick.height);
@@ -476,7 +485,7 @@ var breakout = function(sketch) {
     );
     sketch.fill(0);
     sketch.textAlign(sketch.CENTER);
-    sketch.textSize(140 * gameConfig.scale);
+    sketch.textSize(90 * gameConfig.scale);
     sketch.text(
       "Title here",
       (gameConfig.areaWidth / 2) * gameConfig.scale,
@@ -834,7 +843,7 @@ var breakout = function(sketch) {
     
     // Font size, family, and style
     mybutton.style('font-size', (mybutton.initFontSize * gameConfig.scale) + 'px');
-    mybutton.style('font-family', 'monospace');
+    mybutton.style('font-family', gameConfig.fontName);
     mybutton.style('font-weight', 'bold');
     mybutton.class('buttons');
 
