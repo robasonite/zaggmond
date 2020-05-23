@@ -160,7 +160,12 @@ var breakout = function(sketch) {
     );
 
     pauseBtn.mousePressed(function() {
-      gamePaused = true;
+      if (gamePaused) {
+        gamePaused = false;
+      }
+      else {
+        gamePaused = true;
+      }
     });
 
     // Add button to array
@@ -292,7 +297,7 @@ var breakout = function(sketch) {
   function gameLoop() {
     
     // Set background to a dark blue color
-    //sketch.background(0,0,90);
+    sketch.background(50,190,50);
     
     /*if (mouseIsPressed) {
       fill(0);
@@ -303,7 +308,7 @@ var breakout = function(sketch) {
     ellipse(mouseX, mouseY, 80, 80);*/
 
     // Draw the game area.
-    sketch.fill(50,190,50);
+    /*sketch.fill(50,190,50);
     //strokeWeight(4);
     //stroke(0,0,200);
     sketch.rect(
@@ -311,7 +316,7 @@ var breakout = function(sketch) {
       0,
       gameConfig.areaWidth * gameConfig.scale,
       gameConfig.areaHeight * gameConfig.scale
-    );
+    ); */
 
     // Top bar
     sketch.fill(100);
