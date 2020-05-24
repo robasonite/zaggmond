@@ -22,3 +22,7 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - Merged changes from the pre-render branch into master.
 - Added a new array to store level building functions. Added a new property called 'level' to the gameConfig object.
 - Added a new function called resetGame(). This clears the balls[] and bricks[] arrays, sets the level to 0, sets the score to 0, and runs the level 0 setup function. It also puts the paddle back in the center of the screen, and positions a newly created ball over it.
+- The Quit menu in the Pause screen now properly resets the game with the resetGame() function. When the player Quits the game and then clicks/taps the Start button on the title screen, the game starts over properly.
+- Added a black line to balls and bricks to help with contrast against bright backgrounds.
+- Added a new function called makeCountdown(). It makes a new object with its own iterate() and end() methods. It takes a start value, a tick value, and a function to fire when the countdown ends. Note that the third argument MUST be the function itself! Define a named function and pass it as the third parameter without the parentheses (no "()"). Tested with console.log statements, works perfectly.
+- Made the countdown show 3..2..1..Go! values to the user without showing "-1".
