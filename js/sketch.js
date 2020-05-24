@@ -203,7 +203,7 @@ var breakout = function(sketch) {
     );
     
     quitBtn.mousePressed(function() {
-      gamePaused = false;
+      resetGame();
       switchScreen('title');
     });
     
