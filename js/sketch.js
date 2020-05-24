@@ -9,7 +9,8 @@ var breakout = function(sketch) {
     mode: 'title',
     uiBarHeight: 100,
     font: '',
-    fontName: ''
+    fontName: '',
+    level: 0
   }
 
   // Global pause variable
@@ -30,7 +31,7 @@ var breakout = function(sketch) {
   // Player score value
   let playerScore = 0;
 
-  // Shape buffers to store pre-rendered stuff
+  // Shape buffers to store pre-rendered stuff.
   let shapeBuffers = {};
 
   // Blueprint objects
@@ -39,18 +40,48 @@ var breakout = function(sketch) {
   // user to make pre-rendered shape buffers.
   let shapeBlueprints = [];
 
-  // Preload sound effects into their own object
+  // Preload sound effects into their own object.
   let soundEffects = {};
+
+  // Level building function get put into their own array.
+  let Levels = [];
+
+  function level_0() {
+    // Make a brick to use as a model.
+    let demoBrick = makeBrick(0,0);
+    console.log(demoBrick.width);
+
+    // Set the number of rows.
+    let rows = 9;
+
+    // Get the starting Y axis offset.
+    let yOffset = gameConfig.uiBarHeight + gameConfig.brickSpacing;
+    
+    // Make rows of bricks.
+    for (let r = 0; r < rows; r++) {
+      for (let i = 0; i < gameConfig.brickRowLength; i++) {
+        bricks.push(
+          makeBrick(
+            gameConfig.brickSpacing + ((demoBrick.width + gameConfig.brickSpacing) * i),
+            yOffset
+          )
+        );
+      }
+      yOffset += demoBrick.height + gameConfig.brickSpacing;
+    }
+  }
+
+  Levels.push(level_0);
 
   sketch.preload = function() {
     // Set the inital scale.
     gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
 
-    // Need to load sound files before trying to use them
+    // Need to load sound files before trying to use them.
     soundEffects.ballHitWall = sketch.loadSound('sounds/hitWall.ogg');
     soundEffects.ballHitBrick = sketch.loadSound('sounds/hitBrick.ogg');
 
-    // Also preload the base font
+    // Also preload the base font.
     gameConfig.font = sketch.loadFont('fonts/FiraMono-Medium.otf');
     gameConfig.fontName = 'FiraMono-Medium';
     
@@ -170,6 +201,7 @@ var breakout = function(sketch) {
     );
     
     quitBtn.mousePressed(function() {
+      gamePaused = false;
       switchScreen('title');
     });
     
@@ -218,22 +250,7 @@ var breakout = function(sketch) {
     balls.push(makeBall(300, 300));
 
     // Make bricks
-    let rows = 9;
-    let yOffset = gameConfig.uiBarHeight + gameConfig.brickSpacing;
-    let brickHeight = 40;
-    let brickWidth = 90;
-    for (let r = 0; r < rows; r++) {
-      for (let i = 0; i < gameConfig.brickRowLength; i++) {
-        // Need to make room for top bar
-        bricks.push(
-          makeBrick(
-            4 + 8 + (i * (90 + gameConfig.brickSpacing)),
-            yOffset
-          )
-        );
-      }
-      yOffset += brickHeight + gameConfig.brickSpacing;
-    }
+    Levels[gameConfig.level]();
 
     // Need to create the player's paddle.
     player = makePaddle(
@@ -763,7 +780,7 @@ var breakout = function(sketch) {
     // And bricks award points to the player!
     mybrick.points = 10;
 
-    // And they may take multiple hits
+    // And they may take multiple hits.
     mybrick.hp = 1;
 
 
