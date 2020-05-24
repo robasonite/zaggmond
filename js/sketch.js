@@ -359,8 +359,8 @@ var breakout = function(sketch) {
   
   function gameLoop() {
     
-    // Set background to a dark blue color
-    sketch.background(50,190,50);
+    // Set the background color
+    sketch.background(90,90,255);
     
     /*if (mouseIsPressed) {
       fill(0);
@@ -666,7 +666,10 @@ var breakout = function(sketch) {
 
     myball.shapeName = 'blueBall';
     myball.makeShape = function(buffer) {
-      buffer.noStroke();
+      // Add an outline.
+      buffer.strokeWeight(1);
+      buffer.stroke(0);
+      //buffer.noStroke();
       buffer.fill(0,0,200);
       buffer.ellipseMode(buffer.CORNER);
       buffer.ellipse(
@@ -741,12 +744,16 @@ var breakout = function(sketch) {
 
     // Draw diamonds instead of circles.
     mybrick.makeShape = function(buffer) {
-      buffer.noStroke();
+      //buffer.noStroke();
 
-      // Let's make them red
+      // Let's make them red.
       buffer.fill(255,0,0);
+     
+      // Add an outline.
+      buffer.strokeWeight(2);
+      buffer.stroke(0);
       
-      // Draw a diamond
+      // Draw a diamond.
       buffer.quad(
 
         // Left corner XY
