@@ -901,12 +901,12 @@ var breakout = function(sketch) {
     cd = {}
 
     // Initial values
-    cd.startValue = start;
-    cd.tickValue = tick;
+    cd.startValue = start + 1;
+    cd.tickValue = tick + 1;
 
     // Iterating values
-    cd.startValueSave = start;
-    cd.tickValueSave = tick;
+    cd.startValueSave = start + 1;
+    cd.tickValueSave = tick + 1;
 
     // What to do when the countdown ends
     cd.end = endAction;
@@ -916,7 +916,7 @@ var breakout = function(sketch) {
 
         // If the tick value is greater than 0, decrement it.
         if (cd.tickValue > 0) {
-          console.log("Tick value: " + cd.tickValue);
+          // console.log("Tick value: " + cd.tickValue);
           cd.tickValue--;
         }
 
@@ -926,6 +926,31 @@ var breakout = function(sketch) {
           console.log("Start value: " + cd.tickValue);
           cd.startValue--;
         }
+
+        // Tell the user what value we're on.
+        let count = cd.startValue - 1;
+
+        // Don't print anything on -1 count.
+        if (count > -1) {
+
+          // If we're on 0, set it to go;
+          if (count == 0) {
+            count = "Go!"
+          }
+
+          // Draw the text
+          sketch.fill(0);
+          sketch.stroke(255);
+          sketch.strokeWeight(4);
+          sketch.textAlign(sketch.CENTER);
+          sketch.textSize(90 * gameConfig.scale);
+          sketch.text(
+            count,
+            (gameConfig.areaWidth / 2) * gameConfig.scale,
+            (gameConfig.areaHeight * 0.5) * gameConfig.scale
+          );
+        }
+
       }
 
       // When the countdown reaches 0, run the end() function.
