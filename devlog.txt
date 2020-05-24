@@ -15,3 +15,10 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - Decided to merge this branch back into master and rename this file to 'devlog.txt'.
 
 ## END Pre-render experiment (branch: pre-render
+
+
+2020-05-24:
+
+- Merged changes from the pre-render branch into master.
+- Added a new array to store level building functions. Added a new property called 'level' to the gameConfig object.
+- Added a new function called resetGame(). This clears the balls[] and bricks[] arrays, sets the level to 0, sets the score to 0, and runs the level 0 setup function. It also puts the paddle back in the center of the screen, and positions a newly created ball over it.
