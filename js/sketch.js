@@ -46,10 +46,10 @@ var breakout = function(sketch) {
   // Level building function get put into their own array.
   let Levels = [];
 
+  // >> LEVEL SECTION START
   function level_0() {
     // Make a brick to use as a model.
     let demoBrick = makeBrick(0,0);
-    console.log(demoBrick.width);
 
     // Set the number of rows.
     let rows = 9;
@@ -73,6 +73,8 @@ var breakout = function(sketch) {
 
   Levels.push(level_0);
 
+  // >> LEVEL SECTION END
+  
   sketch.preload = function() {
     // Set the inital scale.
     gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
@@ -243,20 +245,8 @@ var breakout = function(sketch) {
       }
     });
 
-    // Add button to array
-    buttons.push(pauseBtn);
-    
-    // Make a ball
-    balls.push(makeBall(300, 300));
-
-    // Make bricks
-    Levels[gameConfig.level]();
-
-    // Need to create the player's paddle.
-    player = makePaddle(
-      (gameConfig.areaWidth / 2) - 70,
-      1100
-    );
+    // Run the reset function to start the game at level 0
+    resetGame();
 
     // Make sure that the right buttons are showing
     switchScreen('title');
@@ -840,7 +830,7 @@ var breakout = function(sketch) {
     mybutton.initHeight = h;
     mybutton.screen = screen;
 
-    // Optional font size
+    // The font size parameter is optional.
     if (fs) {
       mybutton.initFontSize = fs;
     }
@@ -848,7 +838,7 @@ var breakout = function(sketch) {
       mybutton.initFontSize = 34;
     }
 
-    // Set position and size based on game scale
+    // Set position and size based on game scale.
     mybutton.position(
       mybutton.initX * gameConfig.scale,
       mybutton.initY * gameConfig.scale
@@ -858,13 +848,43 @@ var breakout = function(sketch) {
       mybutton.initHeight * gameConfig.scale
     );
     
-    // Font size, family, and style
+    // Font size, family, and style.
     mybutton.style('font-size', (mybutton.initFontSize * gameConfig.scale) + 'px');
     mybutton.style('font-family', gameConfig.fontName);
     mybutton.style('font-weight', 'bold');
     mybutton.class('buttons');
 
     return mybutton;
+  }
+
+  // Reset the level, balls, and bricks.
+  function resetGame() {
+
+    // Reset all of the relevent values.
+    playerScore = 0;
+    bricks = [];
+    balls = [];
+    gamePaused = false;
+    gameConfig.level = 0;
+
+    // Restore level 0 conditions, starting with the player's paddle.
+    player = makePaddle(
+      (gameConfig.areaWidth / 2) - 70,
+      1100
+    );
+
+    // Make the ball.
+    let newBall = (makeBall(0,0));
+
+    // Position the ball over the paddle.
+    newBall.x = player.x + (player.width / 2) - (newBall.width / 2)
+    newBall.y = player.y - newBall.height - 6;
+
+    // Add the ball to the array so it can be tracked.
+    balls.push(newBall);
+
+    // Set up level 0, which will populate the bricks[] array.
+    Levels[gameConfig.level]();
   }
 }
 
