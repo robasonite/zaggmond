@@ -1,3 +1,10 @@
+// Robert's breakout
+// Copyright 2020 Robasonite.com
+// License: MIT
+//
+// A huge thankyou goes out to the great people of the Internet. Though we have never met, on or offline, this work would have been impossible without the efforts of the many YouTubers, Redditors, and bloggers who post content about JavaScript, Android, and game development. It's like a college education without a rigid schedule, classrooms, crappy professors, or rediculous debt. Thank you all so very much.
+
+
 var breakout = function(sketch) {
   gameConfig = {
     scale: 1.0,
@@ -10,16 +17,24 @@ var breakout = function(sketch) {
     uiBarHeight: 100,
     font: '',
     fontName: '',
-    level: 0
+    level: 0,
+    countdownStart: 3,
+    countdownTick: 30,
   }
 
-  // Global pause variable
+  // Global pause variable; Nothing should be moving if true.
   let gamePaused = false;
+
+  // Whether or not a countdown is running.
+  let countdownRunning = false;
+
+  // The countdown that runs when the user starts a new game, or unpauses an existing one.
+  let resumeCountdown;
 
   // Make an array of balls.
   let balls = [];
 
-  // Make an array of bricks
+  // Make an array of bricks.
   let bricks = [];
 
   // Make an array of buttons.
@@ -121,6 +136,17 @@ var breakout = function(sketch) {
     shapeBuffers.blueBall = sketch.createGraphics(demoBall.width, demoBall.height);
     demoBall.makeShape(shapeBuffers.blueBall); */
 
+    // Make the resume countdown.
+    function unpause() {
+      gamePaused = false;
+    }
+
+    resumeCountdown = makeCountdown(
+      gameConfig.countdownStart,
+      gameConfig.countdownTick,
+      unpause
+    );
+
 
     // Set initial background and fill colors.
     sketch.background(0);
@@ -221,7 +247,7 @@ var breakout = function(sketch) {
     
     resumeBtn.mousePressed(function() {
       switchScreen('play');
-      gamePaused = false;
+      countdownRunning = true;
     });
     
     buttons.push(resumeBtn);
@@ -399,9 +425,15 @@ var breakout = function(sketch) {
       gameConfig.uiBarHeight * gameConfig.scale
     );
 
-    // Update positions of balls, paddle, and bricks, BUT only if the game is NOT paused.
-    if (!gamePaused) {
+    // Update positions of balls, paddle, and bricks, BUT only if the game is NOT paused. Also won't run if there's a countdown running.
+    if (!gamePaused && !countdownRunning) {
       simUpdate();
+    }
+
+    // If a countdown is running, run it's iterate function.
+    if (countdownRunning) {
+      // Currently only the resumeCountdown exists.
+      resumeCountdown.iterate();
     }
 
     // Draw the balls.
@@ -862,6 +894,51 @@ var breakout = function(sketch) {
     mybutton.class('buttons');
 
     return mybutton;
+  }
+
+  // Countdown before releasing the ball.
+  function makeCountdown(start,tick, endAction) {
+    cd = {}
+
+    // Initial values
+    cd.startValue = start;
+    cd.tickValue = tick;
+
+    // Iterating values
+    cd.startValueSave = start;
+    cd.tickValueSave = tick;
+
+    // What to do when the countdown ends
+    cd.end = endAction;
+
+    cd.iterate = function() {
+      if (cd.startValue > 0) {
+
+        // If the tick value is greater than 0, decrement it.
+        if (cd.tickValue > 0) {
+          console.log("Tick value: " + cd.tickValue);
+          cd.tickValue--;
+        }
+
+        // Else, reset the tick value and decrement the start value.
+        else {
+          cd.tickValue = cd.tickValueSave;
+          console.log("Start value: " + cd.tickValue);
+          cd.startValue--;
+        }
+      }
+
+      // When the countdown reaches 0, run the end() function.
+      else {
+        console.log("End function fired!");
+        cd.startValue = cd.startValueSave;
+        cd.tickValue = cd.tickValueSave;
+        countdownRunning = false;
+        cd.end();
+      }
+    }
+
+    return cd;
   }
 
   // Reset the level, balls, and bricks.
