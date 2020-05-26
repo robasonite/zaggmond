@@ -19,7 +19,7 @@ var breakout = function(sketch) {
     fontName: '',
     level: 0,
     countdownStart: 3,
-    countdownTick: 30,
+    countdownTick: 40,
   }
 
   // Global pause variable; Nothing should be moving if true.
@@ -270,6 +270,8 @@ var breakout = function(sketch) {
         switchScreen('pause');
       }
     });
+    
+    buttons.push(pauseBtn);
 
     // Run the reset function to start the game at level 0
     resetGame();
