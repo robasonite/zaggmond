@@ -893,7 +893,17 @@ var breakout = function(sketch) {
     mybutton.style('font-size', (mybutton.initFontSize * gameConfig.scale) + 'px');
     mybutton.style('font-family', gameConfig.fontName);
     mybutton.style('font-weight', 'bold');
+
+    // DOES NOT WORK
+    // Try to make button text unselectable and keep the long-press context
+    // menu from appearing.
+    //mybutton.setAttribute("unselectable", "on");
+    //mybutton.style.MozUserSelect = "none";
+    //mybutton.style.webkitUserSelect = "none";
+   
+    // Attach a class for additional styling.
     mybutton.class('buttons');
+
 
     return mybutton;
   }
