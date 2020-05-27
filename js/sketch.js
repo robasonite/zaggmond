@@ -79,9 +79,26 @@ var breakout = function(sketch) {
     for (let r = 0; r < rows; r++) {
       for (let i = 0; i < gameConfig.brickRowLength; i++) {
         bricks.push(
-          makeBlueBrick(
+          makeGrayBrick(
             gameConfig.brickSpacing + ((demoBrick.width + gameConfig.brickSpacing) * i),
             yOffset
+          )
+        );
+      }
+      yOffset += demoBrick.height + gameConfig.brickSpacing;
+    }
+    
+    // Get the starting Y axis offset.
+    yOffset = gameConfig.uiBarHeight + gameConfig.brickSpacing + (demoBrick.height / 2);
+    let xOffset = (gameConfig.brickSpacing / 2) + (demoBrick.width / 2);
+    
+    // Make rows of bricks.
+    for (let r = 0; r < rows; r++) {
+      for (let i = 0; i < gameConfig.brickRowLength - 1; i++) {
+        bricks.push(
+          makeOrangeBrick(
+            gameConfig.brickSpacing + ((demoBrick.width + gameConfig.brickSpacing) * i) + xOffset,
+            yOffset + (gameConfig.brickSpacing / 2)
           )
         );
       }
@@ -109,6 +126,11 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makeEffectParticle(0,0));
     shapeBlueprints.push(makeBrick(0,0));
     shapeBlueprints.push(makeBlueBrick(0,0));
+    shapeBlueprints.push(makeGreenBrick(0,0));
+    shapeBlueprints.push(makeOrangeBrick(0,0));
+    shapeBlueprints.push(makeYellowBrick(0,0));
+    shapeBlueprints.push(makeWhiteBrick(0,0));
+    shapeBlueprints.push(makeGrayBrick(0,0));
     shapeBlueprints.push(makeBall(0,0));
     shapeBlueprints.push(makePaddle(0,0));
     for (let i = 0; i < shapeBlueprints.length; i++) {
@@ -912,6 +934,42 @@ var breakout = function(sketch) {
     mybrick.shapeName = 'blueBrick';
     return mybrick;
   }
+  
+  function makeGreenBrick(x, y) {
+    let mybrick = makeBrick(x, y);
+    mybrick.color = sketch.color(0,255,0);
+    mybrick.shapeName = 'greenBrick';
+    return mybrick;
+  }
+  
+  function makeOrangeBrick(x, y) {
+    let mybrick = makeBrick(x, y);
+    mybrick.color = sketch.color(255,165,0);
+    mybrick.shapeName = 'orangeBrick';
+    return mybrick;
+  }
+  
+  function makeYellowBrick(x, y) {
+    let mybrick = makeBrick(x, y);
+    mybrick.color = sketch.color(255,255,0);
+    mybrick.shapeName = 'yellowBrick';
+    return mybrick;
+  }
+  
+  function makeWhiteBrick(x, y) {
+    let mybrick = makeBrick(x, y);
+    mybrick.color = sketch.color(255,255,255);
+    mybrick.shapeName = 'whiteBrick';
+    return mybrick;
+  }
+  
+  function makeGrayBrick(x, y) {
+    let mybrick = makeBrick(x, y);
+    mybrick.color = sketch.color(128);
+    mybrick.shapeName = 'grayBrick';
+    return mybrick;
+  }
+
 
   function makePaddle(x, y) {
     // Borrow some functions from the Ball.
