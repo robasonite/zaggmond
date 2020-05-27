@@ -75,11 +75,20 @@ var breakout = function(sketch) {
     [0],
     [0],
     [1,2,3,4,5,6],
-    [7,2,2,2,2,2,2],
-    [1,2,3,4,5,6],
-    [7,2,2,2,2,2,2],
-    [1,2,3,4,5,6],
-    [7,2,2,2,2,2,2]
+    [7,1,2,3,4,5,6],
+    [7,1,2,3,4,5],
+    [6,7,1,2,3,4,5],
+    [6,7,1,2,3,4],
+    [5,6,7,1,2,3,4],
+    [5,6,7,1,2,3],
+    [4,5,6,7,1,2,3],
+    [4,5,6,7,1,2],
+    [3,4,5,6,7,1,2],
+    [3,4,5,6,7,1],
+    [2,3,4,5,6,7,1],
+    [2,3,4,5,6,7],
+    [1,2,3,4,5,6,7],
+    [1,2,3,4,5,6]
   ];
 
   Levels.push(level0);
@@ -103,12 +112,12 @@ var breakout = function(sketch) {
 
         // Set our x and y positions.
         // The Y position always goes up by half a brick height.
-        let y = yOffset + (((demoBrick.height / 2) + gameConfig.brickSpacing) * rowNum);
+        let y = yOffset + (((demoBrick.height / 2) + (gameConfig.brickSpacing / 2)) * rowNum);
 
         // The X position depends on whether or not we're on a staggered row.
           let x = gameConfig.brickSpacing + ((demoBrick.width + gameConfig.brickSpacing) * brickNum);
         if (stagRow) {
-          x += demoBrick.width / 2
+          x += (demoBrick.width / 2) + (gameConfig.brickSpacing / 2);
         }
 
         // The brick making function
