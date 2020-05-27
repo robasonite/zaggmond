@@ -946,26 +946,19 @@ var breakout = function(sketch) {
 
   // Make an explosion of particles.
   function makeEffectExplosion(x, y) {
-    // Inject a particle for each corner.
-    let leftUpper = makeEffectParticle(x, y);
-    leftUpper.vx = leftUpper.speed * -1;
-    leftUpper.vy = leftUpper.speed * -1;
-    particles.push(leftUpper);
-    
-    let rightUpper = makeEffectParticle(x, y);
-    rightUpper.vx = rightUpper.speed;
-    rightUpper.vy = rightUpper.speed * -1;
-    particles.push(rightUpper);
-    
-    let leftLower = makeEffectParticle(x, y);
-    leftLower.vx = leftLower.speed * -1;
-    leftLower.vy = leftLower.speed;
-    particles.push(leftLower);
-    
-    let rightLower = makeEffectParticle(x, y);
-    rightLower.vx = rightLower.speed;
-    rightLower.vy = rightLower.speed;
-    particles.push(rightLower);
+    // Randomly decide how many particles to generate.
+    let numberOfParticles = sketch.random(3, 7);
+    let multipliers = [-1, 1, -0.5, 0.5, 0.2, -0.2];
+
+    for (let i = 0; i < numberOfParticles; i++) {
+
+      // Inject a particle with semi random x and y velocity
+      let particle = makeEffectParticle(x, y);
+      particle.speed = sketch.random(1, 15);
+      particle.vx = particle.speed * sketch.random(multipliers);
+      particle.vy = particle.speed * sketch.random(multipliers);
+      particles.push(particle);
+    }
   }
 
   
