@@ -106,6 +106,7 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makeBrick(0,0));
     shapeBlueprints.push(makeBall(0,0));
     shapeBlueprints.push(makePaddle(0,0));
+    //shapeBlueprints.push(makeParticle(0,0));
     for (let i = 0; i < shapeBlueprints.length; i++) {
       // Make the buffer
       shapeBuffers[shapeBlueprints[i].shapeName] = sketch.createGraphics(shapeBlueprints[i].width, shapeBlueprints[i].height);
@@ -684,12 +685,49 @@ var breakout = function(sketch) {
     toggleFS(true);
   }
 
+  // Simple particle function.
+  function makeParticle(x,y) {
+    let myparticle = {};
+    myparticle.x = x;
+    myparticle.y = y;
+    myparticle.vx = 10;
+    myparticle.vy = 10;
+    myparticle.speed = 10;
+    myparticle.width = 1;
+    myparticle.height = 1;
+
+    myparticle.shapeName = 'particle';
+    myparticle.makeShape = function(buffer) {
+      buffer.strokeWeight(0);
+      buffer.fill(255);
+      buffer.rect(
+        myparticle.x,
+        myparticle.y,
+        myparticle.width,
+        myparticle.height
+      );
+    }
+    
+    myparticle.draw = function(scale, buffer) {
+      sketch.image(
+        buffer,
+        myparticle.x * scale,
+        myparticle.y * scale,
+        myparticle.width * scale,
+        myparticle.height * scale
+      );
+    }
+
+    return myparticle;
+
+  }
+
 
   // Ball making function
   //function makeBall(x, y, s) {
   // Decided to set ball size to 30px.
   function makeBall(x, y) {
-    let myball = {};
+    let myball = makeParticle(x, y);
     myball.x = x;
     myball.y = y;
     myball.vx = 8;
@@ -748,16 +786,6 @@ var breakout = function(sketch) {
       }
     }
     
-    myball.draw = function(scale, buffer) {
-      sketch.image(
-        buffer,
-        myball.x * scale,
-        myball.y * scale,
-        myball.width * scale,
-        myball.height * scale
-      );
-    }
-
     return myball;
   }
 
