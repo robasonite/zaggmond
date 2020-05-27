@@ -70,7 +70,7 @@ var breakout = function(sketch) {
 
   // Keep in mind that every other row is stagger!
   // The pattern goes 7 bricks, 6 bricks, 7 bricks, etc.
-  let demoLevel = [
+  let level0 = [
     [0],
     [0],
     [0],
@@ -81,6 +81,8 @@ var breakout = function(sketch) {
     [1,2,3,4,5,6],
     [7,2,2,2,2,2,2]
   ];
+
+  Levels.push(level0);
 
   function levelReader(level) {
     // Make a brick to use as a model.
@@ -164,6 +166,7 @@ var breakout = function(sketch) {
     }
   }
 
+  /*
   function level_0() {
     // Make a brick to use as a model.
     let demoBrick = makeBrick(0,0);
@@ -205,7 +208,7 @@ var breakout = function(sketch) {
     }
   }
 
-  Levels.push(level_0);
+  Levels.push(level_0); */
 
   // >> LEVEL SECTION END
   
@@ -340,6 +343,7 @@ var breakout = function(sketch) {
     
     startBtn.mousePressed(function() {
       switchScreen('play');
+      countdownRunning = true;
     });
     
     buttons.push(startBtn);
@@ -1234,6 +1238,7 @@ var breakout = function(sketch) {
             (gameConfig.areaWidth / 2) * gameConfig.scale,
             (gameConfig.areaHeight * 0.5) * gameConfig.scale
           );
+          sketch.strokeWeight(0);
         }
 
       }
@@ -1280,7 +1285,7 @@ var breakout = function(sketch) {
 
     // Set up level 0, which will populate the bricks[] array.
     //Levels[gameConfig.level]();
-    levelReader(demoLevel);
+    levelReader(Levels[gameConfig.level]);
   }
 }
 
