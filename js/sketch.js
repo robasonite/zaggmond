@@ -55,7 +55,7 @@ var breakout = function(sketch) {
   // Blueprint objects
   // This array contains a collection of shape objects that are
   // never drawn to the screen. Instead, their attributes are
-  // user to make pre-rendered shape buffers.
+  // used to make pre-rendered shape buffers.
   let shapeBlueprints = [];
 
   // Preload sound effects into their own object.
@@ -79,7 +79,7 @@ var breakout = function(sketch) {
     for (let r = 0; r < rows; r++) {
       for (let i = 0; i < gameConfig.brickRowLength; i++) {
         bricks.push(
-          makeBrick(
+          makeBlueBrick(
             gameConfig.brickSpacing + ((demoBrick.width + gameConfig.brickSpacing) * i),
             yOffset
           )
@@ -108,6 +108,7 @@ var breakout = function(sketch) {
     // Before we draw ANYTHING, create shape buffers for the bricks
     shapeBlueprints.push(makeEffectParticle(0,0));
     shapeBlueprints.push(makeBrick(0,0));
+    shapeBlueprints.push(makeBlueBrick(0,0));
     shapeBlueprints.push(makeBall(0,0));
     shapeBlueprints.push(makePaddle(0,0));
     for (let i = 0; i < shapeBlueprints.length; i++) {
@@ -860,12 +861,15 @@ var breakout = function(sketch) {
 
     mybrick.shapeName = 'redBrick';
 
+    // Color
+    mybrick.color = sketch.color(255,0,0);
+
     // Draw diamonds instead of circles.
     mybrick.makeShape = function(buffer) {
       //buffer.noStroke();
 
       // Let's make them red.
-      buffer.fill(255,0,0);
+      buffer.fill(mybrick.color);
      
       // Add an outline.
       buffer.strokeWeight(2);
@@ -899,6 +903,13 @@ var breakout = function(sketch) {
     mybrick.hp = 1;
 
 
+    return mybrick;
+  }
+
+  function makeBlueBrick(x, y) {
+    let mybrick = makeBrick(x, y);
+    mybrick.color = sketch.color(0,0,255);
+    mybrick.shapeName = 'blueBrick';
     return mybrick;
   }
 
