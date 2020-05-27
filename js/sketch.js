@@ -228,6 +228,12 @@ var breakout = function(sketch) {
     // Need to load sound files before trying to use them.
     soundEffects.ballHitWall = sketch.loadSound('sounds/hitWall.ogg');
     soundEffects.ballHitBrick = sketch.loadSound('sounds/hitBrick.ogg');
+    soundEffects.ballHitPaddle = sketch.loadSound('sounds/hitPaddle.ogg');
+
+    // Adjust the volume of the sound effects.
+    soundEffects.ballHitWall.setVolume(0.2);
+    soundEffects.ballHitBrick.setVolume(0.7);
+    soundEffects.ballHitPaddle.setVolume(0.7);
 
     // Also preload the base font.
     gameConfig.font = sketch.loadFont('fonts/FiraMono-Medium.otf');
@@ -432,8 +438,14 @@ var breakout = function(sketch) {
         gameConfig.areaHeight - (gameConfig.uiBarHeight * 2)
       );
 
-      // Check for paddle collisions
+      // Check for paddle collisions.
       if (collider(balls[x], player)) {
+        // Play the right sound, but not if it's already playing.
+        if (!soundEffects.ballHitPaddle.isPlaying()) {
+          soundEffects.ballHitPaddle.play();
+        }
+        
+
         // Send the ball back up.
         if (balls[x].vy > 0) {
           balls[x].vy *= -1;
