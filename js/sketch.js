@@ -2,6 +2,8 @@
 // Copyright 2020 Robasonite.com
 // License: MIT
 //
+// Built with P5js
+//
 // A huge thankyou goes out to the great people of the Internet. Though we have never met, on or offline, this work would have been impossible without the efforts of the many YouTubers, Redditors, and bloggers who post content about JavaScript, Android, and game development. It's like a college education without a rigid schedule, classrooms, crappy professors, or rediculous debt. Thank you all so very much.
 
 
@@ -65,6 +67,103 @@ var breakout = function(sketch) {
   let Levels = [];
 
   // >> LEVEL SECTION START
+
+  // Keep in mind that every other row is stagger!
+  // The pattern goes 7 bricks, 6 bricks, 7 bricks, etc.
+  let demoLevel = [
+    [0],
+    [0],
+    [0],
+    [1,2,3,4,5,6],
+    [7,2,2,2,2,2,2],
+    [1,2,3,4,5,6],
+    [7,2,2,2,2,2,2],
+    [1,2,3,4,5,6],
+    [7,2,2,2,2,2,2]
+  ];
+
+  function levelReader(level) {
+    // Make a brick to use as a model.
+    let demoBrick = makeBrick(0,0);
+   
+    // Default for even rows.
+    let xOffset = gameConfig.brickSpacing;
+    let yOffset = gameConfig.uiBarHeight + gameConfig.brickSpacing;
+
+    // Whether or not we are on a staggered row.
+    let stagRow = false;
+
+    // Each outer element is an array.
+    for (let rowNum = 0; rowNum < level.length; rowNum++) {
+
+      // Each element of an array is a brick number.
+      for (let brickNum = 0; brickNum < level[rowNum].length; brickNum++) {
+
+        // Set our x and y positions.
+        // The Y position always goes up by half a brick height.
+        let y = yOffset + (((demoBrick.height / 2) + gameConfig.brickSpacing) * rowNum);
+
+        // The X position depends on whether or not we're on a staggered row.
+          let x = gameConfig.brickSpacing + ((demoBrick.width + gameConfig.brickSpacing) * brickNum);
+        if (stagRow) {
+          x += demoBrick.width / 2
+        }
+
+        // The brick making function
+        let spawnBrick;
+
+        // Choose which brick spawning function to run
+        switch (level[rowNum][brickNum]) {
+          // A value of 0 means no brick spawns
+          case 1:
+            spawnBrick = makeBrick(x, y);
+            break;
+
+          case 2:
+            spawnBrick = makeBlueBrick(x, y);
+            break;
+
+          case 3:
+            spawnBrick = makeGreenBrick(x, y);
+            break;
+
+          case 4:
+            spawnBrick = makeOrangeBrick(x, y);
+            break;
+
+          case 5:
+            spawnBrick = makeYellowBrick(x, y);
+            break;
+
+          case 6:
+            spawnBrick = makeWhiteBrick(x, y);
+            break;
+
+          case 7:
+            spawnBrick = makeGrayBrick(x, y);
+            break;
+
+          // If there's no match, set spawnBrick to false;
+          default:
+            spawnBrick = false;
+        }
+
+        // At this point, spawnBrick is either the value 'false', or a brick object.
+        if (spawnBrick) {
+          bricks.push(spawnBrick);
+        }
+      }
+
+      // Toggle stagRow after each row.
+      if (stagRow) {
+        stagRow = false;
+      }
+      else {
+        stagRow = true;
+      }
+    }
+  }
+
   function level_0() {
     // Make a brick to use as a model.
     let demoBrick = makeBrick(0,0);
@@ -712,9 +811,9 @@ var breakout = function(sketch) {
             gameConfig.areaHeight * gameConfig.scale
           );
        
-          console.log("Fullscreen scale: " + gameConfig.scale);
-          console.log("Fullscreen height: " + gameConfig.areaHeight * gameConfig.scale);
-          console.log("Screen height: " + window.screen.height);
+          //console.log("Fullscreen scale: " + gameConfig.scale);
+          //console.log("Fullscreen height: " + gameConfig.areaHeight * gameConfig.scale);
+          //console.log("Screen height: " + window.screen.height);
         }, 500);
       }
     }
@@ -1109,7 +1208,7 @@ var breakout = function(sketch) {
         // Else, reset the tick value and decrement the start value.
         else {
           cd.tickValue = cd.tickValueSave;
-          console.log("Start value: " + cd.tickValue);
+          //console.log("Start value: " + cd.tickValue);
           cd.startValue--;
         }
 
@@ -1141,7 +1240,7 @@ var breakout = function(sketch) {
 
       // When the countdown reaches 0, run the end() function.
       else {
-        console.log("End function fired!");
+        //console.log("End function fired!");
         cd.startValue = cd.startValueSave;
         cd.tickValue = cd.tickValueSave;
         countdownRunning = false;
@@ -1180,7 +1279,8 @@ var breakout = function(sketch) {
     balls.push(newBall);
 
     // Set up level 0, which will populate the bricks[] array.
-    Levels[gameConfig.level]();
+    //Levels[gameConfig.level]();
+    levelReader(demoLevel);
   }
 }
 
