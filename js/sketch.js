@@ -464,20 +464,21 @@ var breakout = function(sketch) {
 
     // Draw the balls.
     for (let x = 0; x < balls.length; x++) {
-      balls[x].draw(gameConfig.scale, shapeBuffers.blueBall);
+      // Draw all objects according to their buffered shape names.
+      balls[x].draw(gameConfig.scale, shapeBuffers[balls[x].shapeName]);
     }
     
     // Draw the brick.
     for (let x = 0; x < bricks.length; x++) {
       // Check if a brick is visible first
       if (bricks[x].visible) {
-        bricks[x].draw(gameConfig.scale, shapeBuffers.redBrick);
+        bricks[x].draw(gameConfig.scale, shapeBuffers[bricks[x].shapeName]);
       }
     }
 
     // Draw any particles that exist.
     for (let x = 0; x < particles.length; x++) {
-      particles[x].draw(gameConfig.scale, shapeBuffers.particle);
+      particles[x].draw(gameConfig.scale, shapeBuffers[particles[x].shapeName]);
     }
 
     // Draw the player.
