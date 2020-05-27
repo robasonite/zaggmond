@@ -32,3 +32,9 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 - Added particle effects! Now whenever a brick is destroyed, the player is treated to an explosion of white particles. The particles are actually tiny squares.
 - Updated the calls to <shape>.draw() in sketch.draw() to use a given shape's own 'shapeName' property to find its buffer in shapeBuffers. This will basically make adding game objects of different colors a LOT easier going forward.
+
+
+2020-05-27:
+
+- Wrote a new function called levelReader(). Now levels can be written in the form of nested arrays. The inner arrays contain brick numbers, which are fed through a 'switch' statement to determine what brick to generate. If a value doesn't match, then no brick is generated. Also, every other row is staggered, which makes levels more interesting.
+- Added a bunch of different colored bricks.
