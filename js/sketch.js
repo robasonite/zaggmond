@@ -349,7 +349,10 @@ var breakout = function(sketch) {
             playerScore += bricks[b].points;
 
             // Trigger an explosion at the location of the brick.
-            makeEffectExplosion(bricks[b].x, bricks[b].y);
+            makeEffectExplosion(
+              bricks[b].x + (bricks[b].width / 2),
+              bricks[b].y + (bricks[b].height / 2)
+            );
           }
 
           // If the brick is not destroyed, play the normal wall hit sound.
