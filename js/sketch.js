@@ -37,6 +37,9 @@ var breakout = function(sketch) {
   // Make an array of bricks.
   let bricks = [];
 
+  // Make an array of effect particles.
+  let particles = [];
+
   // Make an array of buttons.
   let buttons = [];
 
@@ -103,10 +106,10 @@ var breakout = function(sketch) {
     gameConfig.fontName = 'FiraMono-Medium';
     
     // Before we draw ANYTHING, create shape buffers for the bricks
+    shapeBlueprints.push(makeEffectParticle(0,0));
     shapeBlueprints.push(makeBrick(0,0));
     shapeBlueprints.push(makeBall(0,0));
     shapeBlueprints.push(makePaddle(0,0));
-    //shapeBlueprints.push(makeParticle(0,0));
     for (let i = 0; i < shapeBlueprints.length; i++) {
       // Make the buffer
       shapeBuffers[shapeBlueprints[i].shapeName] = sketch.createGraphics(shapeBlueprints[i].width, shapeBlueprints[i].height);
@@ -344,6 +347,9 @@ var breakout = function(sketch) {
             
             // Award points
             playerScore += bricks[b].points;
+
+            // Trigger an explosion at the location of the brick.
+            makeEffectExplosion(bricks[b].x, bricks[b].y);
           }
 
           // If the brick is not destroyed, play the normal wall hit sound.
@@ -380,6 +386,23 @@ var breakout = function(sketch) {
         bricks[x].move(gameConfig.scale);
       }
     }
+
+    // Iterate over particles.
+    let aliveParticles = []
+    for (let i = 0; i < particles.length; i++) {
+
+      // Update each particle's distance life.
+      particles[i].checkDistance();
+
+      // If still alive, save it for next frame and move it.
+      if (particles[i].alive) {
+        aliveParticles.push(particles[i]);
+        particles[i].move(gameConfig.scale);
+      }
+    }
+
+    // Remove dead particles.
+    particles = aliveParticles;
 
     // Update the player
     player.boundsCheck(0, gameConfig.areaWidth);
@@ -450,6 +473,11 @@ var breakout = function(sketch) {
       if (bricks[x].visible) {
         bricks[x].draw(gameConfig.scale, shapeBuffers.redBrick);
       }
+    }
+
+    // Draw any particles that exist.
+    for (let x = 0; x < particles.length; x++) {
+      particles[x].draw(gameConfig.scale, shapeBuffers.particle);
     }
 
     // Draw the player.
@@ -690,11 +718,11 @@ var breakout = function(sketch) {
     let myparticle = {};
     myparticle.x = x;
     myparticle.y = y;
-    myparticle.vx = 10;
-    myparticle.vy = 10;
-    myparticle.speed = 10;
-    myparticle.width = 1;
-    myparticle.height = 1;
+    myparticle.vx = 0;
+    myparticle.vy = 0;
+    myparticle.speed = 2;
+    myparticle.width = 4;
+    myparticle.height = 4;
 
     myparticle.shapeName = 'particle';
     myparticle.makeShape = function(buffer) {
@@ -706,6 +734,11 @@ var breakout = function(sketch) {
         myparticle.width,
         myparticle.height
       );
+    }
+    
+    myparticle.move = function(scale) {
+      myparticle.x += myparticle.vx;
+      myparticle.y += myparticle.vy;
     }
     
     myparticle.draw = function(scale, buffer) {
@@ -720,6 +753,30 @@ var breakout = function(sketch) {
 
     return myparticle;
 
+  }
+  
+  // Special effect particles.
+  // These particles are used for explosions and the like.
+  function makeEffectParticle(x, y) {
+    let eparticle = makeParticle(x, y);
+
+    // Set a maximum travel distance.
+    eparticle.maxDistance = 20;
+
+    // Particle must be alive to be seen.
+    eparticle.alive = true;
+
+    // When the particle travels far enough, it dies.
+    eparticle.checkDistance = function() {
+      if (eparticle.maxDistance > 0) {
+        eparticle.maxDistance--;
+      }
+      else {
+        eparticle.alive = false;
+      }
+    }
+
+    return eparticle;
   }
 
 
@@ -750,11 +807,6 @@ var breakout = function(sketch) {
         myball.width,
         myball.height
       );
-    }
-
-    myball.move = function(scale) {
-      myball.x += myball.vx;
-      myball.y += myball.vy;
     }
 
     myball.boundsCheck = function (x, y, width, height) {
@@ -891,6 +943,34 @@ var breakout = function(sketch) {
     return mypaddle;
   }
 
+
+  // Make an explosion of particles.
+  function makeEffectExplosion(x, y) {
+    // Inject a particle for each corner.
+    let leftUpper = makeEffectParticle(x, y);
+    leftUpper.vx = leftUpper.speed * -1;
+    leftUpper.vy = leftUpper.speed * -1;
+    particles.push(leftUpper);
+    
+    let rightUpper = makeEffectParticle(x, y);
+    rightUpper.vx = rightUpper.speed;
+    rightUpper.vy = rightUpper.speed * -1;
+    particles.push(rightUpper);
+    
+    let leftLower = makeEffectParticle(x, y);
+    leftLower.vx = leftLower.speed * -1;
+    leftLower.vy = leftLower.speed;
+    particles.push(leftLower);
+    
+    let rightLower = makeEffectParticle(x, y);
+    rightLower.vx = rightLower.speed;
+    rightLower.vy = rightLower.speed;
+    particles.push(rightLower);
+  }
+
+  
+
+  // Generate UI button controls
   function makeUiButton(label, x, y, w, h, screen, fs) {
     mybutton = sketch.createButton(label);
     mybutton.initX = x;
@@ -1013,6 +1093,7 @@ var breakout = function(sketch) {
     playerScore = 0;
     bricks = [];
     balls = [];
+    particles = [];
     gamePaused = false;
     gameConfig.level = 0;
 
