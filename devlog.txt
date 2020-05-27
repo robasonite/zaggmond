@@ -26,3 +26,9 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - Added a black line to balls and bricks to help with contrast against bright backgrounds.
 - Added a new function called makeCountdown(). It makes a new object with its own iterate() and end() methods. It takes a start value, a tick value, and a function to fire when the countdown ends. Note that the third argument MUST be the function itself! Define a named function and pass it as the third parameter without the parentheses (no "()"). Tested with console.log statements, works perfectly.
 - Made the countdown show 3..2..1..Go! values to the user without showing "-1".
+
+
+2020-05-26:
+
+- Added particle effects! Now whenever a brick is destroyed, the player is treated to an explosion of white particles. The particles are actually tiny squares.
+- Updated the calls to <shape>.draw() in sketch.draw() to use a given shape's own 'shapeName' property to find its buffer in shapeBuffers. This will basically make adding game objects of different colors a LOT easier going forward.
