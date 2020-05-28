@@ -1303,19 +1303,15 @@ var breakout = function(sketch) {
 
     return cd;
   }
-
-  // Reset the level, balls, and bricks.
-  function resetGame() {
-
-    // Reset all of the relevent values.
-    playerScore = 0;
+  
+  // Reset the balls and bricks. Used when moving to the next level.
+  function resetLevel() {
     bricks = [];
     balls = [];
     particles = [];
     gamePaused = false;
-    gameConfig.level = 0;
-
-    // Restore level 0 conditions, starting with the player's paddle.
+    
+    // Prepare level, starting with the player's paddle.
     player = makePaddle(
       (gameConfig.areaWidth / 2) - 70,
       1100
@@ -1331,9 +1327,19 @@ var breakout = function(sketch) {
     // Add the ball to the array so it can be tracked.
     balls.push(newBall);
 
-    // Set up level 0, which will populate the bricks[] array.
-    //Levels[gameConfig.level]();
+    // Set up the level.
     levelReader(Levels[gameConfig.level]);
+  }
+
+  // Reset the level, balls, and bricks.
+  function resetGame() {
+
+    // Reset all of the relevent values.
+    playerScore = 0;
+    gameConfig.level = 0;
+
+    // Reset the rest of it.
+    resetLevel();
   }
 }
 
