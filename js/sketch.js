@@ -455,114 +455,162 @@ var breakout = function(sketch) {
   // The main game loop.
   // Updating function
   function simUpdate() {
-    for (let x = 0; x < balls.length; x++) {
+    // Before doing ANYTHING, check to see if there are any bricks left in play.
+    if (bricks.length == 0) {
+      // If so, move the player to the next level, if there is one.
+      gameConfig.level++
+      if (Levels[gameConfig.level]) {
+        resetLevel();
+        countdownRunning = true;
 
-      // Take top and bottom bars into account
-      balls[x].boundsCheck(
-        0,
-        gameConfig.uiBarHeight,
-        gameConfig.areaWidth,
-        gameConfig.areaHeight - (gameConfig.uiBarHeight * 2)
-      );
-
-      // Check for paddle collisions.
-      if (collider(balls[x], player)) {
-        // Play the right sound, but not if it's already playing.
-        if (!soundEffects.ballHitPaddle.isPlaying()) {
-          soundEffects.ballHitPaddle.play();
-        }
-        
-
-        // Send the ball back up.
-        if (balls[x].vy > 0) {
-          balls[x].vy *= -1;
-        }
-
-        // Get the absolute distance between ball and paddle midpoints.
-        let ballMidX = balls[x].x + (balls[x].width / 2);
-        let paddleMidX = player.x + (player.width / 2);
-        let midpointDistance = sketch.abs(ballMidX - paddleMidX);
-
-        // Convert value to percentage
-        let midpointPercent = midpointDistance / sketch.abs(paddleMidX - player.x);
-
-        // Flatten and convert percentage,
-        // round to nearest hundredth
-        let multiplier = sketch.pow(10,2);
-        midpointPercent = sketch.round(midpointPercent * multiplier) / multiplier;
-
-        // Floor if over 1
-        if (midpointPercent > 1.0) {
-          midpointPercent = sketch.floor(midpointPercent);
-        }
-          
-        // Adjust the X velocity of the ball.
-        balls[x].vx = balls[x].speed * midpointPercent;
-
-        // Bounce left or right
-        if (ballMidX < paddleMidX) {
-          balls[x].vx *= -1;
-        }
+        // Skip the rest of this function.
+        return false;
       }
 
-      // Ball and brick collisions
-      for (let b = 0; b < bricks.length; b++) {
-        if (collider(balls[x], bricks[b]) && bricks[b].visible) {
-         
-          // Damage the brick.
-          bricks[b].hp -= 1;
+      else {
+        console.log("You win!");
+        resetGame();
+        switchScreen('title');
+      }
+    }
 
-          if (bricks[b].hp < 1) {
-            // Brick is "destroyed"
-            bricks[b].visible = false;
-            
-            // Play the sound effect
-            soundEffects.ballHitBrick.play();
-            
-            // Award points
-            playerScore += bricks[b].points;
 
-            // Trigger an explosion at the location of the brick.
-            makeEffectExplosion(
-              bricks[b].x + (bricks[b].width / 2),
-              bricks[b].y + (bricks[b].height / 2)
-            );
+    let aliveBalls = [];
+    for (let x = 0; x < balls.length; x++) {
+      // First, check if the ball is alive.
+      if (balls[x].alive) {
+        // If so, add it to aliveBalls.
+        aliveBalls.push(balls[x]);
+
+        // Take top and bottom bars into account for bounds checks.
+        balls[x].boundsCheck(
+          0,
+          gameConfig.uiBarHeight,
+          gameConfig.areaWidth,
+          gameConfig.areaHeight - (gameConfig.uiBarHeight * 2)
+        );
+
+        // Check for paddle collisions.
+        if (collider(balls[x], player)) {
+          // Play the right sound, but not if it's already playing.
+          if (!soundEffects.ballHitPaddle.isPlaying()) {
+            soundEffects.ballHitPaddle.play();
+          }
+          
+
+          // Send the ball back up.
+          if (balls[x].vy > 0) {
+            balls[x].vy *= -1;
           }
 
-          // If the brick is not destroyed, play the normal wall hit sound.
-          else {
-            soundEffects.ballHitWall.play();
+          // Get the absolute distance between ball and paddle midpoints.
+          let ballMidX = balls[x].x + (balls[x].width / 2);
+          let paddleMidX = player.x + (player.width / 2);
+          let midpointDistance = sketch.abs(ballMidX - paddleMidX);
+
+          // Convert value to percentage
+          let midpointPercent = midpointDistance / sketch.abs(paddleMidX - player.x);
+
+          // Flatten and convert percentage,
+          // round to nearest hundredth
+          let multiplier = sketch.pow(10,2);
+          midpointPercent = sketch.round(midpointPercent * multiplier) / multiplier;
+
+          // Floor if over 1
+          if (midpointPercent > 1.0) {
+            midpointPercent = sketch.floor(midpointPercent);
           }
+            
+          // Adjust the X velocity of the ball.
+          balls[x].vx = balls[x].speed * midpointPercent;
 
-          // Decide how to bounce the ball
-          let ballMidX = balls[x].x + (balls[x].height / 2);
-          let brickMidX= bricks[b].x + (bricks[b].height / 2);
-
-          balls[x].vy *= -1;
-          if (
-              balls[x].vx > 0 && ballMidX < brickMidX ||
-              balls[x].vx < 0 && ballMidX > brickMidX
-            ) {
+          // Bounce left or right
+          if (ballMidX < paddleMidX) {
             balls[x].vx *= -1;
           }
         }
+
+        // Ball and brick collisions
+        for (let b = 0; b < bricks.length; b++) {
+          if (collider(balls[x], bricks[b]) && bricks[b].visible) {
+           
+            // Damage the brick.
+            bricks[b].hp -= 1;
+
+            if (bricks[b].hp < 1) {
+              // Brick is "destroyed"
+              bricks[b].visible = false;
+              bricks[b].alive = false;
+              
+              // Play the sound effect
+              soundEffects.ballHitBrick.play();
+              
+              // Award points
+              playerScore += bricks[b].points;
+
+              // Trigger an explosion at the location of the brick.
+              makeEffectExplosion(
+                bricks[b].x + (bricks[b].width / 2),
+                bricks[b].y + (bricks[b].height / 2)
+              );
+            }
+
+            // If the brick is not destroyed, play the normal wall hit sound.
+            else {
+              soundEffects.ballHitWall.play();
+            }
+
+            // Decide how to bounce the ball
+            let ballMidX = balls[x].x + (balls[x].height / 2);
+            let brickMidX= bricks[b].x + (bricks[b].height / 2);
+
+            balls[x].vy *= -1;
+            if (
+                balls[x].vx > 0 && ballMidX < brickMidX ||
+                balls[x].vx < 0 && ballMidX > brickMidX
+              ) {
+              balls[x].vx *= -1;
+            }
+          }
+        }
+
+        // Finally, move the ball.
+        balls[x].move(gameConfig.scale);
       }
-      balls[x].move(gameConfig.scale);
     }
+
+    // Scrub dead balls.
+    balls = aliveBalls;
+
+
     
-    // Iterate over bricks
+    // This part is mainly used for moving bricks, but it's also a good time to remove dead bricks.
+    let aliveBricks = [];
     for (let x = 0; x < bricks.length; x++) {
-      // Check if a brick is visible first
-      if (bricks[x].visible) {
-        bricks[x].boundsCheck(
-          0,
-          0,
-          gameConfig.areaWidth,
-          gameConfig.areaHeight
-        );
-        bricks[x].move(gameConfig.scale);
+      // Check if a brick is alive first
+      if (bricks[x].alive) {
+        // Is so, than it is alive and should be added to aliveBricks.
+        aliveBricks.push(bricks[x]);
+       
+        // Next check if the brick is visible.
+        if (bricks[x].visible) {
+
+          // Next, do a bounds check.
+          bricks[x].boundsCheck(
+            0,
+            0,
+            gameConfig.areaWidth,
+            gameConfig.areaHeight
+          );
+
+          // Then move the brick.
+          bricks[x].move(gameConfig.scale);
+        }
       }
     }
+
+    // Remove bricks that are no longer alive.
+    bricks = aliveBricks;
 
     // Iterate over particles.
     let aliveParticles = []
@@ -894,6 +942,11 @@ var breakout = function(sketch) {
   // Simple particle function.
   function makeParticle(x,y) {
     let myparticle = {};
+    // Particles, and other game elements, must be 'alive' to prevent from
+    // being garbage collected.
+    myparticle.alive = true;
+   
+    // Standard attributes like X and Y positions, velocity, speed, and dimensions.
     myparticle.x = x;
     myparticle.y = y;
     myparticle.vx = 0;
@@ -940,9 +993,6 @@ var breakout = function(sketch) {
 
     // Set a maximum travel distance.
     eparticle.maxDistance = 20;
-
-    // Particle must be alive to be seen.
-    eparticle.alive = true;
 
     // When the particle travels far enough, it dies.
     eparticle.checkDistance = function() {
