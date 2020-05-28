@@ -29,8 +29,11 @@ var breakout = function(sketch) {
   // Whether or not a countdown is running.
   let countdownRunning = false;
 
+  // Store countdowns in their own object.
+  let countdowns = {}
+
   // The countdown that runs when the user starts a new game, or unpauses an existing one.
-  let resumeCountdown;
+  //let resumeCountdown;
 
   // Make an array of balls.
   let balls = [];
@@ -314,7 +317,7 @@ var breakout = function(sketch) {
       gamePaused = false;
     }
 
-    resumeCountdown = makeCountdown(
+    countdowns.resumeCountdown = makeCountdown(
       gameConfig.countdownStart,
       gameConfig.countdownTick,
       unpause
@@ -386,8 +389,12 @@ var breakout = function(sketch) {
     );
     
     startBtn.mousePressed(function() {
+
+      // Switch to the play screen
       switchScreen('play');
-      countdownRunning = true;
+
+      // Activate the resumeCountdown
+      countdowns.resumeCountdown.activate();
     });
     
     buttons.push(startBtn);
@@ -421,7 +428,8 @@ var breakout = function(sketch) {
     
     resumeBtn.mousePressed(function() {
       switchScreen('play');
-      countdownRunning = true;
+      
+      countdowns.resumeCountdown.activate();
     });
     
     buttons.push(resumeBtn);
@@ -465,7 +473,8 @@ var breakout = function(sketch) {
       if (Levels[gameConfig.level]) {
         resetPlayer();
         levelReader(Levels[gameConfig.level]);
-        countdownRunning = true;
+      
+        countdowns.resumeCountdown.activate();
 
         // Skip the rest of this function.
         return false;
@@ -495,7 +504,8 @@ var breakout = function(sketch) {
       // Else, reset with a new ball.
       else {
         resetPlayer();
-        countdownRunning = true;
+      
+        countdowns.resumeCountdown.activate();
       }
     }
 
@@ -709,8 +719,13 @@ var breakout = function(sketch) {
     // If a countdown is running, run it's iterate function.
     // This is put here so that the countdown gets drawn OVER the balls and bricks.
     if (countdownRunning) {
-      // Currently only the resumeCountdown exists.
-      resumeCountdown.iterate();
+
+      // Iterate over all active countdowns
+      for (var key of Object.keys(countdowns)) {
+        if (countdowns[key].active) {
+          countdowns[key].iterate();
+        }
+      }
     }
 
 
@@ -1337,14 +1352,25 @@ var breakout = function(sketch) {
     // Initial values
     cd.startValue = start + 1;
     cd.tickValue = tick + 1;
+    cd.active = false;
 
     // Iterating values
     cd.startValueSave = start + 1;
     cd.tickValueSave = tick + 1;
 
-    // What to do when the countdown ends
+    // What to do when the countdown ends.
     cd.end = endAction;
 
+    // Countdown activation function.
+    cd.activate = function() {
+      // Set active to true;
+      cd.active = true;
+
+      // Tell the game that a countdown is active.
+      countdownRunning = true;
+    }
+
+    // Iteration function that dictates how the countdown actually "counts down".
     cd.iterate = function() {
       if (cd.startValue > 0) {
 
@@ -1394,6 +1420,7 @@ var breakout = function(sketch) {
         cd.startValue = cd.startValueSave;
         cd.tickValue = cd.tickValueSave;
         countdownRunning = false;
+        cd.active = false;
         cd.end();
       }
     }
