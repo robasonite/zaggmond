@@ -736,7 +736,7 @@ var breakout = function(sketch) {
       gameConfig.uiBarHeight * gameConfig.scale
     );
 
-    // Draw the player's score
+    // Draw the player's score.
     sketch.fill(255);
     sketch.textAlign(sketch.LEFT);
     sketch.textSize(40 * gameConfig.scale);
@@ -745,6 +745,23 @@ var breakout = function(sketch) {
       20 * gameConfig.scale,
       50 * gameConfig.scale
     );
+
+    // Draw the player's lives.
+    sketch.textSize(40 * gameConfig.scale);
+    sketch.text(
+      "Lives: " + playerLives,
+      420 * gameConfig.scale,
+      1250 * gameConfig.scale
+    );
+    
+    // Tell the player what level we're on.
+    sketch.textSize(40 * gameConfig.scale);
+    sketch.text(
+      "Lvl: " + gameConfig.level,
+      120 * gameConfig.scale,
+      1250 * gameConfig.scale
+    );
+
 
     // Input handling
     if (sketch.mouseIsPressed) {
