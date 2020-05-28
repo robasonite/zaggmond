@@ -42,3 +42,10 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - The game now starts the next level when all of the bricks on the current level are destroyed. If there are no more levels, the game resets and the player is taken back to the title screen.
 - The ball, brick, and particle arrays are now "garbage collected" after every frame. That is, the arrays are replaced with their 'Alive' counterparts every frame. If an object's 'alive' property is set to 'false', they don't get added to this intermeditate array and are effectively erased.
 
+
+2020-05-28:
+
+- Add life and level counters to the game.
+- The game now resets the ball and paddle position when the player loses a life.
+- When the player loses all of their lives, the game resets and puts the player back at the title screen.
+- Game countdowns now have their own object. Now I can store multiple countdowns *and* refer to them by name. Each countdown also has their own activate() method, which eliminates pasting redundant `countdowns.cdName.active = true` statements all over the place. The activate() method sets its active property to 'true' AND sets the global countdownRunning variable to true. Countdowns also deactivate themselves just before firing their end() methods. This will allow for special countdowns and countdown-based objects further down the line.
