@@ -13,7 +13,6 @@ var breakout = function(sketch) {
     areaWidth: 720,
     areaHeight: 1280,
     buttonFontHeight: 16,
-    brickRowLength: 7,
     brickSpacing: 10,
     mode: 'title',
     uiBarHeight: 100,
@@ -50,6 +49,9 @@ var breakout = function(sketch) {
 
   // Player score value
   let playerScore = 0;
+
+  // Player lives
+  let playerLives = 2;
 
   // Shape buffers to store pre-rendered stuff.
   let shapeBuffers = {};
@@ -455,12 +457,14 @@ var breakout = function(sketch) {
   // The main game loop.
   // Updating function
   function simUpdate() {
-    // Before doing ANYTHING, check to see if there are any bricks left in play.
+
+    // Before doing ANYTHING, check for bricks.
     if (bricks.length == 0) {
       // If so, move the player to the next level, if there is one.
       gameConfig.level++
       if (Levels[gameConfig.level]) {
-        resetLevel();
+        resetPlayer();
+        levelReader(Levels[gameConfig.level]);
         countdownRunning = true;
 
         // Skip the rest of this function.
@@ -474,6 +478,26 @@ var breakout = function(sketch) {
       }
     }
 
+    // Next, check for balls.
+    else if (balls.length == 0) {
+      // Player loses a life
+      playerLives--;
+      console.log(playerLives);
+
+      // If the play has no lives left, game over.
+      if (playerLives < 0) {
+        // If not, game over.
+        console.log("You LOSE!");
+        resetGame();
+        switchScreen('title');
+      }
+
+      // Else, reset with a new ball.
+      else {
+        resetPlayer();
+        countdownRunning = true;
+      }
+    }
 
     let aliveBalls = [];
     for (let x = 0; x < balls.length; x++) {
@@ -487,7 +511,7 @@ var breakout = function(sketch) {
           0,
           gameConfig.uiBarHeight,
           gameConfig.areaWidth,
-          gameConfig.areaHeight - (gameConfig.uiBarHeight * 2)
+          gameConfig.areaHeight - gameConfig.uiBarHeight 
         );
 
         // Check for paddle collisions.
@@ -658,33 +682,9 @@ var breakout = function(sketch) {
       gameConfig.areaHeight * gameConfig.scale
     ); */
 
-    // Top bar
-    sketch.fill(100);
-    sketch.noStroke();
-    sketch.rect(
-      0,
-      0,
-      gameConfig.areaWidth * gameConfig.scale,
-      gameConfig.uiBarHeight * gameConfig.scale
-    );
-
-    // Bottom bar
-    sketch.rect(
-      0,
-      (gameConfig.areaHeight - gameConfig.uiBarHeight) * gameConfig.scale,
-      gameConfig.areaWidth * gameConfig.scale,
-      gameConfig.uiBarHeight * gameConfig.scale
-    );
-
     // Update positions of balls, paddle, and bricks, BUT only if the game is NOT paused. Also won't run if there's a countdown running.
     if (!gamePaused && !countdownRunning) {
       simUpdate();
-    }
-
-    // If a countdown is running, run it's iterate function.
-    if (countdownRunning) {
-      // Currently only the resumeCountdown exists.
-      resumeCountdown.iterate();
     }
 
     // Draw the balls.
@@ -705,9 +705,36 @@ var breakout = function(sketch) {
     for (let x = 0; x < particles.length; x++) {
       particles[x].draw(gameConfig.scale, shapeBuffers[particles[x].shapeName]);
     }
+    
+    // If a countdown is running, run it's iterate function.
+    // This is put here so that the countdown gets drawn OVER the balls and bricks.
+    if (countdownRunning) {
+      // Currently only the resumeCountdown exists.
+      resumeCountdown.iterate();
+    }
+
 
     // Draw the player.
     player.draw(gameConfig.scale, shapeBuffers.normalPaddle);
+
+    // Draw the top and bottom bars AFTER drawing all of the game elements.
+    // Top bar
+    sketch.fill(100);
+    sketch.noStroke();
+    sketch.rect(
+      0,
+      0,
+      gameConfig.areaWidth * gameConfig.scale,
+      gameConfig.uiBarHeight * gameConfig.scale
+    );
+
+    // Bottom bar
+    sketch.rect(
+      0,
+      (gameConfig.areaHeight - gameConfig.uiBarHeight) * gameConfig.scale,
+      gameConfig.areaWidth * gameConfig.scale,
+      gameConfig.uiBarHeight * gameConfig.scale
+    );
 
     // Draw the player's score
     sketch.fill(255);
@@ -1049,10 +1076,13 @@ var breakout = function(sketch) {
         myball.vx *= -1;
         hitWall = true;
       }
+
+      // If the ball falls through the bottom of the screen, kill it.
       else if (myball.y + myball.height > y + height) {
         myball.y = y + height - myball.height -1;
         myball.vy *= -1;
-        hitWall = true;
+        //hitWall = true;
+        myball.alive = false;
       }
       else if (myball.y < y) {
         myball.y = y + 1;
@@ -1355,11 +1385,7 @@ var breakout = function(sketch) {
   }
   
   // Reset the balls and bricks. Used when moving to the next level.
-  function resetLevel() {
-    bricks = [];
-    balls = [];
-    particles = [];
-    gamePaused = false;
+  function resetPlayer() {
     
     // Prepare level, starting with the player's paddle.
     player = makePaddle(
@@ -1368,6 +1394,7 @@ var breakout = function(sketch) {
     );
 
     // Make the ball.
+    balls = [];
     let newBall = (makeBall(0,0));
 
     // Position the ball over the paddle.
@@ -1377,19 +1404,24 @@ var breakout = function(sketch) {
     // Add the ball to the array so it can be tracked.
     balls.push(newBall);
 
-    // Set up the level.
-    levelReader(Levels[gameConfig.level]);
   }
 
   // Reset the level, balls, and bricks.
   function resetGame() {
 
     // Reset all of the relevent values.
+    bricks = [];
+    particles = [];
     playerScore = 0;
+    playerLives = 2;
     gameConfig.level = 0;
+    gamePaused = false;
 
-    // Reset the rest of it.
-    resetLevel();
+    // Reset player and ball
+    resetPlayer();
+    
+    // Set up the level
+    levelReader(Levels[gameConfig.level]);
   }
 }
 
