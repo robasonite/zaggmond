@@ -19,7 +19,7 @@ var breakout = function(sketch) {
     uiBarHeight: 100,
     font: '',
     fontName: '',
-    level: 0,
+    level: 1,
     countdownStart: 3,
     countdownTick: 40,
   }
@@ -74,6 +74,25 @@ var breakout = function(sketch) {
     [0],
     [0],
     [0],
+    [0],
+    [0],
+    [0],
+    [1,6,2,6,3,6,4],
+    [0],
+    [1,0,2,0,3,0,4],
+    [0],
+    [1,0,2,0,3,0,4],
+    [0],
+    [1,0,2,0,3,0,4],
+    [0],
+    [1,0,2,0,3,0,4],
+  ];
+  Levels.push(level0);
+  
+  let level1 = [
+    [0],
+    [0],
+    [0],
     [1,2,3,4,5,6],
     [7,1,2,3,4,5,6],
     [7,1,2,3,4,5],
@@ -90,8 +109,11 @@ var breakout = function(sketch) {
     [1,2,3,4,5,6,7],
     [1,2,3,4,5,6]
   ];
+  Levels.push(level1);
+  
 
-  Levels.push(level0);
+
+  
 
   function levelReader(level) {
     // Make a brick to use as a model.
