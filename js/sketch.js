@@ -70,7 +70,8 @@ var breakout = function(sketch) {
 
   // Keep in mind that every other row is stagger!
   // The pattern goes 7 bricks, 6 bricks, 7 bricks, etc.
-  let level0 = [
+  let level0 = {}
+  level0.bricks = [
     [0],
     [0],
     [0],
@@ -88,8 +89,9 @@ var breakout = function(sketch) {
     [1,0,2,0,3,0,4],
   ];
   Levels.push(level0);
-  
-  let level1 = [
+ 
+  let level1 = {};
+  level1.bricks = [
     [0],
     [0],
     [0],
@@ -116,6 +118,9 @@ var breakout = function(sketch) {
   
 
   function levelReader(level) {
+    // Grab the level bricks
+    let levelBricks = level.bricks;
+
     // Make a brick to use as a model.
     let demoBrick = makeBrick(0,0);
    
@@ -127,10 +132,10 @@ var breakout = function(sketch) {
     let stagRow = false;
 
     // Each outer element is an array.
-    for (let rowNum = 0; rowNum < level.length; rowNum++) {
+    for (let rowNum = 0; rowNum < levelBricks.length; rowNum++) {
 
       // Each element of an array is a brick number.
-      for (let brickNum = 0; brickNum < level[rowNum].length; brickNum++) {
+      for (let brickNum = 0; brickNum < levelBricks[rowNum].length; brickNum++) {
 
         // Set our x and y positions.
         // The Y position always goes up by half a brick height.
@@ -146,7 +151,7 @@ var breakout = function(sketch) {
         let spawnBrick;
 
         // Choose which brick spawning function to run
-        switch (level[rowNum][brickNum]) {
+        switch (levelBricks[rowNum][brickNum]) {
           // A value of 0 means no brick spawns
           case 1:
             spawnBrick = makeBrick(x, y);
