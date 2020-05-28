@@ -38,3 +38,4 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 - Wrote a new function called levelReader(). Now levels can be written in the form of nested arrays. The inner arrays contain brick numbers, which are fed through a 'switch' statement to determine what brick to generate. If a value doesn't match, then no brick is generated. Also, every other row is staggered, which makes levels more interesting.
 - Added a bunch of different colored bricks.
+- Made a few minore adjustments to audio volume and the effect files. Removed most of the reverb/echo from hitWall.ogg. Shortened hitPaddle.ogg and added a slight fade out. Reducing the hitWall.ogg effect to about 20% volume, and reducing the other 2 effects to 70% volume yields better results than before. Still don't like the hitPaddle.ogg effect. Maybe I'll replace it with a metallic bouncing sound later.
