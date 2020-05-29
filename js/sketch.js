@@ -1332,6 +1332,10 @@ var breakout = function(sketch) {
     msg.x = 400 * gameConfig.scale;
     msg.y = 400 * gameConfig.scale;
     msg.txt = txt;
+    msg.fontSize = 100;
+    msg.fillColor = sketch.color(0);
+    msg.strokeColor = sketch.color(255);
+    msg.strokeWeight = 4;
 
     // Whether or not the msg object is active.
     msg.active = true;
@@ -1348,16 +1352,18 @@ var breakout = function(sketch) {
       // If time is less than maxTime, show the message
       if (msg.time < msg.maxTime) {
         sketch.textAlign(sketch.CENTER);
-        sketch.textSize(100 * gameConfig.scale);
-        sketch.fill(0);
-        sketch.strokeWeight(4);
-        sketch.stroke(255)
+        sketch.textSize(msg.fontSize * gameConfig.scale);
+        sketch.fill(msg.fillColor);
+        if (msg.strokeWeight > 0) {
+          sketch.strokeWeight(msg.strokeWeight);
+        }
+        sketch.stroke(msg.strokeColor)
         sketch.text(
           msg.txt,
           (gameConfig.areaWidth / 2) * gameConfig.scale,
           (gameConfig.areaHeight / 2) * gameConfig.scale
         );
-        sketch.noStroke
+        sketch.noStroke();
 
         // Increment the time
         msg.time++;
