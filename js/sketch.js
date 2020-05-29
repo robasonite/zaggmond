@@ -18,22 +18,14 @@ var breakout = function(sketch) {
     uiBarHeight: 100,
     font: '',
     fontName: '',
-    level: 1,
-    countdownStart: 3,
-    countdownTick: 40,
+    level: 1
   }
 
   // Global pause variable; Nothing should be moving if true.
   let gamePaused = false;
 
-  // Whether or not a countdown is running.
-  let countdownRunning = false;
-
-  // Store countdowns in their own object.
-  let countdowns = {}
-
-  // The countdown that runs when the user starts a new game, or unpauses an existing one.
-  //let resumeCountdown;
+  // Need to integrate timed message into the main game loop.
+  let messages = [];
 
   // Make an array of balls.
   let balls = [];
@@ -312,18 +304,6 @@ var breakout = function(sketch) {
     shapeBuffers.blueBall = sketch.createGraphics(demoBall.width, demoBall.height);
     demoBall.makeShape(shapeBuffers.blueBall); */
 
-    // Make the resume countdown.
-    function unpause() {
-      gamePaused = false;
-    }
-
-    countdowns.resumeCountdown = makeCountdown(
-      gameConfig.countdownStart,
-      gameConfig.countdownTick,
-      unpause
-    );
-
-
     // Set initial background and fill colors.
     sketch.background(0);
     sketch.fill(255);
@@ -393,8 +373,19 @@ var breakout = function(sketch) {
       // Switch to the play screen
       switchScreen('play');
 
-      // Activate the resumeCountdown
-      countdowns.resumeCountdown.activate();
+      // Pause the game
+      gamePaused = true;
+
+      // Generate a test message
+      let demoText = makeMessage("Welcome!");
+
+      // Set the end action
+      demoText.endAction = function() {
+        gamePaused = false;
+      }
+
+      // Feed it to the game loop
+      messages.push(demoText);
     });
     
     buttons.push(startBtn);
@@ -428,8 +419,6 @@ var breakout = function(sketch) {
     
     resumeBtn.mousePressed(function() {
       switchScreen('play');
-      
-      countdowns.resumeCountdown.activate();
     });
     
     buttons.push(resumeBtn);
@@ -473,11 +462,6 @@ var breakout = function(sketch) {
       if (Levels[gameConfig.level]) {
         resetPlayer();
         levelReader(Levels[gameConfig.level]);
-      
-        countdowns.resumeCountdown.activate();
-
-        // Skip the rest of this function.
-        return false;
       }
 
       else {
@@ -504,8 +488,6 @@ var breakout = function(sketch) {
       // Else, reset with a new ball.
       else {
         resetPlayer();
-      
-        countdowns.resumeCountdown.activate();
       }
     }
 
@@ -692,8 +674,8 @@ var breakout = function(sketch) {
       gameConfig.areaHeight * gameConfig.scale
     ); */
 
-    // Update positions of balls, paddle, and bricks, BUT only if the game is NOT paused. Also won't run if there's a countdown running.
-    if (!gamePaused && !countdownRunning) {
+    // Update positions of balls, paddle, and bricks, BUT only if the game is NOT paused.
+    if (!gamePaused) {
       simUpdate();
     }
 
@@ -716,22 +698,22 @@ var breakout = function(sketch) {
       particles[x].draw(gameConfig.scale, shapeBuffers[particles[x].shapeName]);
     }
     
-    // If a countdown is running, run it's iterate function.
-    // This is put here so that the countdown gets drawn OVER the balls and bricks.
-    if (countdownRunning) {
-
-      // Iterate over all active countdowns
-      for (var key of Object.keys(countdowns)) {
-        if (countdowns[key].active) {
-          countdowns[key].iterate();
-        }
-      }
-    }
-
 
     // Draw the player.
     player.draw(gameConfig.scale, shapeBuffers.normalPaddle);
 
+    // Draw timed text messages with garbage collecting.
+    let activeMessages = [];
+    for (let i = 0; i < messages.length; i++) {
+      if (messages[i].active) {
+        messages[i].showMessageText();
+        activeMessages.push(messages[i]);
+      }
+    }
+
+    messages = activeMessages;
+
+    
     // Draw the top and bottom bars AFTER drawing all of the game elements.
     // Top bar
     sketch.fill(100);
@@ -752,30 +734,27 @@ var breakout = function(sketch) {
     );
 
     // Draw the player's score.
-    sketch.fill(255);
-    sketch.textAlign(sketch.LEFT);
-    sketch.textSize(40 * gameConfig.scale);
-    sketch.text(
+    showBarText(
       "Score: " + playerScore,
       20 * gameConfig.scale,
       50 * gameConfig.scale
     );
 
+
     // Draw the player's lives.
-    sketch.textSize(40 * gameConfig.scale);
-    sketch.text(
+    showBarText(
       "Lives: " + playerLives,
       420 * gameConfig.scale,
       1250 * gameConfig.scale
     );
     
     // Tell the player what level we're on.
-    sketch.textSize(40 * gameConfig.scale);
-    sketch.text(
+    showBarText(
       "Lvl: " + gameConfig.level,
       120 * gameConfig.scale,
       1250 * gameConfig.scale
     );
+
 
 
     // Input handling
@@ -1345,88 +1324,67 @@ var breakout = function(sketch) {
     return mybutton;
   }
 
-  // Countdown before releasing the ball.
-  function makeCountdown(start,tick, endAction) {
-    cd = {}
+  // Function that makes message text objects
+  function makeMessage(txt) {
+    let msg = {}
 
-    // Initial values
-    cd.startValue = start + 1;
-    cd.tickValue = tick + 1;
-    cd.active = false;
+    // X, Y, and message text.
+    msg.x = 400 * gameConfig.scale;
+    msg.y = 400 * gameConfig.scale;
+    msg.txt = txt;
 
-    // Iterating values
-    cd.startValueSave = start + 1;
-    cd.tickValueSave = tick + 1;
+    // Whether or not the msg object is active.
+    msg.active = true;
 
-    // What to do when the countdown ends.
-    cd.end = endAction;
+    // How long the msg object should live
+    msg.maxTime = 130;
 
-    // Countdown activation function.
-    cd.activate = function() {
-      // Set active to true;
-      cd.active = true;
+    // A counter to increment every frame
+    msg.time = 0;
 
-      // Tell the game that a countdown is active.
-      countdownRunning = true;
-    }
+    // The text drawing function
+    msg.showMessageText = function() {
+      
+      // If time is less than maxTime, show the message
+      if (msg.time < msg.maxTime) {
+        sketch.textAlign(sketch.CENTER);
+        sketch.textSize(100 * gameConfig.scale);
+        sketch.fill(0);
+        sketch.strokeWeight(4);
+        sketch.stroke(255)
+        sketch.text(
+          msg.txt,
+          (gameConfig.areaWidth / 2) * gameConfig.scale,
+          (gameConfig.areaHeight / 2) * gameConfig.scale
+        );
+        sketch.noStroke
 
-    // Iteration function that dictates how the countdown actually "counts down".
-    cd.iterate = function() {
-      if (cd.startValue > 0) {
-
-        // If the tick value is greater than 0, decrement it.
-        if (cd.tickValue > 0) {
-          // console.log("Tick value: " + cd.tickValue);
-          cd.tickValue--;
-        }
-
-        // Else, reset the tick value and decrement the start value.
-        else {
-          cd.tickValue = cd.tickValueSave;
-          //console.log("Start value: " + cd.tickValue);
-          cd.startValue--;
-        }
-
-        // Tell the user what value we're on.
-        let count = cd.startValue - 1;
-
-        // Don't print anything on -1 count.
-        if (count > -1) {
-
-          // If we're on 0, set it to go;
-          if (count == 0) {
-            count = "Go!"
-          }
-
-          // Draw the text
-          sketch.fill(0);
-          sketch.stroke(255);
-          sketch.strokeWeight(4);
-          sketch.textAlign(sketch.CENTER);
-          sketch.textSize(90 * gameConfig.scale);
-          sketch.text(
-            count,
-            (gameConfig.areaWidth / 2) * gameConfig.scale,
-            (gameConfig.areaHeight * 0.5) * gameConfig.scale
-          );
-          sketch.strokeWeight(0);
-        }
-
+        // Increment the time
+        msg.time++;
       }
 
-      // When the countdown reaches 0, run the end() function.
+      // Else, mark the msg object as inactive so that gets deleted.
       else {
-        //console.log("End function fired!");
-        cd.startValue = cd.startValueSave;
-        cd.tickValue = cd.tickValueSave;
-        countdownRunning = false;
-        cd.active = false;
-        cd.end();
+        msg.active = false;
+
+        // Check for an end-action function
+        if (msg.endAction) {
+          msg.endAction();
+        }
       }
     }
 
-    return cd;
+    return msg
   }
+
+  // Function that shows bar text
+  function showBarText(message, x, y) {
+    sketch.fill(255);
+    sketch.textAlign(sketch.LEFT);
+    sketch.textSize(40 * gameConfig.scale);
+    sketch.text(message, x, y);
+  }
+
   
   // Reset the balls and bricks. Used when moving to the next level.
   function resetPlayer() {
