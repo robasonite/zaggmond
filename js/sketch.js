@@ -423,6 +423,7 @@ var breakout = function(sketch) {
     
     resumeBtn.mousePressed(function() {
       switchScreen('play');
+      makeResumeCountdown();
     });
     
     buttons.push(resumeBtn);
@@ -466,6 +467,8 @@ var breakout = function(sketch) {
       if (Levels[gameConfig.level]) {
         resetPlayer();
         levelReader(Levels[gameConfig.level]);
+        gamePaused = true;
+        makeResumeCountdown();
       }
 
       else {
@@ -492,6 +495,8 @@ var breakout = function(sketch) {
       // Else, reset with a new ball.
       else {
         resetPlayer();
+        gamePaused = true;
+        makeResumeCountdown();
       }
     }
 
