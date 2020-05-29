@@ -1,4 +1,4 @@
-## Pre-render experiment (branch: pre-render
+## Pre-render experiment (branch: pre-render)
 
 The purpose of this branch is to see if pre-rendered graphics perform better. The general approach will be to create P5 buffers with createGraphics() for every graphical element in the game. Then all rendering will be done with image().
 
@@ -14,7 +14,7 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - Made several non-rendering specific changes to the code. I added a score counter and the Fira Mona font.
 - Decided to merge this branch back into master and rename this file to 'devlog.txt'.
 
-## END Pre-render experiment (branch: pre-render
+## END Pre-render experiment (branch: pre-render)
 
 
 2020-05-24:
@@ -49,3 +49,13 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - The game now resets the ball and paddle position when the player loses a life.
 - When the player loses all of their lives, the game resets and puts the player back at the title screen.
 - Game countdowns now have their own object. Now I can store multiple countdowns *and* refer to them by name. Each countdown also has their own activate() method, which eliminates pasting redundant `countdowns.cdName.active = true` statements all over the place. The activate() method sets its active property to 'true' AND sets the global countdownRunning variable to true. Countdowns also deactivate themselves just before firing their end() methods. This will allow for special countdowns and countdown-based objects further down the line.
+
+
+## Coundown fix (branch: countdown)
+
+- When I wrote the makeCountdown() function, I set it up to return an object that could be manipulated after initial creation. I used the same pattern to generate all of the other game objects. makePaddle(), for example, starts off by running makeBall() to return an object. Then that object is turned into a paddle with the rest of the statements in the function. But for some unknown reason, this DID NOT WORK for the makeCountdown() function. Objects generated with makeCountdown() OVERWROTE EACH OTHER. I couldn't figure it out, so I removed it. I'm going to try writing a generic showMessage() function first.
+- Decided to write a function called showBarText(). It reduces the lines of code required for the three bar text elements (score, lives, and level).
+- Decided to give message objects their own array. Message objects are generated with the makeMessage() function. They only have one method called showMessageText().
+- In addition to showing the message text, msgObj.showMessageText() also checks its 'time' property. If msgObj.time is less than msgObj.maxTime, it shows the message with standard P5 text rendering and increments the 'time' property. When this condition is no longer true, the 'else' block sets msgObj.active to 'false'. After that, the same 'for' loop in the gameLoop() function used to run msgObj.showMessageText() on all 'active' message objects is also used to scrub inactive objects through array replacement.
+- Added another feature to msgObj.showMessageText(): The endAction() method. Message objects now check if this method exists in the afformentioned 'else' block. If so, it will try to run msgObj.endAction() from within msgObj.showMethodText() after setting msgObj.active to 'false'.
+- NOTE: The endAction method is attached to a messge object AFTER it is created, but BEFORE it is added to messages array.
