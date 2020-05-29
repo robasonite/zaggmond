@@ -2,16 +2,20 @@
 
 The purpose of this branch is to see if pre-rendered graphics perform better. The general approach will be to create P5 buffers with createGraphics() for every graphical element in the game. Then all rendering will be done with image().
 
+
 2020-05-22:
 
 - Added a crude FPS counter that turns red whenever the FPS drops below 50. CPU usage consistantly reads between 65% and 70%.
+
 - The paddle, ball, and bricks are now all pre-rendered. No noticable increase in performance. FPS counter flash red about as much as it did before.
+
 - Adjusted things so that the canvas no longer takes up the entire page. There's no reason for it to consume the entire page because nothing is drawn outside the play area. Changed page background to black in index.html. FPS counter seems to turn red less often.
 
 
 2020-05-23:
 
 - Made several non-rendering specific changes to the code. I added a score counter and the Fira Mona font.
+
 - Decided to merge this branch back into master and rename this file to 'devlog.txt'.
 
 ## END Pre-render experiment (branch: pre-render)
@@ -20,42 +24,74 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 2020-05-24:
 
 - Merged changes from the pre-render branch into master.
+
 - Added a new array to store level building functions. Added a new property called 'level' to the gameConfig object.
+
 - Added a new function called resetGame(). This clears the balls[] and bricks[] arrays, sets the level to 0, sets the score to 0, and runs the level 0 setup function. It also puts the paddle back in the center of the screen, and positions a newly created ball over it.
+
 - The Quit menu in the Pause screen now properly resets the game with the resetGame() function. When the player Quits the game and then clicks/taps the Start button on the title screen, the game starts over properly.
+
 - Added a black line to balls and bricks to help with contrast against bright backgrounds.
+
 - Added a new function called makeCountdown(). It makes a new object with its own iterate() and end() methods. It takes a start value, a tick value, and a function to fire when the countdown ends. Note that the third argument MUST be the function itself! Define a named function and pass it as the third parameter without the parentheses (no "()"). Tested with console.log statements, works perfectly.
+
 - Made the countdown show 3..2..1..Go! values to the user without showing "-1".
 
 
 2020-05-26:
 
 - Added particle effects! Now whenever a brick is destroyed, the player is treated to an explosion of white particles. The particles are actually tiny squares.
-- Updated the calls to <shape>.draw() in sketch.draw() to use a given shape's own 'shapeName' property to find its buffer in shapeBuffers. This will basically make adding game objects of different colors a LOT easier going forward.
+
+- Updated the calls to shapeObj.draw() in sketch.draw() to use a given shape's own 'shapeName' property to find its buffer in shapeBuffers. This will basically make adding game objects of different colors a LOT easier going forward.
 
 
 2020-05-27:
 
 - Wrote a new function called levelReader(). Now levels can be written in the form of nested arrays. The inner arrays contain brick numbers, which are fed through a 'switch' statement to determine what brick to generate. If a value doesn't match, then no brick is generated. Also, every other row is staggered, which makes levels more interesting.
+
 - Added a bunch of different colored bricks.
+
 - Made a few minore adjustments to audio volume and the effect files. Removed most of the reverb/echo from hitWall.ogg. Shortened hitPaddle.ogg and added a slight fade out. Reducing the hitWall.ogg effect to about 20% volume, and reducing the other 2 effects to 70% volume yields better results than before. Still don't like the hitPaddle.ogg effect. Maybe I'll replace it with a metallic bouncing sound later.
+
 - The game now starts the next level when all of the bricks on the current level are destroyed. If there are no more levels, the game resets and the player is taken back to the title screen.
+
 - The ball, brick, and particle arrays are now "garbage collected" after every frame. That is, the arrays are replaced with their 'Alive' counterparts every frame. If an object's 'alive' property is set to 'false', they don't get added to this intermeditate array and are effectively erased.
 
 
 2020-05-28:
 
 - Add life and level counters to the game.
+
 - The game now resets the ball and paddle position when the player loses a life.
+
 - When the player loses all of their lives, the game resets and puts the player back at the title screen.
+
 - Game countdowns now have their own object. Now I can store multiple countdowns *and* refer to them by name. Each countdown also has their own activate() method, which eliminates pasting redundant `countdowns.cdName.active = true` statements all over the place. The activate() method sets its active property to 'true' AND sets the global countdownRunning variable to true. Countdowns also deactivate themselves just before firing their end() methods. This will allow for special countdowns and countdown-based objects further down the line.
 
 
 ## Coundown fix (branch: countdown)
 
 - When I wrote the makeCountdown() function, I set it up to return an object that could be manipulated after initial creation. I used the same pattern to generate all of the other game objects. makePaddle(), for example, starts off by running makeBall() to return an object. Then that object is turned into a paddle with the rest of the statements in the function. But for some unknown reason, this DID NOT WORK for the makeCountdown() function. Objects generated with makeCountdown() OVERWROTE EACH OTHER. I couldn't figure it out, so I removed it. I'm going to try writing a generic showMessage() function first.
+
 - Decided to write a function called showBarText(). It reduces the lines of code required for the three bar text elements (score, lives, and level).
+
 - Decided to give message objects their own array. Message objects are generated with the makeMessage() function. They only have one method called showMessageText().
+
 - In addition to showing the message text, msgObj.showMessageText() also checks its 'time' property. If msgObj.time is less than msgObj.maxTime, it shows the message with standard P5 text rendering and increments the 'time' property. When this condition is no longer true, the 'else' block sets msgObj.active to 'false'. After that, the same 'for' loop in the gameLoop() function used to run msgObj.showMessageText() on all 'active' message objects is also used to scrub inactive objects through array replacement.
-- Added another feature to msgObj.showMessageText(): The endAction() method. Message objects now check if this method exists in the afformentioned 'else' block. If so, it will try to run msgObj.endAction() from within msgObj.showMethodText() after setting msgObj.active to 'false'.
-- NOTE: The endAction method is attached to a messge object AFTER it is created, but BEFORE it is added to messages array.
+
+- Added another feature to msgObj.showMessageText(): The endAction() method. Message objects now check if this method exists in the afformentioned 'else' block. If so, it will try to run msgObj.endAction() from within msgObj.showMessageText() after setting msgObj.active to 'false'.
+
+- NOTE: The endAction() method is attached to a messge object AFTER it is created, but BEFORE it is added to messages array.
+
+
+2020-05-29:
+
+- Added a few more properties to the objects generated with makeMessage(). Changing those properties will now effect how msgObj.showMessageText() draws to the screen. That means I could potentially "spin off" this function into a bunch of other text elements.
+
+- Added msgMaxTime property to the gameConfig object. makeMessage() now uses that property to determine the maximum amount of time a given message stays alive.
+
+- Wrote a new function called makeResumeCountdown(). I started my making the threeCountMessage() obj with makeMessage. In the endAction() method of threeCountMessage(), I make the next message object in the chain, give it the appropriate endAction(), and then add that object to messages array. The end result is a slightly confusing nested structure with functions defined inside of other functions, but it works. In a nutsehll, threeCountMessage() makes twoCountMessage() when it dies. Then twoCountMessage() makes oneCountMessage() when it dies. Then oneCountMessage() makes goMessage() when it dies. Finally, goMessage() unpauses the game when it dies. Looks fluid from the point of the player.
+
+- I think I solved it. The new makeResumeCountdown() function is running quite well. It works reliably when the player first starts the game, loses a ball, progresses to the next level, or unpauses the game. I think I can call this issue resolved. This branch will be merged into master.
+
+## END Coundown fix (branch: countdown)
