@@ -16,9 +16,10 @@ var breakout = function(sketch) {
     brickSpacing: 10,
     mode: 'title',
     uiBarHeight: 100,
+    msgMaxTime: 60,
     font: '',
     fontName: '',
-    level: 1
+    level: 0
   }
 
   // Global pause variable; Nothing should be moving if true.
@@ -376,8 +377,11 @@ var breakout = function(sketch) {
       // Pause the game
       gamePaused = true;
 
+      // Inject a countdown into messages[].
+      makeResumeCountdown();
+
       // Generate a test message
-      let demoText = makeMessage("Welcome!");
+      /*let demoText = makeMessage("Welcome!");
 
       // Set the end action
       demoText.endAction = function() {
@@ -385,7 +389,7 @@ var breakout = function(sketch) {
       }
 
       // Feed it to the game loop
-      messages.push(demoText);
+      messages.push(demoText); */
     });
     
     buttons.push(startBtn);
@@ -1341,7 +1345,7 @@ var breakout = function(sketch) {
     msg.active = true;
 
     // How long the msg object should live
-    msg.maxTime = 130;
+    msg.maxTime = gameConfig.msgMaxTime;
 
     // A counter to increment every frame
     msg.time = 0;
@@ -1381,6 +1385,39 @@ var breakout = function(sketch) {
     }
 
     return msg
+  }
+
+  // String a set of 4 messages together to make the countdown.
+  function makeResumeCountdown() {
+
+    // Start with the first message
+    let threeCountMessage = makeMessage("3");
+
+    // Define the end action to display the next number.
+    threeCountMessage.endAction = function() {
+      let twoCountMessage = makeMessage("2");
+
+      twoCountMessage.endAction = function() {
+        let oneCountMessage = makeMessage("1");
+
+        oneCountMessage.endAction = function() {
+          let goMessage = makeMessage("Go!");
+
+          goMessage.endAction = function() {
+            gamePaused = false;
+          }
+
+          messages.push(goMessage);
+        }
+
+        messages.push(oneCountMessage);
+      }
+
+      messages.push(twoCountMessage);
+    }
+
+    // Push this into the main messages array.
+    messages.push(threeCountMessage);
   }
 
   // Function that shows bar text
