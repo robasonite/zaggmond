@@ -76,7 +76,7 @@ var breakout = function(sketch) {
     [0],
     [0],
     [0],
-    [8,6,2,6,3,6,4],
+    [8,9,2,6,3,6,4],
     [0],
     [1,0,2,0,3,0,4],
     [0],
@@ -182,6 +182,10 @@ var breakout = function(sketch) {
           case 8:
             spawnBrick = makeInvincibleBrick(x, y);
             break;
+          
+          case 9:
+            spawnBrick = makeArmoredBrick(x, y);
+            break;
 
           // If there's no match, set spawnBrick to false;
           default:
@@ -278,6 +282,7 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makeWhiteBrick(0,0));
     shapeBlueprints.push(makeGrayBrick(0,0));
     shapeBlueprints.push(makeInvincibleBrick(0,0));
+
     shapeBlueprints.push(makeBall(0,0));
     shapeBlueprints.push(makePaddle(0,0));
     for (let i = 0; i < shapeBlueprints.length; i++) {
@@ -578,8 +583,10 @@ var breakout = function(sketch) {
         for (let b = 0; b < bricks.length; b++) {
           if (collider(balls[x], bricks[b]) && bricks[b].visible) {
            
-            // Damage the brick.
-            bricks[b].hp -= 1;
+            // Damage the brick if it can be dstroyed.
+            if (!bricks[b].noDie) {
+              bricks[b].hp -= 1;
+            }
 
             // Destroy the brick if HP is less than 1 AND noDie is false.
             if (bricks[b].hp < 1 && bricks[b].noDie == false) {
@@ -714,7 +721,7 @@ var breakout = function(sketch) {
       balls[x].draw(gameConfig.scale, shapeBuffers[balls[x].shapeName]);
     }
     
-    // Draw the brick.
+    // Draw the bricks.
     for (let x = 0; x < bricks.length; x++) {
       // Check if a brick is visible first
       if (bricks[x].visible) {
@@ -1153,15 +1160,21 @@ var breakout = function(sketch) {
     mybrick.width = 90;
 
     mybrick.shapeName = 'redBrick';
+    
+    // And bricks award points to the player!
+    mybrick.points = 10;
 
-    // Color
+    // And they may take multiple hits.
+    mybrick.hp = 1;
+
+    // Color, red by default
     mybrick.color = sketch.color(255,0,0);
 
     // Draw diamonds instead of circles.
     mybrick.makeShape = function(buffer) {
       //buffer.noStroke();
 
-      // Let's make them red.
+      // Fill with specified color.
       buffer.fill(mybrick.color);
      
       // Add an outline.
@@ -1188,12 +1201,21 @@ var breakout = function(sketch) {
         mybrick.y + mybrick.height,
       );
     }
+   
+    // Bricks have a slightly different draw function to show
+    // how much HP they have. They layer smaller diamonds on top.
+    mybrick.draw = function(scale, buffer) {
+      for (let z = 0; z < mybrick.hp; z++) {
+        sketch.image(
+          buffer,
+          (mybrick.x + (4 * z))  * scale,
+          (mybrick.y + (4 * z)) * scale,
+          (mybrick.width - (8 * z)) * scale,
+          (mybrick.height - (8 * z)) * scale
+        );
+      }
+    }
 
-    // And bricks award points to the player!
-    mybrick.points = 10;
-
-    // And they may take multiple hits.
-    mybrick.hp = 1;
 
     // Or they could be invincible
     mybrick.noDie = false;
@@ -1243,6 +1265,14 @@ var breakout = function(sketch) {
     mybrick.shapeName = 'grayBrick';
     return mybrick;
   }
+  
+  // These bricks take 3 hits to die and reuse the existing red brick shape buffer.
+  function makeArmoredBrick(x, y) {
+    let mybrick = makeBrick(x, y);
+    mybrick.hp = 3;
+    
+    return mybrick;
+  }
 
   // These bricks can not be destroyed.
   function makeInvincibleBrick(x, y) {
@@ -1252,6 +1282,7 @@ var breakout = function(sketch) {
     mybrick.noDie = true;
     return mybrick;
   }
+
 
 
   function makePaddle(x, y) {
