@@ -1206,12 +1206,14 @@ var breakout = function(sketch) {
     // how much HP they have. They layer smaller diamonds on top.
     mybrick.draw = function(scale, buffer) {
       for (let z = 0; z < mybrick.hp; z++) {
+        let whMultiplier = z * 0.2;
+        let xyMultiplier = z * 0.1;
         sketch.image(
           buffer,
-          (mybrick.x + (4 * z))  * scale,
-          (mybrick.y + (4 * z)) * scale,
-          (mybrick.width - (8 * z)) * scale,
-          (mybrick.height - (8 * z)) * scale
+          (mybrick.x + (mybrick.width * xyMultiplier)) * scale,
+          (mybrick.y + (mybrick.height * xyMultiplier)) * scale,
+          (mybrick.width - (mybrick.width * whMultiplier)) * scale,
+          (mybrick.height - (mybrick.height * whMultiplier)) * scale 
         );
       }
     }
