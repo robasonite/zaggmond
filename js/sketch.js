@@ -76,7 +76,7 @@ var breakout = function(sketch) {
     [0],
     [0],
     [0],
-    [1,6,2,6,3,6,4],
+    [8,6,2,6,3,6,4],
     [0],
     [1,0,2,0,3,0,4],
     [0],
@@ -178,6 +178,10 @@ var breakout = function(sketch) {
           case 7:
             spawnBrick = makeGrayBrick(x, y);
             break;
+          
+          case 8:
+            spawnBrick = makeInvincibleBrick(x, y);
+            break;
 
           // If there's no match, set spawnBrick to false;
           default:
@@ -273,6 +277,7 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makeYellowBrick(0,0));
     shapeBlueprints.push(makeWhiteBrick(0,0));
     shapeBlueprints.push(makeGrayBrick(0,0));
+    shapeBlueprints.push(makeInvincibleBrick(0,0));
     shapeBlueprints.push(makeBall(0,0));
     shapeBlueprints.push(makePaddle(0,0));
     for (let i = 0; i < shapeBlueprints.length; i++) {
@@ -461,11 +466,25 @@ var breakout = function(sketch) {
   function simUpdate() {
 
     // Before doing ANYTHING, check for bricks.
-    if (bricks.length == 0) {
+    
+    // Check for destructable bricks first.
+    let regularBrickCount = 0;
+    for (let x = 0; x < bricks.length; x++) {
+      // If the brick is destructable, count it.
+      if (bricks[x].noDie == false) {
+        regularBrickCount++;
+      }
+    }
+
+
+    // When there are no more destructible bricks, the level is "cleared".
+    if (regularBrickCount == 0) {
       // If so, move the player to the next level, if there is one.
       gameConfig.level++
       if (Levels[gameConfig.level]) {
         resetPlayer();
+        // Clear the the bricks to get rid of non-dstructable brick.
+        bricks = [];
         levelReader(Levels[gameConfig.level]);
         gamePaused = true;
         makeResumeCountdown();
@@ -562,7 +581,8 @@ var breakout = function(sketch) {
             // Damage the brick.
             bricks[b].hp -= 1;
 
-            if (bricks[b].hp < 1) {
+            // Destroy the brick if HP is less than 1 AND noDie is false.
+            if (bricks[b].hp < 1 && bricks[b].noDie == false) {
               // Brick is "destroyed"
               bricks[b].visible = false;
               bricks[b].alive = false;
@@ -1175,6 +1195,9 @@ var breakout = function(sketch) {
     // And they may take multiple hits.
     mybrick.hp = 1;
 
+    // Or they could be invincible
+    mybrick.noDie = false;
+
 
     return mybrick;
   }
@@ -1218,6 +1241,15 @@ var breakout = function(sketch) {
     let mybrick = makeBrick(x, y);
     mybrick.color = sketch.color(128);
     mybrick.shapeName = 'grayBrick';
+    return mybrick;
+  }
+
+  // These bricks can not be destroyed.
+  function makeInvincibleBrick(x, y) {
+    let mybrick = makeBrick(x, y);
+    mybrick.color = sketch.color(0);
+    mybrick.shapeName = 'invincibleBrick';
+    mybrick.noDie = true;
     return mybrick;
   }
 
