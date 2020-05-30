@@ -1202,23 +1202,6 @@ var breakout = function(sketch) {
       );
     }
    
-    // Bricks have a slightly different draw function to show
-    // how much HP they have. They layer smaller diamonds on top.
-    mybrick.draw = function(scale, buffer) {
-      for (let z = 0; z < mybrick.hp; z++) {
-        let whMultiplier = z * 0.2;
-        let xyMultiplier = z * 0.1;
-        sketch.image(
-          buffer,
-          (mybrick.x + (mybrick.width * xyMultiplier)) * scale,
-          (mybrick.y + (mybrick.height * xyMultiplier)) * scale,
-          (mybrick.width - (mybrick.width * whMultiplier)) * scale,
-          (mybrick.height - (mybrick.height * whMultiplier)) * scale 
-        );
-      }
-    }
-
-
     // Or they could be invincible
     mybrick.noDie = false;
 
@@ -1268,13 +1251,6 @@ var breakout = function(sketch) {
     return mybrick;
   }
   
-  // These bricks take 3 hits to die and reuse the existing red brick shape buffer.
-  function makeArmoredBrick(x, y) {
-    let mybrick = makeBrick(x, y);
-    mybrick.hp = 3;
-    
-    return mybrick;
-  }
 
   // These bricks can not be destroyed.
   function makeInvincibleBrick(x, y) {
@@ -1282,6 +1258,52 @@ var breakout = function(sketch) {
     mybrick.color = sketch.color(0);
     mybrick.shapeName = 'invincibleBrick';
     mybrick.noDie = true;
+    return mybrick;
+  }
+
+  
+  // These bricks take 3 hits to die and reuse existing shape buffers.
+  function makeArmoredBrick(x, y) {
+    let mybrick = makeBrick(x, y);
+    mybrick.hp = 3;
+
+    // These need a different kind of draw function to shop HP left.
+    mybrick.draw = function(scale, buffer) {
+      // Draw the main brick first like normal
+      sketch.image(
+        buffer,
+        mybrick.x * scale,
+        mybrick.y * scale,
+        mybrick.width * scale,
+        mybrick.height * scale 
+      );
+
+      // Next, define multipliers for rendering the inner diamond.
+      let whMultiplier = 0.4;
+      let xyMultiplier = 0.2;
+
+      // By default, we want the inner diamond to be black, which is going to use the invincibleBrick shape buffer.
+      let innerBuffer = shapeBuffers.invincibleBrick;
+
+      // Next, we use the HP to determine which buffer to replace this with.
+      if (mybrick.hp == 2) {
+        innerBuffer = shapeBuffers.grayBrick;
+      }
+
+      else if (mybrick.hp == 1) {
+        innerBuffer = shapeBuffers.whiteBrick;
+      }
+      
+
+      sketch.image(
+        innerBuffer,
+        (mybrick.x + (mybrick.width * xyMultiplier)) * scale,
+        (mybrick.y + (mybrick.height * xyMultiplier)) * scale,
+        (mybrick.width - (mybrick.width * whMultiplier)) * scale,
+        (mybrick.height - (mybrick.height * whMultiplier)) * scale,
+      );
+    }
+    
     return mybrick;
   }
 
