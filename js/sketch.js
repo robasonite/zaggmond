@@ -37,8 +37,8 @@ var breakout = function(sketch) {
   // Make an array of effect particles.
   let particles = [];
 
-  // Need another array for explosions;
-  let explosions = []
+  // Need another array for explosion points;
+  let explosionPoints = []
 
   // Make an array of buttons.
   let buttons = [];
@@ -79,15 +79,15 @@ var breakout = function(sketch) {
     [0],
     [0],
     [0],
-    [8,9,2,6,3,6,4],
+    [8,9,10,6,3,6,4],
     [0],
-    [1,0,2,0,3,0,4],
+    [1,0,2,0,3,0,0],
     [0],
-    [1,0,2,0,3,0,4],
+    [1,0,2,0,3,0,0],
     [0],
-    [1,0,2,0,3,0,4],
+    [1,0,2,0,3,1,1],
     [0],
-    [1,0,2,0,3,0,4],
+    [1,0,2,0,3,10,1],
   ];
   Levels.push(level0);
  
@@ -189,6 +189,10 @@ var breakout = function(sketch) {
           case 9:
             spawnBrick = makeArmoredBrick(x, y);
             break;
+          
+          case 10:
+            spawnBrick = makeBombBrick(x, y);
+            break;
 
           // If there's no match, set spawnBrick to false;
           default:
@@ -286,6 +290,7 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makeWhiteBrick(0,0));
     shapeBlueprints.push(makeGrayBrick(0,0));
     shapeBlueprints.push(makeInvincibleBrick(0,0));
+    shapeBlueprints.push(makeBombBrick(0,0));
 
     shapeBlueprints.push(makeBall(0,0));
     shapeBlueprints.push(makePaddle(0,0));
@@ -488,19 +493,24 @@ var breakout = function(sketch) {
       
       // Award points
       playerScore += brick.points;
-
-      // Trigger an explosion at the location of the brick.
-      makeEffectExplosion(
-        brick.x + (brick.width / 2),
-        brick.y + (brick.height / 2)
-      );
-
+      
       // If the brick is a bomb brick, trigger a bomb explosion.
       //console.log("bomb explosion triggered");
-      makeBombExplosion(
-        brick.x + (brick.width / 2),
-        brick.y + (brick.height / 2)
-      );
+      if (brick.type == "bomb") {
+        makeBombExplosion(
+          brick.x + (brick.width / 2),
+          brick.y + (brick.height / 2)
+        );
+      }
+
+      // Else, trigger a regular particle explosion.
+      else {
+        makeEffectExplosion(
+          brick.x + (brick.width / 2),
+          brick.y + (brick.height / 2)
+        );
+      }
+
     }
 
     // If the brick is not destroyed, play the normal wall hit sound.
@@ -687,21 +697,18 @@ var breakout = function(sketch) {
     // Remove dead particles.
     particles = aliveParticles;
 
-    // Now resolve explosions. Each 'explosion' is an array of points
-    for (let e = 0; e < explosions.length; e++) {
-      let contacts = explosions[e];
-      for (let c = 0; c < contacts.length; c++) {
-        for (let b = 0; b < bricks.length; b++) {
-          // Don't apply damage to bricks that no longer alive.
-          if (collider(contacts[c], bricks[b]) && bricks[b].alive == true) {
-            resolveBrickDamage(bricks[b]);
-          }
+    // Now resolve explosionPoints
+    for (let e = 0; e < explosionPoints.length; e++) {
+      for (let b = 0; b < bricks.length; b++) {
+        // Don't apply damage to bricks that no longer alive.
+        if (collider(explosionPoints[e], bricks[b]) && bricks[b].alive == true) {
+          resolveBrickDamage(bricks[b]);
         }
       }
     }
 
     // After running through all explosions, reset the array.
-    explosions = [];
+    explosionPoints = [];
 
 
     
@@ -1125,15 +1132,20 @@ var breakout = function(sketch) {
     let eparticle = makeParticle(x, y);
 
     // Set a maximum travel distance.
-    eparticle.maxDistance = 20;
+    eparticle.maxDistance = 80;
 
     // When the particle travels far enough, it dies.
     eparticle.checkDistance = function() {
       if (eparticle.maxDistance > 0) {
-        eparticle.maxDistance--;
+        eparticle.maxDistance -= eparticle.speed;
       }
       else {
         eparticle.alive = false;
+        
+        // Optional function to run when the particle dies.
+        if (eparticle.endAction) {
+          eparticle.endAction();
+        }
       }
     }
 
@@ -1141,8 +1153,7 @@ var breakout = function(sketch) {
   }
 
 
-  // Bomb sparks are closely related, but they do damage
-  // to surround bricks
+  // Bomb sparks are closely related, but they trigger explosionPoints upon death.
   function makeBombSpark(x, y) {
     let bspark = makeEffectParticle(x, y)
     bspark.shapeName = 'bombSpark';
@@ -1153,6 +1164,12 @@ var breakout = function(sketch) {
     // Make bomb sparks bigger.
     bspark.width = 8;
     bspark.height = 8;
+    
+    // Make it travel faster.
+    bspark.speed = 4;
+   
+    // Adjust max distance.
+    bspark.maxDistance = 50;
 
     // Make the spark red.
     bspark.color = sketch.color(255, 0, 0);
@@ -1160,7 +1177,15 @@ var breakout = function(sketch) {
     // Make a demo brick to set appropriate max distance.
     let demoBrick = makeBrick(x, y);
 
-    bspark.maxDistance = demoBrick.height / 2;
+    // Make sparks trigger damage to other bricks upon death.
+    bspark.endAction = function() {
+      let ep = makeEffectParticle(bspark.x, bspark.y);
+      ep.width = bspark.width;
+      ep.height = bspark.height;
+      ep.x -= ep.width / 2;
+      ep.y -= ep.height / 2;
+      explosionPoints.push(ep);
+    }
 
     return bspark;
   }
@@ -1345,6 +1370,44 @@ var breakout = function(sketch) {
     return mybrick;
   }
 
+
+  // These bricks blow up when destroyed.
+  function makeBombBrick(x, y) {
+    let mybrick = makeBrick(x, y);
+    mybrick.color = sketch.color(0);
+    mybrick.shapeName = 'bombBrick';
+
+    // Make resolveBrickDamage() create explosionPoints.
+    mybrick.type = 'bomb';
+
+    // These bricks are drawn differently.
+    mybrick.draw = function(scale, buffer) {
+      // Draw the main brick first like normal
+      sketch.image(
+        buffer,
+        mybrick.x * scale,
+        mybrick.y * scale,
+        mybrick.width * scale,
+        mybrick.height * scale 
+      );
+
+      // Next, define multipliers for rendering the inner diamond.
+      let whMultiplier = 0.5;
+      let xyMultiplier = whMultiplier / 2;
+
+      // Render a small red brick for the center
+      sketch.image(
+        shapeBuffers.redBrick,
+        (mybrick.x + (mybrick.width * xyMultiplier)) * scale,
+        (mybrick.y + (mybrick.height * xyMultiplier)) * scale,
+        (mybrick.width - (mybrick.width * whMultiplier)) * scale,
+        (mybrick.height - (mybrick.height * whMultiplier)) * scale,
+      );
+    }
+
+    return mybrick;
+  }
+
   
   // These bricks take 3 hits to die and reuse existing shape buffers.
   function makeArmoredBrick(x, y) {
@@ -1499,49 +1562,6 @@ var breakout = function(sketch) {
     lowerLeft.vx = lowerLeft.speed * -1;
     lowerLeft.vy = lowerLeft.speed;
     particles.push(lowerLeft);
-
-    // Need to grab a brick to use as a model
-    let demoBrick = makeBrick(x, y);
-    // Define the full set of 8 contact particles to act as non-drawing markers.
-    let contactMarkers = [];
-    let leftContact = makeBombSpark(x, y)
-    leftContact.x -= demoBrick.width;
-    contactMarkers.push(leftContact);
-    
-    let rightContact = makeBombSpark(x, y)
-    rightContact.x += (demoBrick.width + rightContact.width);
-    contactMarkers.push(rightContact);
-    
-    let topContact = makeBombSpark(x, y)
-    topContact.y -= demoBrick.height;
-    contactMarkers.push(topContact);
-    
-    let bottomContact = makeBombSpark(x, y)
-    bottomContact.y += (demoBrick.height + bottomContact.height);
-    contactMarkers.push(bottomContact);
-    
-    let upperLeftContact = makeBombSpark(x, y)
-    upperLeftContact.y -= demoBrick.height;
-    upperLeftContact.x -= demoBrick.width;
-    contactMarkers.push(upperLeftContact);
-    
-    let upperRightContact = makeBombSpark(x, y)
-    upperRightContact.y -= demoBrick.height;
-    upperRightContact.x += (demoBrick.width + upperRightContact.width);
-    contactMarkers.push(upperRightContact);
-    
-    let lowerLeftContact = makeBombSpark(x, y)
-    lowerLeftContact.y += (demoBrick.height + lowerLeftContact.height);
-    lowerLeftContact.x -= demoBrick.width;
-    contactMarkers.push(lowerLeftContact);
-    
-    let lowerRightContact = makeBombSpark(x, y)
-    lowerRightContact.y += (demoBrick.height + lowerRightContact.height);
-    lowerRightContact.x += (demoBrick.width + lowerRightContact.width);
-    contactMarkers.push(lowerRightContact);
-
-    // Add the explosion to an array
-    explosions.push(contactMarkers);
   }
 
 
