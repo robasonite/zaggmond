@@ -95,3 +95,28 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - I think I solved it. The new makeResumeCountdown() function is running quite well. It works reliably when the player first starts the game, loses a ball, progresses to the next level, or unpauses the game. I think I can call this issue resolved. This branch will be merged into master.
 
 ## END Coundown fix (branch: countdown)
+
+
+
+2020-05-30:
+
+- Added the makeInvincibleBrick() function to the game and modified the "no bricks left" portion of simUpdate(). It no longer checks the length of the main bricks array. Instead, it now counts the number of normal bricks left and uses that when deciding to advance to the next level. When advancing to the next level, it clears the brick array before calling levelReader() on the next level.
+
+- Changed the drawing function for bricks to reflect the HP by drawing smaller bricks on top of the base brick. It does this by painting the shape buffer multiple times with different dimensions. Not the best way to do it, but it works. Maybe I should make them change colors?
+
+- Changed the drawing function for armored bricks to use different shape buffers to draw a single inner brick graphic. The colors run from black to gray to white. Black means 3 or more HP left. Gray means 2 and white means 1. It really does look better with just a single inner diamond instead of *one diamond per HP*.
+
+
+2020-05-31:
+
+- Brick collision resolution got its own function today called resolveBrickDamage(). It determines what sound to play when the ball hits a brick, and whether or not the brick dies. It will now also trigger an explosion of red sparks if the brick.type == "bomb".
+
+- Made the first prototype bomb bricks. My initial idea was to do collision detection and resolution between the 'sparks' array and the 'bricks' array. This didn't work out very well because resolveBrickDamage() ended up being called instantaneously *and* continuously, resulting in never-ending calls to makeBombExplosion(), which generated even more calls to resolveBrickDamage(). Basically, the game froze and the 'sparks' array grew to over 1000 elements in just a few seconds. Not ideal.
+
+  Instead, I made yet another array just to hold explosions. Each "explosion" contains an array of small objects (sparks that are never drawn) to run the collider() function against. The collider calls resolveBrickDamage(), which obviously damages any bricks present at the specified location. I added an extra nest 'for' loop to simUpdate(), right after resolving brick and ball collisions. At the end of that section, it clears the 'explosions' array. That means explosions are unable to exist beyond the frame that they spawn in, so no more *continuously adding elements to an array until the browser crashes*.
+
+- Wrote a new function called makeBombExplosion(). It releases an explosion of "just for show" bomb sparks and adds "explosion" arrays to the main 'explosions' array. The red sparks are released as intended, but the surrounding bricks break before the sparks "time out". This is merely a problem with presentation. Easy to fix.
+
+- Gave the explosion system and overhaul. 'explosions' is now 'explosionPoints', which are just non-drawing bombParticles. The particles are dropped into the explosionPoints array when a bombParticle dies. This made the explosion resolsution portion of simUpdate() simpler, and it made makeBombExplosion() function shorter. Just had to mess with maxDistance and speed until I found a combination that sucessfully dealt damage to adjacent bricks.
+
+- Added a new bombBrick that calls makeBombExplosion() when it's destroyed.
