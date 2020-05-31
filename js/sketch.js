@@ -37,6 +37,9 @@ var breakout = function(sketch) {
   // Make an array of effect particles.
   let particles = [];
 
+  // Need another array for explosions;
+  let explosions = []
+
   // Make an array of buttons.
   let buttons = [];
 
@@ -274,6 +277,7 @@ var breakout = function(sketch) {
     
     // Before we draw ANYTHING, create shape buffers for the bricks
     shapeBlueprints.push(makeEffectParticle(0,0));
+    shapeBlueprints.push(makeBombSpark(0,0));
     shapeBlueprints.push(makeBrick(0,0));
     shapeBlueprints.push(makeBlueBrick(0,0));
     shapeBlueprints.push(makeGreenBrick(0,0));
@@ -466,6 +470,45 @@ var breakout = function(sketch) {
     switchScreen('title');
   }
 
+  // The damage resolution function for bricks
+  function resolveBrickDamage(brick) {
+    // Damage the brick if it can be dstroyed.
+    if (!brick.noDie) {
+      brick.hp -= 1;
+    }
+
+    // Destroy the brick if HP is less than 1 AND noDie is false.
+    if (brick.hp < 1 && brick.noDie == false) {
+      // Brick is "destroyed"
+      brick.visible = false;
+      brick.alive = false;
+      
+      // Play the sound effect
+      soundEffects.ballHitBrick.play();
+      
+      // Award points
+      playerScore += brick.points;
+
+      // Trigger an explosion at the location of the brick.
+      makeEffectExplosion(
+        brick.x + (brick.width / 2),
+        brick.y + (brick.height / 2)
+      );
+
+      // If the brick is a bomb brick, trigger a bomb explosion.
+      //console.log("bomb explosion triggered");
+      makeBombExplosion(
+        brick.x + (brick.width / 2),
+        brick.y + (brick.height / 2)
+      );
+    }
+
+    // If the brick is not destroyed, play the normal wall hit sound.
+    else {
+      soundEffects.ballHitWall.play();
+    }
+  }
+
   // The main game loop.
   // Updating function
   function simUpdate() {
@@ -490,6 +533,9 @@ var breakout = function(sketch) {
         resetPlayer();
         // Clear the the bricks to get rid of non-dstructable brick.
         bricks = [];
+
+        // Also clear the particles
+        particles = [];
         levelReader(Levels[gameConfig.level]);
         gamePaused = true;
         makeResumeCountdown();
@@ -582,35 +628,7 @@ var breakout = function(sketch) {
         // Ball and brick collisions
         for (let b = 0; b < bricks.length; b++) {
           if (collider(balls[x], bricks[b]) && bricks[b].visible) {
-           
-            // Damage the brick if it can be dstroyed.
-            if (!bricks[b].noDie) {
-              bricks[b].hp -= 1;
-            }
-
-            // Destroy the brick if HP is less than 1 AND noDie is false.
-            if (bricks[b].hp < 1 && bricks[b].noDie == false) {
-              // Brick is "destroyed"
-              bricks[b].visible = false;
-              bricks[b].alive = false;
-              
-              // Play the sound effect
-              soundEffects.ballHitBrick.play();
-              
-              // Award points
-              playerScore += bricks[b].points;
-
-              // Trigger an explosion at the location of the brick.
-              makeEffectExplosion(
-                bricks[b].x + (bricks[b].width / 2),
-                bricks[b].y + (bricks[b].height / 2)
-              );
-            }
-
-            // If the brick is not destroyed, play the normal wall hit sound.
-            else {
-              soundEffects.ballHitWall.play();
-            }
+            resolveBrickDamage(bricks[b]);
 
             // Decide how to bounce the ball
             let ballMidX = balls[x].x + (balls[x].height / 2);
@@ -633,6 +651,57 @@ var breakout = function(sketch) {
 
     // Scrub dead balls.
     balls = aliveBalls;
+    
+
+    // Iterate over particles.
+    let aliveParticles = []
+    for (let i = 0; i < particles.length; i++) {
+
+      // Update each particle's distance life.
+      particles[i].checkDistance();
+
+      // If still alive, save it for next frame and resolve it.
+      if (particles[i].alive) {
+        aliveParticles.push(particles[i]);
+
+        // If the spark damages bricks, resolve collisions.
+        // This causes continuous calls to makeBombExplosion!
+        // DO NOT UNCOMMENT!
+        /*if (particles[i].damageBricks) {
+          for (let b = 0; b < bricks.length; b++) {
+            if (collider(particles[i], bricks[b])) {
+              // Remove the particle.
+              particles[i].alive = false;
+
+              // Resolve brick damage
+              resolveBrickDamage(bricks[b]);
+            }
+          }
+        }*/
+
+        // Move the particle.
+        particles[i].move(gameConfig.scale);
+      }
+    }
+
+    // Remove dead particles.
+    particles = aliveParticles;
+
+    // Now resolve explosions. Each 'explosion' is an array of points
+    for (let e = 0; e < explosions.length; e++) {
+      let contacts = explosions[e];
+      for (let c = 0; c < contacts.length; c++) {
+        for (let b = 0; b < bricks.length; b++) {
+          // Don't apply damage to bricks that no longer alive.
+          if (collider(contacts[c], bricks[b]) && bricks[b].alive == true) {
+            resolveBrickDamage(bricks[b]);
+          }
+        }
+      }
+    }
+
+    // After running through all explosions, reset the array.
+    explosions = [];
 
 
     
@@ -660,26 +729,10 @@ var breakout = function(sketch) {
         }
       }
     }
-
+    
     // Remove bricks that are no longer alive.
     bricks = aliveBricks;
 
-    // Iterate over particles.
-    let aliveParticles = []
-    for (let i = 0; i < particles.length; i++) {
-
-      // Update each particle's distance life.
-      particles[i].checkDistance();
-
-      // If still alive, save it for next frame and move it.
-      if (particles[i].alive) {
-        aliveParticles.push(particles[i]);
-        particles[i].move(gameConfig.scale);
-      }
-    }
-
-    // Remove dead particles.
-    particles = aliveParticles;
 
     // Update the player
     player.boundsCheck(0, gameConfig.areaWidth);
@@ -1019,6 +1072,9 @@ var breakout = function(sketch) {
     // Particles, and other game elements, must be 'alive' to prevent from
     // being garbage collected.
     myparticle.alive = true;
+
+    // Some particles can damage bricks
+    //myparticle.damageBricks = false;
    
     // Standard attributes like X and Y positions, velocity, speed, and dimensions.
     myparticle.x = x;
@@ -1029,10 +1085,13 @@ var breakout = function(sketch) {
     myparticle.width = 4;
     myparticle.height = 4;
 
+    // Set the color
+    myparticle.color = sketch.color(255);
+
     myparticle.shapeName = 'particle';
     myparticle.makeShape = function(buffer) {
       buffer.strokeWeight(0);
-      buffer.fill(255);
+      buffer.fill(myparticle.color);
       buffer.rect(
         myparticle.x,
         myparticle.y,
@@ -1079,6 +1138,31 @@ var breakout = function(sketch) {
     }
 
     return eparticle;
+  }
+
+
+  // Bomb sparks are closely related, but they do damage
+  // to surround bricks
+  function makeBombSpark(x, y) {
+    let bspark = makeEffectParticle(x, y)
+    bspark.shapeName = 'bombSpark';
+
+    // Tell the game that these particles damage bricks
+    //bspark.damageBricks = true;
+
+    // Make bomb sparks bigger.
+    bspark.width = 8;
+    bspark.height = 8;
+
+    // Make the spark red.
+    bspark.color = sketch.color(255, 0, 0);
+    
+    // Make a demo brick to set appropriate max distance.
+    let demoBrick = makeBrick(x, y);
+
+    bspark.maxDistance = demoBrick.height / 2;
+
+    return bspark;
   }
 
 
@@ -1279,8 +1363,8 @@ var breakout = function(sketch) {
       );
 
       // Next, define multipliers for rendering the inner diamond.
-      let whMultiplier = 0.4;
-      let xyMultiplier = 0.2;
+      let whMultiplier = 0.5;
+      let xyMultiplier = whMultiplier / 2;
 
       // By default, we want the inner diamond to be black, which is going to use the invincibleBrick shape buffer.
       let innerBuffer = shapeBuffers.invincibleBrick;
@@ -1371,8 +1455,95 @@ var breakout = function(sketch) {
       particles.push(particle);
     }
   }
-
   
+  // Make an explosion of particles and deal damage to surrounding bricks.
+  function makeBombExplosion(x, y) {
+    // Make 8 sparks, one for each direction.
+    // These particles are just for show.
+    let leftParticle = makeBombSpark(x, y);
+    leftParticle.vx = leftParticle.speed * -1;
+    leftParticle.vy = 0;
+    particles.push(leftParticle);
+    
+    let upParticle = makeBombSpark(x, y);
+    upParticle.vx = 0;
+    upParticle.vy = upParticle.speed * -1;
+    particles.push(upParticle);
+    
+    let rightParticle = makeBombSpark(x, y);
+    rightParticle.vx = rightParticle.speed;
+    rightParticle.vy = 0;
+    particles.push(rightParticle);
+    
+    let downParticle = makeBombSpark(x, y);
+    downParticle.vx = 0;
+    downParticle.vy = downParticle.speed;
+    particles.push(downParticle);
+    
+    let upperLeft = makeBombSpark(x, y);
+    upperLeft.vx = upperLeft.speed * -1;
+    upperLeft.vy = upperLeft.speed * -1;
+    particles.push(upperLeft);
+    
+    let upperRight = makeBombSpark(x, y);
+    upperRight.vx = upperRight.speed;
+    upperRight.vy = upperRight.speed * -1;
+    particles.push(upperRight);
+    
+    let lowerRight = makeBombSpark(x, y);
+    lowerRight.vx = lowerRight.speed;
+    lowerRight.vy = lowerRight.speed;
+    particles.push(lowerRight);
+    
+    let lowerLeft = makeBombSpark(x, y);
+    lowerLeft.vx = lowerLeft.speed * -1;
+    lowerLeft.vy = lowerLeft.speed;
+    particles.push(lowerLeft);
+
+    // Need to grab a brick to use as a model
+    let demoBrick = makeBrick(x, y);
+    // Define the full set of 8 contact particles to act as non-drawing markers.
+    let contactMarkers = [];
+    let leftContact = makeBombSpark(x, y)
+    leftContact.x -= demoBrick.width;
+    contactMarkers.push(leftContact);
+    
+    let rightContact = makeBombSpark(x, y)
+    rightContact.x += (demoBrick.width + rightContact.width);
+    contactMarkers.push(rightContact);
+    
+    let topContact = makeBombSpark(x, y)
+    topContact.y -= demoBrick.height;
+    contactMarkers.push(topContact);
+    
+    let bottomContact = makeBombSpark(x, y)
+    bottomContact.y += (demoBrick.height + bottomContact.height);
+    contactMarkers.push(bottomContact);
+    
+    let upperLeftContact = makeBombSpark(x, y)
+    upperLeftContact.y -= demoBrick.height;
+    upperLeftContact.x -= demoBrick.width;
+    contactMarkers.push(upperLeftContact);
+    
+    let upperRightContact = makeBombSpark(x, y)
+    upperRightContact.y -= demoBrick.height;
+    upperRightContact.x += (demoBrick.width + upperRightContact.width);
+    contactMarkers.push(upperRightContact);
+    
+    let lowerLeftContact = makeBombSpark(x, y)
+    lowerLeftContact.y += (demoBrick.height + lowerLeftContact.height);
+    lowerLeftContact.x -= demoBrick.width;
+    contactMarkers.push(lowerLeftContact);
+    
+    let lowerRightContact = makeBombSpark(x, y)
+    lowerRightContact.y += (demoBrick.height + lowerRightContact.height);
+    lowerRightContact.x += (demoBrick.width + lowerRightContact.width);
+    contactMarkers.push(lowerRightContact);
+
+    // Add the explosion to an array
+    explosions.push(contactMarkers);
+  }
+
 
   // Generate UI button controls
   function makeUiButton(label, x, y, w, h, screen, fs) {
