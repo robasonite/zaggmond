@@ -105,9 +105,9 @@ var breakout = function(sketch) {
      [5,6,7,1,2,3],
     [4,5,6,7,1,2,3],
      [4,5,6,7,1,2],
-    [3,4,5,6,7,1,2],
-     [3,4,5,6,7,1],
-    [2,3,4,5,6,7,1],
+    [9,9,9,9,9,9,9],
+     [3,10,10,10,10,1],
+    [9,9,9,9,9,9,9],
      [2,3,4,5,6,7],
     [1,2,3,4,5,6,7],
      [1,2,3,4,5,6]
@@ -1416,7 +1416,7 @@ var breakout = function(sketch) {
   // These bricks take 3 hits to die and reuse existing shape buffers.
   function makeArmoredBrick(x, y) {
     let mybrick = makeBrick(x, y);
-    mybrick.hp = 3;
+    mybrick.hp = 4;
 
     // These need a different kind of draw function to shop HP left.
     mybrick.draw = function(scale, buffer) {
@@ -1437,22 +1437,25 @@ var breakout = function(sketch) {
       let innerBuffer = shapeBuffers.invincibleBrick;
 
       // Next, we use the HP to determine which buffer to replace this with.
-      if (mybrick.hp == 2) {
+      if (mybrick.hp == 3) {
         innerBuffer = shapeBuffers.grayBrick;
       }
 
-      else if (mybrick.hp == 1) {
+      else if (mybrick.hp == 2) {
         innerBuffer = shapeBuffers.whiteBrick;
       }
       
 
-      sketch.image(
-        innerBuffer,
-        (mybrick.x + (mybrick.width * xyMultiplier)) * scale,
-        (mybrick.y + (mybrick.height * xyMultiplier)) * scale,
-        (mybrick.width - (mybrick.width * whMultiplier)) * scale,
-        (mybrick.height - (mybrick.height * whMultiplier)) * scale,
-      );
+      // Only draw the inner diamond if the HP is greater than 1.
+      if (mybrick.hp > 1) {
+        sketch.image(
+          innerBuffer,
+          (mybrick.x + (mybrick.width * xyMultiplier)) * scale,
+          (mybrick.y + (mybrick.height * xyMultiplier)) * scale,
+          (mybrick.width - (mybrick.width * whMultiplier)) * scale,
+          (mybrick.height - (mybrick.height * whMultiplier)) * scale,
+        );
+      }
     }
     
     return mybrick;
