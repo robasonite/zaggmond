@@ -74,43 +74,43 @@ var breakout = function(sketch) {
   let level0 = {}
   level0.bricks = [
     [0],
+     [0],
     [0],
+     [0],
     [0],
-    [0],
-    [0],
-    [0],
-    [8,9,10,6,3,6,4],
-    [0],
-    [1,0,2,0,3,0,0],
-    [0],
-    [1,0,2,0,3,0,0],
-    [0],
-    [1,0,2,0,3,1,1],
-    [0],
-    [1,0,2,0,3,10,1],
+     [0],
+    [1,1,1,1,1,1,1],
+     [0],
+    [2,2,2,2,2,2,2],
+     [0,0,10,10,0,0],
+    [3,3,3,3,3,3,3],
+     [0],
+    [4,4,4,4,4,4,4],
+     [0],
+    [5,5,5,5,5,5,5],
   ];
   Levels.push(level0);
  
   let level1 = {};
   level1.bricks = [
     [0],
+     [0],
     [0],
-    [0],
-    [1,2,3,4,5,6],
+     [1,2,3,4,5,6],
     [7,1,2,3,4,5,6],
-    [7,1,2,3,4,5],
+     [7,1,2,3,4,5],
     [6,7,1,2,3,4,5],
-    [6,7,1,2,3,4],
+     [6,7,1,2,3,4],
     [5,6,7,1,2,3,4],
-    [5,6,7,1,2,3],
+     [5,6,7,1,2,3],
     [4,5,6,7,1,2,3],
-    [4,5,6,7,1,2],
+     [4,5,6,7,1,2],
     [3,4,5,6,7,1,2],
-    [3,4,5,6,7,1],
+     [3,4,5,6,7,1],
     [2,3,4,5,6,7,1],
-    [2,3,4,5,6,7],
+     [2,3,4,5,6,7],
     [1,2,3,4,5,6,7],
-    [1,2,3,4,5,6]
+     [1,2,3,4,5,6]
   ];
   Levels.push(level1);
   
@@ -1154,37 +1154,41 @@ var breakout = function(sketch) {
 
 
   // Bomb sparks are closely related, but they trigger explosionPoints upon death.
-  function makeBombSpark(x, y) {
+  // Remember to set the target X and Y.
+  function makeBombSpark(x, y, targetX, targetY) {
     let bspark = makeEffectParticle(x, y)
     bspark.shapeName = 'bombSpark';
 
-    // Tell the game that these particles damage bricks
-    //bspark.damageBricks = true;
+    // Make sure the target x and y are defined.
+    bspark.targetX = targetX;
+    bspark.targetY = targetY;
 
     // Make bomb sparks bigger.
     bspark.width = 8;
     bspark.height = 8;
     
     // Make it travel faster.
-    bspark.speed = 4;
+    bspark.speed = 8;
    
     // Adjust max distance.
-    bspark.maxDistance = 50;
+    //bspark.maxDistance = 48;
 
     // Make the spark red.
     bspark.color = sketch.color(255, 0, 0);
     
-    // Make a demo brick to set appropriate max distance.
-    let demoBrick = makeBrick(x, y);
-
     // Make sparks trigger damage to other bricks upon death.
     bspark.endAction = function() {
-      let ep = makeEffectParticle(bspark.x, bspark.y);
+      let ep = makeEffectParticle(
+        bspark.targetX,
+        bspark.targetY
+      );
       ep.width = bspark.width;
       ep.height = bspark.height;
       ep.x -= ep.width / 2;
       ep.y -= ep.height / 2;
       explosionPoints.push(ep);
+
+      //console.log(explosionPoints);
     }
 
     return bspark;
@@ -1522,43 +1526,91 @@ var breakout = function(sketch) {
   // Make an explosion of particles and deal damage to surrounding bricks.
   function makeBombExplosion(x, y) {
     // Make 8 sparks, one for each direction.
-    // These particles are just for show.
-    let leftParticle = makeBombSpark(x, y);
+    // Upon death, each spark hits its target.
+    
+    // Need a demo brick
+    let demoBrick = makeBrick(0, 0);
+
+    //console.log("Bomb brick origin: " + x + "," + y);
+
+    // Each spark has a target
+    let leftParticle = makeBombSpark(
+      x, 
+      y,
+      x - demoBrick.width,
+      y
+    );
+    //console.log("Left particle: " + (x - demoBrick.width) + "," + y);
     leftParticle.vx = leftParticle.speed * -1;
     leftParticle.vy = 0;
     particles.push(leftParticle);
     
-    let upParticle = makeBombSpark(x, y);
+    let upParticle = makeBombSpark(
+      x,
+      y,
+      x,
+      y - demoBrick.height
+    );
     upParticle.vx = 0;
     upParticle.vy = upParticle.speed * -1;
     particles.push(upParticle);
     
-    let rightParticle = makeBombSpark(x, y);
+    let rightParticle = makeBombSpark(
+      x,
+      y,
+      x + demoBrick.width,
+      y
+    );
     rightParticle.vx = rightParticle.speed;
     rightParticle.vy = 0;
     particles.push(rightParticle);
     
-    let downParticle = makeBombSpark(x, y);
+    let downParticle = makeBombSpark(
+      x,
+      y,
+      x,
+      y + demoBrick.height
+    );
     downParticle.vx = 0;
     downParticle.vy = downParticle.speed;
     particles.push(downParticle);
     
-    let upperLeft = makeBombSpark(x, y);
+    let upperLeft = makeBombSpark(
+      x,
+      y,
+      x - demoBrick.width,
+      y - demoBrick.height
+    );
     upperLeft.vx = upperLeft.speed * -1;
     upperLeft.vy = upperLeft.speed * -1;
     particles.push(upperLeft);
     
-    let upperRight = makeBombSpark(x, y);
+    let upperRight = makeBombSpark(
+      x,
+      y,
+      x + demoBrick.width,
+      y - demoBrick.height
+    );
     upperRight.vx = upperRight.speed;
     upperRight.vy = upperRight.speed * -1;
     particles.push(upperRight);
     
-    let lowerRight = makeBombSpark(x, y);
+    let lowerRight = makeBombSpark(
+      x,
+      y,
+      x + demoBrick.width,
+      y + demoBrick.height
+    );
     lowerRight.vx = lowerRight.speed;
     lowerRight.vy = lowerRight.speed;
     particles.push(lowerRight);
     
-    let lowerLeft = makeBombSpark(x, y);
+    let lowerLeft = makeBombSpark(
+      x,
+      y,
+      x - demoBrick.width,
+      y + demoBrick.height
+    );
     lowerLeft.vx = lowerLeft.speed * -1;
     lowerLeft.vy = lowerLeft.speed;
     particles.push(lowerLeft);
