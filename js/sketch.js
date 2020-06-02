@@ -9,6 +9,9 @@
 
 var breakout = function(sketch) {
   gameConfig = {
+    canvas: '',
+    compStyle: '',
+    buttonOffsetX: '',
     scale: 1.0,
     areaWidth: 720,
     areaHeight: 1280,
@@ -20,6 +23,16 @@ var breakout = function(sketch) {
     font: '',
     fontName: '',
     level: 0
+  }
+
+  // Give gameConfig a function for getting the current style rules and the current buttonOffsetX.
+  gameConfig.getCompStyle = function() {
+    // Get the style rules
+    let targetElement = gameConfig.canvas.elt
+    gameConfig.compStyle = targetElement.currentStyle || window.getComputedStyle(targetElement);
+
+    // Get the current left margin as a floating point number.
+    gameConfig.buttonOffsetX = parseFloat(gameConfig.compStyle.marginLeft);
   }
 
   // Global pause variable; Nothing should be moving if true.
@@ -307,10 +320,14 @@ var breakout = function(sketch) {
     // put setup code here
 
     // Create the canvas
-    sketch.createCanvas(
+    gameConfig.canvas = sketch.createCanvas(
       gameConfig.areaWidth * gameConfig.scale,
       gameConfig.areaHeight * gameConfig.scale
     );
+
+    // Get the current style of the canvas
+    gameConfig.getCompStyle();
+
 
     // Set the font
     sketch.textFont(gameConfig.font);
@@ -1054,9 +1071,13 @@ var breakout = function(sketch) {
 
     // After getting the new scale, resize and reposition all buttons to match
     setTimeout(() => {
+      // Update the styles to get the new X offset
+      gameConfig.getCompStyle();
+
+      // Modify the buttons.
       for (let i = 0; i < buttons.length; i++) {
         buttons[i].position(
-          buttons[i].initX * gameConfig.scale,
+          (buttons[i].initX * gameConfig.scale) + gameConfig.buttonOffsetX,
           buttons[i].initY * gameConfig.scale
         );
         buttons[i].size(
@@ -1637,9 +1658,9 @@ var breakout = function(sketch) {
       mybutton.initFontSize = 34;
     }
 
-    // Set position and size based on game scale.
+    // Set position and size based on game scale and buttonOffsetX.
     mybutton.position(
-      mybutton.initX * gameConfig.scale,
+      (mybutton.initX * gameConfig.scale) + gameConfig.buttonOffsetX,
       mybutton.initY * gameConfig.scale
     );
     mybutton.size(
