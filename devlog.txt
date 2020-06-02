@@ -120,3 +120,12 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - Gave the explosion system and overhaul. 'explosions' is now 'explosionPoints', which are just non-drawing bombParticles. The particles are dropped into the explosionPoints array when a bombParticle dies. This made the explosion resolsution portion of simUpdate() simpler, and it made makeBombExplosion() function shorter. Just had to mess with maxDistance and speed until I found a combination that sucessfully dealt damage to adjacent bricks.
 
 - Added a new bombBrick that calls makeBombExplosion() when it's destroyed.
+
+- Turns out fiddling the maxDistance and speed variables in makeBombSpark() wasn't the answer, I noticed that the sparks were still missing their mark. So now makeBombSpark() takes additional X and Y values for the target. In makeBombExplosion, I use width and height values from a dummy brick object to manually set a target for each of the 8 sparks. What a pain. But now it works as expected. The bricks still don't get damaged until "after" the spark dies, but now the explosionPoints are created with exact target coordinates.
+
+
+2020-06-01:
+
+- Decided to change the armored bricks so that the inner diamond disappears when HP drops to 1. Also changed the default starting HP to 4.
+
+- The <canvas> element that the game runs in now appears in the center of the screen with 'margin-left' and 'margin-right' set to 'auto'. That worked fine for the canvas, but added a new problem to solve: The buttons were in the wrong spot. Since the buttons are just plain HTML <button> elements rendered by P5js, I had to figure out how to get the value of 'margin-left' to apply a proper X offset. Once I found the relevent documentation online, I added a getCompStyle() method directly to the gameConfig object. That function uses either 'target.currentStyle' or 'window.getComputedStyle(target)' (whichever is available) to set gameConfig.compStyle. It then sets gameConfig.buttonOffsetX by running 'parseFloat(gameConfig.compStyle.marginLeft)'. The 'parseFloat()' call is necessary to remove the ".px" part and convert the string into a proper floating point value. Adding this value to the X position of a button fixes the problem. The buttons even move the correct spots when the browser window is resize.
