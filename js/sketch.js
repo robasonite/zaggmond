@@ -7,7 +7,8 @@
 // A huge thankyou goes out to the great people of the Internet. Though we have never met, on or offline, this work would have been impossible without the efforts of the many YouTubers, Redditors, and bloggers who post content about JavaScript, Android, and game development. It's like a college education without a rigid schedule, classrooms, crappy professors, or rediculous debt. Thank you all so very much.
 //
 // TODO:
-// - Make the paddle explode when the player loses all of the ball.
+// - Design a some level backgrounds
+//
 
 var breakout = function(sketch) {
   gameConfig = {
@@ -87,6 +88,7 @@ var breakout = function(sketch) {
   // Keep in mind that every other row is stagger!
   // The pattern goes 7 bricks, 6 bricks, 7 bricks, etc.
   let level0 = {}
+  level0.backgroundImage = 'img/background1.png';
   level0.bricks = [
     [0],
      [0],
@@ -315,6 +317,14 @@ var breakout = function(sketch) {
 
       // Draw to the buffer
       shapeBlueprints[i].makeShape(shapeBuffers[shapeBlueprints[i].shapeName]);
+    }
+
+    // Also preload all level backgrounds.
+    for (let i = 0; i < Levels.length; i++) {
+      if (Levels[i].backgroundImage) {
+        let img = sketch.loadImage(Levels[i].backgroundImage);
+        Levels[i].background = img;
+      }
     }
   }
 
@@ -721,8 +731,19 @@ var breakout = function(sketch) {
   
   function gameLoop() {
     
-    // Set the background color
-    sketch.background(90,90,255);
+    // Set the background color if there is no background for the level.
+    if (Levels[gameConfig.level].background) {
+      sketch.image(
+        Levels[gameConfig.level].background,
+        0, 
+        0,
+        gameConfig.areaWidth * gameConfig.scale,
+        gameConfig.areaHeight * gameConfig.scale
+      );
+    }
+    else {
+      sketch.background(90,90,255);
+    }
     
     /*if (mouseIsPressed) {
       fill(0);
@@ -1110,7 +1131,7 @@ var breakout = function(sketch) {
 
     myparticle.shapeName = 'particle';
     myparticle.makeShape = function(buffer) {
-      buffer.strokeWeight(0);
+      buffer.noStroke();
       buffer.fill(myparticle.color);
       buffer.rect(
         myparticle.x,
@@ -1223,17 +1244,26 @@ var breakout = function(sketch) {
 
     myball.shapeName = 'blueBall';
     myball.makeShape = function(buffer) {
-      // Add an outline.
-      buffer.strokeWeight(1);
-      buffer.stroke(0);
-      //buffer.noStroke();
-      buffer.fill(0,0,200);
+      buffer.noStroke();
       buffer.ellipseMode(buffer.CORNER);
+
+      // Outer circle
+      buffer.fill(155);
       buffer.ellipse(
         myball.x,
         myball.y,
         myball.width,
         myball.height
+      );
+
+
+      // Inner circle
+      buffer.fill(0,0,255);
+      buffer.ellipse(
+        myball.x + 2,
+        myball.y + 2,
+        myball.width - 4,
+        myball.height - 4
       );
     }
 
@@ -1304,8 +1334,8 @@ var breakout = function(sketch) {
       buffer.fill(mybrick.color);
      
       // Add an outline.
-      buffer.strokeWeight(2);
       buffer.stroke(0);
+      buffer.strokeWeight(2);
       
       // Draw a diamond.
       buffer.quad(
@@ -1326,6 +1356,7 @@ var breakout = function(sketch) {
         mybrick.x + (mybrick.width / 2),
         mybrick.y + mybrick.height,
       );
+      buffer.noStroke();
     }
    
     // Or they could be invincible
@@ -1496,7 +1527,8 @@ var breakout = function(sketch) {
 
     // Paddles are rectangles
     mypaddle.makeShape = function(buffer) {
-      buffer.noStroke();
+      buffer.stroke(155);
+      buffer.strokeWeight(8);
       buffer.fill(0);
       buffer.rect(
         mypaddle.x,
@@ -1504,6 +1536,7 @@ var breakout = function(sketch) {
         mypaddle.width,
         mypaddle.height
       );
+      buffer.noStroke();
     }
 
     // Because the paddle is player controlled, this needs an overhaul.
