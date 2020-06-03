@@ -5,7 +5,9 @@
 // Built with P5js
 //
 // A huge thankyou goes out to the great people of the Internet. Though we have never met, on or offline, this work would have been impossible without the efforts of the many YouTubers, Redditors, and bloggers who post content about JavaScript, Android, and game development. It's like a college education without a rigid schedule, classrooms, crappy professors, or rediculous debt. Thank you all so very much.
-
+//
+// TODO:
+// - Make the paddle explode when the player loses all of the ball.
 
 var breakout = function(sketch) {
   gameConfig = {
@@ -407,6 +409,9 @@ var breakout = function(sketch) {
     
     startBtn.mousePressed(function() {
 
+      // Set up the game
+      resetGame();
+
       // Switch to the play screen
       switchScreen('play');
 
@@ -441,7 +446,7 @@ var breakout = function(sketch) {
     );
     
     quitBtn.mousePressed(function() {
-      resetGame();
+      //resetGame();
       switchScreen('title');
     });
     
@@ -486,7 +491,7 @@ var breakout = function(sketch) {
     buttons.push(pauseBtn);
 
     // Run the reset function to start the game at level 0
-    resetGame();
+    //resetGame();
 
     // Make sure that the right buttons are showing
     switchScreen('title');
@@ -576,25 +581,9 @@ var breakout = function(sketch) {
     }
 
     // Next, check for balls.
-    else if (balls.length == 0) {
-      // Player loses a life
-      playerLives--;
-      console.log(playerLives);
-
-      // If the play has no lives left, game over.
-      if (playerLives < 0) {
-        // If not, game over.
-        console.log("You LOSE!");
-        resetGame();
-        switchScreen('title');
-      }
-
-      // Else, reset with a new ball.
-      else {
-        resetPlayer();
-        gamePaused = true;
-        makeResumeCountdown();
-      }
+    if (balls.length == 0) {
+      // Kill the player
+      killPlayer();
     }
 
     let aliveBalls = [];
@@ -813,7 +802,9 @@ var breakout = function(sketch) {
     
 
     // Draw the player.
-    player.draw(gameConfig.scale, shapeBuffers.normalPaddle);
+    if (player.visible) {
+      player.draw(gameConfig.scale, shapeBuffers.normalPaddle);
+    }
 
     // Draw timed text messages with garbage collecting.
     let activeMessages = [];
@@ -1787,6 +1778,39 @@ var breakout = function(sketch) {
     sketch.text(message, x, y);
   }
 
+
+  // Kill the player and show an explosion
+  function killPlayer() {
+    player.visible = false;
+    gamePaused = true;
+    // If the play has no lives left, game over.
+    if (playerLives < 1) {
+      // If not, game over.
+      console.log("You LOSE!");
+      switchScreen('title');
+      //resetGame();
+
+      // Skip rest of function
+      return false;
+    }
+
+    // Else, reset with a new ball.
+    else {
+      // Player loses a life
+      playerLives--;
+      player.visible = false;
+      
+      let missMessage = makeMessage("MISS!");
+      missMessage.endAction = function() {
+        gamePaused = true;
+        resetPlayer();
+        makeResumeCountdown();
+      }
+      messages.push(missMessage);
+    }
+
+  }
+
   
   // Reset the balls and bricks. Used when moving to the next level.
   function resetPlayer() {
@@ -1796,6 +1820,7 @@ var breakout = function(sketch) {
       (gameConfig.areaWidth / 2) - 70,
       1100
     );
+    player.visible = true;
 
     // Make the ball.
     balls = [];
