@@ -287,7 +287,7 @@ var breakout = function(sketch) {
 
     // Adjust the volume of the sound effects.
     soundEffects.ballHitWall.setVolume(0.2);
-    soundEffects.ballHitBrick.setVolume(0.7);
+    //soundEffects.ballHitBrick.setVolume(1.7);
     soundEffects.ballHitPaddle.setVolume(0.7);
 
     // Also preload the base font.
@@ -669,39 +669,6 @@ var breakout = function(sketch) {
     balls = aliveBalls;
     
 
-    // Iterate over particles.
-    let aliveParticles = []
-    for (let i = 0; i < particles.length; i++) {
-
-      // Update each particle's distance life.
-      particles[i].checkDistance();
-
-      // If still alive, save it for next frame and resolve it.
-      if (particles[i].alive) {
-        aliveParticles.push(particles[i]);
-
-        // If the spark damages bricks, resolve collisions.
-        // This causes continuous calls to makeBombExplosion!
-        // DO NOT UNCOMMENT!
-        /*if (particles[i].damageBricks) {
-          for (let b = 0; b < bricks.length; b++) {
-            if (collider(particles[i], bricks[b])) {
-              // Remove the particle.
-              particles[i].alive = false;
-
-              // Resolve brick damage
-              resolveBrickDamage(bricks[b]);
-            }
-          }
-        }*/
-
-        // Move the particle.
-        particles[i].move(gameConfig.scale);
-      }
-    }
-
-    // Remove dead particles.
-    particles = aliveParticles;
 
     // Now resolve explosionPoints
     for (let e = 0; e < explosionPoints.length; e++) {
@@ -794,6 +761,40 @@ var breakout = function(sketch) {
         bricks[x].draw(gameConfig.scale, shapeBuffers[bricks[x].shapeName]);
       }
     }
+    
+    // Iterate over particles.
+    let aliveParticles = []
+    for (let i = 0; i < particles.length; i++) {
+
+      // Update each particle's distance life.
+      particles[i].checkDistance();
+
+      // If still alive, save it for next frame and resolve it.
+      if (particles[i].alive) {
+        aliveParticles.push(particles[i]);
+
+        // If the spark damages bricks, resolve collisions.
+        // This causes continuous calls to makeBombExplosion!
+        // DO NOT UNCOMMENT!
+        /*if (particles[i].damageBricks) {
+          for (let b = 0; b < bricks.length; b++) {
+            if (collider(particles[i], bricks[b])) {
+              // Remove the particle.
+              particles[i].alive = false;
+
+              // Resolve brick damage
+              resolveBrickDamage(bricks[b]);
+            }
+          }
+        }*/
+
+        // Move the particle.
+        particles[i].move(gameConfig.scale);
+      }
+    }
+
+    // Remove dead particles.
+    particles = aliveParticles;
 
     // Draw any particles that exist.
     for (let x = 0; x < particles.length; x++) {
@@ -1781,31 +1782,50 @@ var breakout = function(sketch) {
 
   // Kill the player and show an explosion
   function killPlayer() {
-    player.visible = false;
+    // Pause the game.
     gamePaused = true;
-    // If the play has no lives left, game over.
-    if (playerLives < 1) {
-      // If not, game over.
-      console.log("You LOSE!");
-      switchScreen('title');
-      //resetGame();
+    
+    // Make the paddle "explode".
+    player.visible = false;
 
-      // Skip rest of function
-      return false;
+    // Determine how many explosions to triger.
+    let step = 35;
+    for (let xp = 0; xp < player.width; xp += step) {
+      makeEffectExplosion(
+        player.x + xp,
+        player.y + (player.height / 2)
+      );
+    }
+    
+    // Play the explosion sound effect.
+    soundEffects.ballHitBrick.play();
+    
+    // Player loses a life.
+    playerLives--;
+
+    // If the player has no lives left, game over.
+    if (playerLives < 0) {
+      // If not, game over.
+      let gameOver = makeMessage("GAME OVER!");
+      gameOver.endAction = function() {
+        switchScreen('title');
+      }
+      gameOver.maxTime = 120;
+      messages.push(gameOver);
+      console.log("You LOSE!");
+
     }
 
     // Else, reset with a new ball.
     else {
-      // Player loses a life
-      playerLives--;
-      player.visible = false;
-      
+      // Tell the player that they missed.
       let missMessage = makeMessage("MISS!");
       missMessage.endAction = function() {
         gamePaused = true;
         resetPlayer();
         makeResumeCountdown();
       }
+      missMessage.maxTime = 60;
       messages.push(missMessage);
     }
 
