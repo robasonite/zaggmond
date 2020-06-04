@@ -1234,15 +1234,15 @@ var breakout = function(sketch) {
     mypowerup.shapeName = 'growPaddle';
     mypowerup.speed = 4;
     mypowerup.vy = mypowerup.speed;
-    mypowerup.height = 60;
+    mypowerup.height = 40;
     mypowerup.width = 90;
-    mypowerup.sprite = '/img/powerUpGrowPaddle.png';
+    mypowerup.sprite = 'img/powerUpGrowPaddle.png';
 
     mypowerup.makeShape = function(buffer) {
-      return false;
+      // This function should never run as long as the sprite file exists.
 
       // Draw the outer frame.
-      /*buffer.fill(155);
+      buffer.fill(155);
       buffer.rect(
         mypowerup.x,
         mypowerup.y,
@@ -1259,6 +1259,7 @@ var breakout = function(sketch) {
         mypowerup.height - 8
       );
 
+      /*
       // Draw the arrows
       buffer.fill(255);
       
