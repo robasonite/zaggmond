@@ -315,6 +315,7 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makeBall(0,0));
     shapeBlueprints.push(makePaddle(0,0));
     shapeBlueprints.push(makePowerupGrowPaddle(0,0));
+    shapeBlueprints.push(makePowerupShrinkPaddle(0,0));
     for (let i = 0; i < shapeBlueprints.length; i++) {
       // Make the buffer
       shapeBuffers[shapeBlueprints[i].shapeName] = sketch.createGraphics(shapeBlueprints[i].width, shapeBlueprints[i].height);
@@ -548,7 +549,7 @@ var breakout = function(sketch) {
       // 20% chance to spawn a powerup
       if (dropval > 0.8) {
         // Drop a powerup
-        let pu = makePowerupGrowPaddle(
+        let pu = pickPowerup(
           brick.x + (brick.width / 2),
           brick.y + brick.height
         )
@@ -1229,6 +1230,36 @@ var breakout = function(sketch) {
 
 
   // Powerups
+  
+
+  // Randomly pick a powerup
+  function pickPowerup(x, y) {
+    let powerup = makePowerupShrinkPaddle(x, y);
+    return powerup;
+  }
+ 
+
+  // Shrink the player paddle
+  function makePowerupShrinkPaddle(x, y) {
+    let mypowerup = makePowerupGrowPaddle(x, y);
+    mypowerup.shapeName = 'shrinkPaddle';
+    mypowerup.points = 150;
+    mypowerup.sprite = 'img/powerUpShrinkPaddle.png';
+    
+    mypowerup.effect = function() {
+      let newsize = player.width - (player.width * 0.15);
+      if (newsize > player.minWidth) {
+        player.width = newsize;
+        playerScore += mypowerup.points;
+      }
+    }
+
+    return mypowerup;
+
+  }
+
+  
+  // Grow the paddle.
   function makePowerupGrowPaddle(x, y) {
     let mypowerup = makeParticle(x, y);
     mypowerup.shapeName = 'growPaddle';
@@ -1236,8 +1267,11 @@ var breakout = function(sketch) {
     mypowerup.vy = mypowerup.speed;
     mypowerup.height = 40;
     mypowerup.width = 90;
-    mypowerup.sprite = 'img/powerUpGrowPaddle.png';
 
+    // Also award the player some points.
+    mypowerup.points = 50;
+    
+    mypowerup.sprite = 'img/powerUpGrowPaddle.png';
     mypowerup.makeShape = function(buffer) {
       // This function should never run as long as the sprite file exists.
 
@@ -1356,6 +1390,7 @@ var breakout = function(sketch) {
       let newsize = player.width + (player.width * 0.15);
       if (newsize < player.maxWidth) {
         player.width = newsize;
+        playerScore += mypowerup.points;
       }
     }
 
@@ -1603,13 +1638,13 @@ var breakout = function(sketch) {
     mybrick.shapeName = 'whiteBrick';
 
     // Drop a powerup
-    mybrick.dropPowerup = function() {
-      let pu = makePowerupGrowPaddle(
+    /*mybrick.dropPowerup = function() {
+      let pu = pickPowerup(
         mybrick.x + (mybrick.width / 2),
         mybrick.y + mybrick.height
       );
       powerups.push(pu);
-    }
+    }*/
     return mybrick;
   }
   
@@ -1739,6 +1774,9 @@ var breakout = function(sketch) {
 
     // Make sure the paddle doesn't get too big
     mypaddle.maxWidth = 380;
+
+    // Or too small
+    mypaddle.minWidth = 80;
 
     // Paddles are rectangles
     mypaddle.makeShape = function(buffer) {
