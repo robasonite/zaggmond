@@ -128,7 +128,9 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 - Decided to change the armored bricks so that the inner diamond disappears when HP drops to 1. Also changed the default starting HP to 4.
 
-- The <canvas> element that the game runs in now appears in the center of the screen with 'margin-left' and 'margin-right' set to 'auto'. That worked fine for the canvas, but added a new problem to solve: The buttons were in the wrong spot. Since the buttons are just plain HTML <button> elements rendered by P5js, I had to figure out how to get the value of 'margin-left' to apply a proper X offset. Once I found the relevent documentation online, I added a getCompStyle() method directly to the gameConfig object. That function uses either 'target.currentStyle' or 'window.getComputedStyle(target)' (whichever is available) to set gameConfig.compStyle. It then sets gameConfig.buttonOffsetX by running 'parseFloat(gameConfig.compStyle.marginLeft)'. The 'parseFloat()' call is necessary to remove the ".px" part and convert the string into a proper floating point value. Adding this value to the X position of a button fixes the problem. The buttons even move the correct spots when the browser window is resize.
+- The '<canvas>' element that the game runs in now appears in the center of the screen with 'margin-left' and 'margin-right' set to 'auto'. That worked fine for the canvas, but added a new problem to solve: The buttons were in the wrong spot. Since the buttons are just plain HTML '<button>' elements rendered by P5js, I had to figure out how to get the value of 'margin-left' to apply a proper X offset. Once I found the relevent documentation online, I added a 'getCompStyle()' method directly to the 'gameConfig' object.
+
+  That function uses either 'target.currentStyle' or 'window.getComputedStyle(target)' (whichever is available) to set 'gameConfig.compStyle'. It then sets 'gameConfig.buttonOffsetX' by running 'parseFloat(gameConfig.compStyle.marginLeft)'. The 'parseFloat()' call is necessary to remove the ".px" part and convert the string into a proper floating point value. Adding this value to the X position of a button fixes the problem. The buttons even move the correct spots when the browser window is resize.
 
 
 2020-06-02:
@@ -147,3 +149,10 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - I briefly experimented with a background '<div>' for displaying the images. This worked by modifying the 'background-image' property every time a new level was started. I guess CSS isn't fast enough to make the change without displaying an annoying flickering effect. Oh well. Redrawing the background every frame doesn't seem to impact performance too much. CPU usage still hovers between 70% and %80. I occasionally see 90%, but it drops back down. Also noticing slightly more lag, mainly on the second level with a lot more bricks.
 
 - Added an outline to both with paddle and the ball to add better visibility.
+
+
+2020-06-04:
+
+- It's powerup day! I added a new array called 'powerups' to house the new powerup objects. I started by writing a new function called 'makePowerupGrowPaddle()'. Like all of the other shapes, I start with a pre-existing shape and modify its methods and properties. This time, I kicked things off with 'makeParticle()'. Every powerup will eventually have a unique shape, but I decided that they should all get a gray frame and a black background. To draw the arrows, I used the 'begineShape', 'vertex()', and 'endShape()' functions that P5js provides.
+
+  Each powerup object has a method called 'effect()', which will modify the necessary global variables. In this case, it makes the paddle 15% wider. Off course, powerups don't just "appear". They have to be spawned when a brick is destroyed. So I modified 'resolveBrickDamage()' to check for 'brick.dropPowerup()'. If found, it tries to run it. I currently have this tacked on to the white bricks for testing, but I will add some code to 'resolveBrickDamage()' to randomly generate a powerup.
