@@ -106,9 +106,9 @@ var breakout = function(sketch) {
      [0],
     [5,5,5,5,5,5,5],
   ];
-  Levels.push(level0);
  
   let level1 = {};
+  level1.backgroundImage = 'img/background2.png';
   level1.bricks = [
     [0],
      [0],
@@ -130,6 +130,7 @@ var breakout = function(sketch) {
      [1,2,3,4,5,6]
   ];
   Levels.push(level1);
+  Levels.push(level0);
   
 
 
@@ -585,7 +586,6 @@ var breakout = function(sketch) {
 
       else {
         console.log("You win!");
-        resetGame();
         switchScreen('title');
       }
     }
