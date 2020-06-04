@@ -608,6 +608,9 @@ var breakout = function(sketch) {
 
         // Also clear the particles
         particles = [];
+
+        // And the powerups
+        powerups = [];
         levelReader(Levels[gameConfig.level]);
         gamePaused = true;
         makeResumeCountdown();
@@ -1234,7 +1237,15 @@ var breakout = function(sketch) {
 
   // Randomly pick a powerup
   function pickPowerup(x, y) {
-    let powerup = makePowerupShrinkPaddle(x, y);
+    let pick = sketch.random();
+    let powerup = '';
+    if (pick > 0.5) {
+      powerup = makePowerupShrinkPaddle(x, y);
+    }
+    else {
+      powerup = makePowerupGrowPaddle(x, y);
+    }
+
     return powerup;
   }
  
@@ -2089,6 +2100,9 @@ var breakout = function(sketch) {
     // Player loses a life.
     playerLives--;
 
+    // Clear all onscreen powerups
+    powerups = [];
+
     // If the player has no lives left, game over.
     if (playerLives < 0) {
       // If not, game over.
@@ -2147,6 +2161,7 @@ var breakout = function(sketch) {
     // Reset all of the relevent values.
     bricks = [];
     particles = [];
+    powerups = [];
     playerScore = 0;
     playerLives = 2;
     gameConfig.level = 0;
