@@ -138,3 +138,12 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - Made the paddle "explode". Well, kind of. I added a call to 'makeEffectExplosion()', but the sparks didn't move when 'killPlayer()' was called. The problem turned out to be 'simUpdate()', which is resonsible for moving everything that appears on screen, particle effects included. So I had to rip out the entire "iterate over particles" section and put it after the 'if' statement that decides when to fire 'simUpdate()'. Now particle "explosions" display properly even if the game is paused, which is the first thing 'killPlayer()' does. The pause is necessary because the player and new ball shouldn't be allowed to move until *after* the whole "MISS!" -> respawn -> countdown sequence.
 
 - Made the paddle explosion a bit more flashy. Now the number of calls to 'makeEffectExplosion()' are determined by how long the paddle is. I messed with the step value in the 'for' loop until I arrived at a value of 35. That's one explosion for every 35 pixels of 'player.width'. It plays a sound effect too, but it's reusing the 'ballHitBrick' sound effect. Maybe I'll change it.
+
+
+2020-06-03:
+
+- Added a couple of background images! Instead of painting the same boring background color over and over, the game now checks to see if a level has a background image. If so, it draws that at the start of each frame with a call to 'P5.image()'. I also wrote a 'for' loop that iterates over all of the level objects and draws their backgrounds to individual buffers. That means the backgrounds are pre-rendered just like everything else.
+
+- I briefly experimented with a background '<div>' for displaying the images. This worked by modifying the 'background-image' property every time a new level was started. I guess CSS isn't fast enough to make the change without displaying an annoying flickering effect. Oh well. Redrawing the background every frame doesn't seem to impact performance too much. CPU usage still hovers between 70% and %80. I occasionally see 90%, but it drops back down. Also noticing slightly more lag, mainly on the second level with a lot more bricks.
+
+- Added an outline to both with paddle and the ball to add better visibility.
