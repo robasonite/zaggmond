@@ -8,7 +8,7 @@
 //
 // TODO:
 // - Design a some level backgrounds
-//
+// - Implement some kind of power-up system
 
 var breakout = function(sketch) {
   gameConfig = {
@@ -52,6 +52,9 @@ var breakout = function(sketch) {
 
   // Make an array of effect particles.
   let particles = [];
+
+  // Need another element for powerups
+  let powerups = [];
 
   // Need another array for explosion points;
   let explosionPoints = []
@@ -312,6 +315,7 @@ var breakout = function(sketch) {
 
     shapeBlueprints.push(makeBall(0,0));
     shapeBlueprints.push(makePaddle(0,0));
+    shapeBlueprints.push(makePowerupGrowPaddle(0,0));
     for (let i = 0; i < shapeBlueprints.length; i++) {
       // Make the buffer
       shapeBuffers[shapeBlueprints[i].shapeName] = sketch.createGraphics(shapeBlueprints[i].width, shapeBlueprints[i].height);
@@ -526,6 +530,24 @@ var breakout = function(sketch) {
       
       // Award points
       playerScore += brick.points;
+
+      // If the brick had a power up, spawn it.
+      /*if (brick.dropPowerup) {
+        brick.dropPowerup();
+      }*/
+
+      // Decide to generate a powerup by random chance
+      let dropval = sketch.random();
+      console.log(dropval);
+      // 20% chance to spawn a powerup
+      if (dropval > 0.8) {
+        // Drop a powerup
+        let pu = makePowerupGrowPaddle(
+          brick.x + (brick.width / 2),
+          brick.y + brick.height
+        )
+        powerups.push(pu);
+      }
       
       // If the brick is a bomb brick, trigger a bomb explosion.
       //console.log("bomb explosion triggered");
@@ -723,6 +745,41 @@ var breakout = function(sketch) {
     // Remove bricks that are no longer alive.
     bricks = aliveBricks;
 
+    // Powerups
+    alivePowerups = [];
+    for (let p = 0; p < powerups.length; p++) {
+      
+      // First check if the powerup is still on the screen.
+      if (powerups[p].y < gameConfig.areaHeight) {
+        // Check for a collision with the player.
+        if (collider(powerups[p], player)) {
+          // Apply the effect.
+          powerups[p].effect();
+
+          // Mark powerup as dead.
+          powerups[p].alive = false;
+        }
+
+        // Else, move the powerup
+        else {
+          powerups[p].move(gameConfig.scale);
+        }
+      }
+
+      else {
+        // Else, the powerup is no longer alive.
+        powerups[p].alive = false;
+      }
+
+      // If the powerup is still alive, save it.
+      if (powerups[p].alive) {
+        alivePowerups.push(powerups[p]);
+      }
+    }
+
+    // Scrub dead powerups
+    powerups = alivePowerups;
+
 
     // Update the player
     player.boundsCheck(0, gameConfig.areaWidth);
@@ -821,7 +878,11 @@ var breakout = function(sketch) {
     for (let x = 0; x < particles.length; x++) {
       particles[x].draw(gameConfig.scale, shapeBuffers[particles[x].shapeName]);
     }
-    
+   
+    // Draw powerups
+    for (let x = 0; x < powerups.length; x++) {
+      powerups[x].draw(gameConfig.scale, shapeBuffers[powerups[x].shapeName]);
+    }
 
     // Draw the player.
     if (player.visible) {
@@ -1159,6 +1220,136 @@ var breakout = function(sketch) {
     return myparticle;
 
   }
+
+
+  // Powerups
+  function makePowerupGrowPaddle(x, y) {
+    let mypowerup = makeParticle(x, y);
+    mypowerup.shapeName = 'growPaddle';
+    mypowerup.speed = 4;
+    mypowerup.vy = mypowerup.speed;
+    mypowerup.height = 60;
+    mypowerup.width = 90;
+
+    mypowerup.makeShape = function(buffer) {
+      // Draw the outer frame.
+      buffer.fill(155);
+      buffer.rect(
+        mypowerup.x,
+        mypowerup.y,
+        mypowerup.width,
+        mypowerup.height
+      );
+     
+      // Draw inner frame.
+      buffer.fill(0);
+      buffer.rect(
+        mypowerup.x + 4,
+        mypowerup.y + 4,
+        mypowerup.width - 8,
+        mypowerup.height - 8
+      );
+
+      // Draw the arrows
+      buffer.fill(255);
+      
+      // RIGHT ARROW
+
+      buffer.beginShape();
+
+      // Right arrow point
+      buffer.vertex(
+        mypowerup.x + (mypowerup.width - 6),
+        mypowerup.y + (mypowerup.height / 2)
+      );
+
+      // Right arrow top point
+      buffer.vertex(
+        mypowerup.x + (mypowerup.width - 20),
+        mypowerup.y + 6
+      );
+
+      // Right arrow top recess
+      buffer.vertex(
+        mypowerup.x + (mypowerup.width - 20),
+        mypowerup.y + 18
+      );
+
+      // Right arrow inner endpoint
+      buffer.vertex(
+        mypowerup.x + (mypowerup.width / 2),
+        mypowerup.y + (mypowerup.height / 2)
+      );
+      
+      // Right arrow bottom recess
+      buffer.vertex(
+        mypowerup.x + (mypowerup.width - 20),
+        mypowerup.y + (mypowerup.height - 18)
+      );
+
+      // Right arrow bottom point
+      buffer.vertex(
+        mypowerup.x + (mypowerup.width - 20),
+        mypowerup.y + (mypowerup.height - 6)
+      );
+
+      // Close off the shape
+      buffer.endShape(buffer.CLOSE);
+
+
+      // LEFT ARROW
+
+      buffer.beginShape();
+
+      // Left arrow point
+      buffer.vertex(
+        mypowerup.x + 6,
+        mypowerup.y + (mypowerup.height / 2)
+      );
+
+      // Left arrow top point
+      buffer.vertex(
+        mypowerup.x + 20,
+        mypowerup.y + 6
+      );
+
+      // Left arrow top recess
+      buffer.vertex(
+        mypowerup.x + 20,
+        mypowerup.y + 18
+      );
+
+      // Left arrow inner endpoint
+      buffer.vertex(
+        mypowerup.x + (mypowerup.width / 2),
+        mypowerup.y + (mypowerup.height / 2)
+      );
+      
+      // Left arrow bottom recess
+      buffer.vertex(
+        mypowerup.x + 20,
+        mypowerup.y + (mypowerup.height - 18)
+      );
+
+      // Left arrow bottom point
+      buffer.vertex(
+        mypowerup.x + 20,
+        mypowerup.y + (mypowerup.height - 6)
+      );
+
+      // Close off the shape
+      buffer.endShape(buffer.CLOSE);
+
+    }
+
+    // Decide the powerup does when the user collects it.
+    mypowerup.effect = function() {
+      player.width += (player.width * 0.15);
+    }
+
+    return mypowerup;
+  }
+
   
   // Special effect particles.
   // These particles are used for explosions and the like.
@@ -1302,7 +1493,7 @@ var breakout = function(sketch) {
     return myball;
   }
 
-  function makeBrick(x,y) {
+  function makeBrick(x, y, powerup) {
     //let mybrick = makeBall(x, y, w);
     let mybrick = makeBall(x, y);
 
@@ -1398,6 +1589,15 @@ var breakout = function(sketch) {
     let mybrick = makeBrick(x, y);
     mybrick.color = sketch.color(255,255,255);
     mybrick.shapeName = 'whiteBrick';
+
+    // Drop a powerup
+    mybrick.dropPowerup = function() {
+      let pu = makePowerupGrowPaddle(
+        mybrick.x + (mybrick.width / 2),
+        mybrick.y + mybrick.height
+      );
+      powerups.push(pu);
+    }
     return mybrick;
   }
   
@@ -1558,7 +1758,7 @@ var breakout = function(sketch) {
   // Make an explosion of particles.
   function makeEffectExplosion(x, y) {
     // Randomly decide how many particles to generate.
-    let numberOfParticles = sketch.random(3, 7);
+    let numberOfParticles = sketch.floor(sketch.random(3, 7));
     let multipliers = [-1, 1, -0.5, 0.5, 0.2, -0.2];
 
     for (let i = 0; i < numberOfParticles; i++) {
