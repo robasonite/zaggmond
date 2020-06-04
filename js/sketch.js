@@ -1351,9 +1351,12 @@ var breakout = function(sketch) {
       buffer.endShape(buffer.CLOSE);*/
     }
 
-    // Decide the powerup does when the user collects it.
+    // Decide what the powerup does when the user collects it.
     mypowerup.effect = function() {
-      player.width += (player.width * 0.15);
+      let newsize = player.width + (player.width * 0.15);
+      if (newsize < player.maxWidth) {
+        player.width = newsize;
+      }
     }
 
     return mypowerup;
@@ -1733,6 +1736,9 @@ var breakout = function(sketch) {
     // Need to adjust the width and height
     mypaddle.width = 140;
     mypaddle.height = 20;
+
+    // Make sure the paddle doesn't get too big
+    mypaddle.maxWidth = 380;
 
     // Paddles are rectangles
     mypaddle.makeShape = function(buffer) {
