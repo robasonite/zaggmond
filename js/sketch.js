@@ -312,7 +312,6 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makeGrayBrick(0,0));
     shapeBlueprints.push(makeInvincibleBrick(0,0));
     shapeBlueprints.push(makeBombBrick(0,0));
-
     shapeBlueprints.push(makeBall(0,0));
     shapeBlueprints.push(makePaddle(0,0));
     shapeBlueprints.push(makePowerupGrowPaddle(0,0));
@@ -320,8 +319,15 @@ var breakout = function(sketch) {
       // Make the buffer
       shapeBuffers[shapeBlueprints[i].shapeName] = sketch.createGraphics(shapeBlueprints[i].width, shapeBlueprints[i].height);
 
-      // Draw to the buffer
-      shapeBlueprints[i].makeShape(shapeBuffers[shapeBlueprints[i].shapeName]);
+      // Check if the shape has an image file. If so, preload it.
+      if (shapeBlueprints[i].sprite) {
+        shapeBuffers[shapeBlueprints[i].shapeName] = sketch.loadImage(shapeBlueprints[i].sprite);
+      }
+
+      else {
+        // If not, run its shape drawing function.
+        shapeBlueprints[i].makeShape(shapeBuffers[shapeBlueprints[i].shapeName]);
+      }
     }
 
     // Also preload all level backgrounds.
@@ -1230,10 +1236,13 @@ var breakout = function(sketch) {
     mypowerup.vy = mypowerup.speed;
     mypowerup.height = 60;
     mypowerup.width = 90;
+    mypowerup.sprite = '/img/powerUpGrowPaddle.png';
 
     mypowerup.makeShape = function(buffer) {
+      return false;
+
       // Draw the outer frame.
-      buffer.fill(155);
+      /*buffer.fill(155);
       buffer.rect(
         mypowerup.x,
         mypowerup.y,
@@ -1271,7 +1280,7 @@ var breakout = function(sketch) {
 
       // Right arrow top recess
       buffer.vertex(
-        mypowerup.x + (mypowerup.width - 20),
+        mypowerup.x + (mypowerup.width - 14),
         mypowerup.y + 18
       );
 
@@ -1338,8 +1347,7 @@ var breakout = function(sketch) {
       );
 
       // Close off the shape
-      buffer.endShape(buffer.CLOSE);
-
+      buffer.endShape(buffer.CLOSE);*/
     }
 
     // Decide the powerup does when the user collects it.
