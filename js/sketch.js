@@ -2100,8 +2100,11 @@ var breakout = function(sketch) {
     // Player loses a life.
     playerLives--;
 
-    // Clear all onscreen powerups
+    // Clear all onscreen powerups.
     powerups = [];
+
+    // Clear any other balls in play.
+    balls = [];
 
     // If the player has no lives left, game over.
     if (playerLives < 0) {
