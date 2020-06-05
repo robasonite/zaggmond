@@ -166,3 +166,16 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - Made a new "shrink paddle" powerup. I had to give the paddle a 'minWidth' property for fairness. Wouldn't want the player's paddle to shrink down to nothing ;)
 
 - Added a new function called 'pickPowerup()'. It randomly chooses one of the two powerups I have and drops it. The onscreen powerups are also cleared when the player loses a life, moves to the next level, or starts the game over.
+
+
+
+## Preloader experiment (branch: preloader)
+
+2020-06-05:
+
+- Today, I made a new branch called 'preloader'. As I start to transition more into making graphical sprites, it only makes sense to add a preloader animation to my program. Or I suppose I could be lazy and write a big "Loading..." message that the game will draw on top of. There are many ways I could spin this.
+
+- After viewing a neat video on a Coding Train YouTube Channel, I gave the convoluted "active loading" method a try. Now I have 3 new functions, 11 new global variables, and a new function called 'checkLoading()' just to check if everything is loaded. P5.draw()' calls 'checkLoading()' until it returns 'true'. Then the program plays just like before. If it returns 'false', then the loading screen is displayed over and over again. It's just a green screen with "Loading..." written across it. Maybe I'll jazz it up later with animation, but it will do for now.
+
+
+## END Preloader experiment (branch: preloader)
