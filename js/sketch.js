@@ -7,7 +7,7 @@
 // A huge thankyou goes out to the great people of the Internet. Though we have never met, on or offline, this work would have been impossible without the efforts of the many YouTubers, Redditors, and bloggers who post content about JavaScript, Android, and game development. It's like a college education without a rigid schedule, classrooms, crappy professors, or rediculous debt. Thank you all so very much.
 //
 // TODO:
-// - Set up a basic loading screen
+// - *DONE* Set up a basic loading screen
 // - *DONE* Design a some level backgrounds
 // - *DONE* Implement some kind of power-up system
 
@@ -314,13 +314,13 @@ var breakout = function(sketch) {
       soundEffects[effectName].setVolume(volume);
       
 
-      console.log("File: " + sound.file);
-      console.log("volume: " + volume);
+      //console.log("File: " + sound.file);
+      //console.log("volume: " + volume);
      
       // Mark audio loading done.
       if (loadedAudioFiles == totalAudioFiles) {
         audioLoadingDone = true;
-        console.log("All audio loaded");
+        //console.log("All audio loaded");
       }
 
     }
@@ -346,7 +346,7 @@ var breakout = function(sketch) {
       // Set the font
       sketch.textFont(gameConfig.font);
 
-      console.log("Font loaded.");
+      //console.log("Font loaded.");
 
     }
 
@@ -369,7 +369,7 @@ var breakout = function(sketch) {
       // Check if we're don loading sprites.
       if (loadedSprites == totalSprites) {
         spriteLoadingDone = true;
-        console.log("All " + totalSprites + " sprites loaded.");
+        //console.log("All " + totalSprites + " sprites loaded.");
       }
     }
 
@@ -405,7 +405,7 @@ var breakout = function(sketch) {
       if (loadedLevelBackgrounds == totalLevelBackgrounds) {
         allLevelBackgroundsLoaded = true;
 
-        console.log("All " + totalLevelBackgrounds + " level backgrounds loaded.");
+        //console.log("All " + totalLevelBackgrounds + " level backgrounds loaded.");
       }
     }
 
@@ -643,9 +643,9 @@ var breakout = function(sketch) {
     
     let startBtn = makeUiButton(
       'START',
-      (gameConfig.areaWidth / 2) - 125,
+      (gameConfig.areaWidth / 2) - (270 / 2),
       gameConfig.areaHeight * 0.4,
-      250,
+      270,
       140,
       'title',
       70
@@ -698,9 +698,9 @@ var breakout = function(sketch) {
     
     let resumeBtn = makeUiButton(
       'RESUME',
-      (gameConfig.areaWidth / 2) - (280 / 2),
+      (gameConfig.areaWidth / 2) - (340 / 2),
       gameConfig.areaHeight * 0.5,
-      280,
+      340,
       140,
       'pause',
       70
@@ -767,7 +767,7 @@ var breakout = function(sketch) {
 
       // Decide to generate a powerup by random chance
       let dropval = sketch.random();
-      console.log(dropval);
+      //console.log(dropval);
       // 20% chance to spawn a powerup
       if (dropval > 0.8) {
         // Drop a powerup
@@ -839,7 +839,7 @@ var breakout = function(sketch) {
       }
 
       else {
-        console.log("You win!");
+        //console.log("You win!");
         switchScreen('title');
       }
     }
@@ -2365,7 +2365,7 @@ var breakout = function(sketch) {
       }
       gameOver.maxTime = 120;
       messages.push(gameOver);
-      console.log("You LOSE!");
+      //console.log("You LOSE!");
 
     }
 
