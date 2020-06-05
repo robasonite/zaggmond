@@ -20,7 +20,7 @@ var breakout = function(sketch) {
     areaHeight: 1280,
     buttonFontHeight: 16,
     brickSpacing: 10,
-    mode: 'title',
+    mode: 'loading',
     uiBarHeight: 100,
     msgMaxTime: 60,
     font: '',
@@ -281,7 +281,8 @@ var breakout = function(sketch) {
   Levels.push(level_0); */
 
   // >> LEVEL SECTION END
-  
+ 
+
   sketch.preload = function() {
     // Set the inital scale.
     gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
@@ -300,7 +301,7 @@ var breakout = function(sketch) {
     gameConfig.font = sketch.loadFont('fonts/FiraMono-Medium.otf');
     gameConfig.fontName = 'FiraMono-Medium';
     
-    // Before we draw ANYTHING, create shape buffers for the bricks
+    // Before we draw ANYTHING, create shape buffers for the game objects.
     shapeBlueprints.push(makeEffectParticle(0,0));
     shapeBlueprints.push(makeBombSpark(0,0));
     shapeBlueprints.push(makeBrick(0,0));
@@ -516,7 +517,7 @@ var breakout = function(sketch) {
     //resetGame();
 
     // Make sure that the right buttons are showing
-    switchScreen('title');
+    switchScreen('loading');
   }
 
   // The damage resolution function for bricks
@@ -1004,8 +1005,8 @@ var breakout = function(sketch) {
   }
 
   function titleScreen() {
-    sketch.background(0);
-    sketch.fill(90,90,200);
+    sketch.background(90,90,200);
+    //sketch.fill(90,90,200);
     //strokeWeight(4);
     //stroke(0,0,200);
     sketch.rect(
@@ -1022,6 +1023,21 @@ var breakout = function(sketch) {
       (gameConfig.areaWidth / 2) * gameConfig.scale,
       (gameConfig.areaHeight * 0.2) * gameConfig.scale
     );
+  }
+
+  function loadingScreen() {
+    sketch.background(30,200,30);
+    sketch.fill(0);
+    sketch.stroke(255);
+    sketch.strokeWeight(4);
+    sketch.textAlign(sketch.CENTER);
+    sketch.textSize(90 * gameConfig.scale);
+    sketch.text(
+      "Loading...",
+      (gameConfig.areaWidth / 2) * gameConfig.scale,
+      (gameConfig.areaHeight / 2) * gameConfig.scale
+    );
+    sketch.noStroke();
   }
   
   function pauseScreen() {
@@ -1049,14 +1065,17 @@ var breakout = function(sketch) {
   let lastLoop = new Date();
   sketch.draw = function() {
     // put drawing code here
-    if (gameConfig.mode == 'play') {
-      gameLoop();
+    if (gameConfig.mode == 'loading') {
+      loadingScreen();
     }
     else if (gameConfig.mode == 'title') {
       titleScreen();
     }
     else if (gameConfig.mode == 'pause') {
       pauseScreen();
+    }
+    else if (gameConfig.mode == 'play') {
+      gameLoop();
     }
 
     // Show FPS
