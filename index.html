@@ -7,6 +7,8 @@
   <title>Mobile app demo</title>
   <style>
     body {
+      font-family: 'FiraMono-Medium';
+      src: url('fonts/FiraMono-Medium.otf');
       padding: 0;
       margin: 0;
       overflow: hidden;
@@ -34,13 +36,21 @@
       font-weight: bold;
       padding: 8px;*/
     }
+
+    #fontTest {
+      color: black;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
   </style>
   <script src="js/p5.min.js"></script>
   <script src="js/addons/p5.sound.min.js"></script>
-  <script src="js/sketch.js"></script>
 </head>
 
 <body>
+  <p id="fontTest">demo text</p>
+  <script src="js/sketch.js"></script>
 </body>
 
 </html>
