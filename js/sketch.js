@@ -7,8 +7,9 @@
 // A huge thankyou goes out to the great people of the Internet. Though we have never met, on or offline, this work would have been impossible without the efforts of the many YouTubers, Redditors, and bloggers who post content about JavaScript, Android, and game development. It's like a college education without a rigid schedule, classrooms, crappy professors, or rediculous debt. Thank you all so very much.
 //
 // TODO:
-// - Design a some level backgrounds
-// - Implement some kind of power-up system
+// - Set up a basic loading screen
+// - *DONE* Design a some level backgrounds
+// - *DONE* Implement some kind of power-up system
 
 var breakout = function(sketch) {
   gameConfig = {
@@ -281,6 +282,170 @@ var breakout = function(sketch) {
   Levels.push(level_0); */
 
   // >> LEVEL SECTION END
+  
+
+
+  // >> ACTIVE LOADER SECTION
+  // Load sound files.
+  let totalAudioFiles = 0;
+  let loadedAudioFiles = 0;
+  let audioLoadingDone = false;
+
+  // Load audio files and attach them to soundEffects.
+  function audioLoader(sa) {
+    // Volume level is optional.
+    let volume = 1.0
+    if (sa[2]) {
+      volume = sa[2];
+    }
+
+    // The effect name and sound file are not optional.
+    let effectName = sa[0];
+    let soundFile = sa[1];
+    
+
+    // Function to run upon success.
+    function soundLoaded(sound) {
+
+      // Increment the loaded audio file counter.
+      loadedAudioFiles++;
+
+      // Set the volume of the sound file.
+      soundEffects[effectName].setVolume(volume);
+      
+
+      console.log("File: " + sound.file);
+      console.log("volume: " + volume);
+     
+      // Mark audio loading done.
+      if (loadedAudioFiles == totalAudioFiles) {
+        audioLoadingDone = true;
+        console.log("All audio loaded");
+      }
+
+    }
+
+    // Load the sound file with a callback.
+    soundEffects[effectName] = sketch.loadSound(soundFile, soundLoaded);
+
+  }
+
+  // Load the font file.
+  let fontFileLoaded = false;
+  function fontLoader(fa) {
+    let fontFile = fa[0];
+    let fontName = fa[1];
+
+    // Check for success.
+    function fontLoaded() {
+      fontFileLoaded = true;
+
+      // Set the fontName for buttons.
+      gameConfig.fontName = fontName;
+
+      // Set the font
+      sketch.textFont(gameConfig.font);
+
+      console.log("Font loaded.");
+
+    }
+
+    // Try to load the font.
+    gameConfig.font = sketch.loadFont(fontFile, fontLoaded);
+  }
+
+  // Sprite loading
+  let totalSprites = 0;
+  let loadedSprites = 0;
+  let spriteLoadingDone = false;
+
+  // This function process shap blueprint objects.
+  function spriteLoader(blueprint) {
+
+    // Success callback
+    function spriteLoaded() {
+      loadedSprites++;
+
+      // Check if we're don loading sprites.
+      if (loadedSprites == totalSprites) {
+        spriteLoadingDone = true;
+        console.log("All " + totalSprites + " sprites loaded.");
+      }
+    }
+
+    // Make the buffer
+    shapeBuffers[blueprint.shapeName] = sketch.createGraphics(blueprint.width, blueprint.height);
+
+    // If the blueprint has a sprite, load it and replace the buffer.
+    if (blueprint.sprite) {
+      shapeBuffers[blueprint.shapeName] = sketch.loadImage(blueprint.sprite, spriteLoaded);
+    }
+
+    // Else, run the makeShape function.
+    else {
+      blueprint.makeShape(shapeBuffers[blueprint.shapeName]);
+      spriteLoaded();
+    }
+  }
+
+
+
+  // Level backgrounds
+  let loadedLevelBackgrounds = 0;
+  let totalLevelBackgrounds = 0;
+  let allLevelBackgroundsLoaded = false;
+  function levelBackgroundLoader(level) {
+    let img = '';
+
+    // Success callback
+    function backgroundLoaded() {
+      loadedLevelBackgrounds++;
+      level.background = img;
+
+      if (loadedLevelBackgrounds == totalLevelBackgrounds) {
+        allLevelBackgroundsLoaded = true;
+
+        console.log("All " + totalLevelBackgrounds + " level backgrounds loaded.");
+      }
+    }
+
+    img = sketch.loadImage(level.backgroundImage, backgroundLoaded);
+  }
+
+
+  // Determine whether everything has been loaded and fire switchScreen() ONLY
+  // ONCE.
+  let everythingLoaded = false;
+  let preloaderStopped = false;
+
+  function checkLoading() {
+    if (everythingLoaded) {
+      if (preloaderStopped == false) {
+        preloaderStopped = true;
+        switchScreen('title');
+      }
+
+      else {
+        // Tell the main draw function that everything is loaded.
+        return true;
+      }
+    }
+
+    else {
+      if (
+        audioLoadingDone &&
+        fontFileLoaded &&
+        spriteLoadingDone &&
+        allLevelBackgroundsLoaded) {
+        everythingLoaded = true;
+      }
+
+      // Tell the main draw function that we're still loading.
+      return false;
+    }
+  }
+
+
  
 
   sketch.preload = function() {
@@ -288,21 +453,21 @@ var breakout = function(sketch) {
     gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
 
     // Need to load sound files before trying to use them.
-    soundEffects.ballHitWall = sketch.loadSound('sounds/hitWall.ogg');
-    soundEffects.ballHitBrick = sketch.loadSound('sounds/hitBrick.ogg');
-    soundEffects.ballHitPaddle = sketch.loadSound('sounds/hitPaddle.ogg');
+    //soundEffects.ballHitWall = sketch.loadSound('sounds/hitWall.ogg');
+    //soundEffects.ballHitBrick = sketch.loadSound('sounds/hitBrick.ogg');
+    //soundEffects.ballHitPaddle = sketch.loadSound('sounds/hitPaddle.ogg');
 
     // Adjust the volume of the sound effects.
-    soundEffects.ballHitWall.setVolume(0.2);
+    //soundEffects.ballHitWall.setVolume(0.2);
     //soundEffects.ballHitBrick.setVolume(1.7);
-    soundEffects.ballHitPaddle.setVolume(0.7);
+    //soundEffects.ballHitPaddle.setVolume(0.7);
 
     // Also preload the base font.
-    gameConfig.font = sketch.loadFont('fonts/FiraMono-Medium.otf');
-    gameConfig.fontName = 'FiraMono-Medium';
+    //gameConfig.font = sketch.loadFont('fonts/FiraMono-Medium.otf');
+    //gameConfig.fontName = 'FiraMono-Medium';
     
     // Before we draw ANYTHING, create shape buffers for the game objects.
-    shapeBlueprints.push(makeEffectParticle(0,0));
+    /*shapeBlueprints.push(makeEffectParticle(0,0));
     shapeBlueprints.push(makeBombSpark(0,0));
     shapeBlueprints.push(makeBrick(0,0));
     shapeBlueprints.push(makeBlueBrick(0,0));
@@ -317,6 +482,10 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makePaddle(0,0));
     shapeBlueprints.push(makePowerupGrowPaddle(0,0));
     shapeBlueprints.push(makePowerupShrinkPaddle(0,0));
+
+    // Count the sprites.
+    totalSprites = shapeBlueprints.length;
+    
     for (let i = 0; i < shapeBlueprints.length; i++) {
       // Make the buffer
       shapeBuffers[shapeBlueprints[i].shapeName] = sketch.createGraphics(shapeBlueprints[i].width, shapeBlueprints[i].height);
@@ -330,15 +499,15 @@ var breakout = function(sketch) {
         // If not, run its shape drawing function.
         shapeBlueprints[i].makeShape(shapeBuffers[shapeBlueprints[i].shapeName]);
       }
-    }
+    } */
 
     // Also preload all level backgrounds.
-    for (let i = 0; i < Levels.length; i++) {
+    /*for (let i = 0; i < Levels.length; i++) {
       if (Levels[i].backgroundImage) {
         let img = sketch.loadImage(Levels[i].backgroundImage);
         Levels[i].background = img;
       }
-    }
+    }*/
   }
 
   sketch.setup = function() {
@@ -354,8 +523,60 @@ var breakout = function(sketch) {
     gameConfig.getCompStyle();
 
 
-    // Set the font
-    sketch.textFont(gameConfig.font);
+    // Load audio files
+    let audioArray = [
+      ['ballHitWall', 'sounds/hitWall.ogg', 0.2],
+      ['ballHitBrick', 'sounds/hitBrick.ogg'],
+      ['ballHitPaddle', 'sounds/hitPaddle.ogg', 0.2],
+    ];
+
+    // Tell the program how many audi files there are.
+    totalAudioFiles = audioArray.length;
+
+    for (let i = 0; i < totalAudioFiles; i++) {
+      audioLoader(audioArray[i]);
+    }
+
+    // Load the game font.
+    fontLoader(['fonts/FiraMono-Medium.otf', 'FiraMono-Medium']);
+
+    // Load or make all of the sprites.
+    shapeBlueprints.push(makeEffectParticle(0,0));
+    shapeBlueprints.push(makeBombSpark(0,0));
+    shapeBlueprints.push(makeBrick(0,0));
+    shapeBlueprints.push(makeBlueBrick(0,0));
+    shapeBlueprints.push(makeGreenBrick(0,0));
+    shapeBlueprints.push(makeOrangeBrick(0,0));
+    shapeBlueprints.push(makeYellowBrick(0,0));
+    shapeBlueprints.push(makeWhiteBrick(0,0));
+    shapeBlueprints.push(makeGrayBrick(0,0));
+    shapeBlueprints.push(makeInvincibleBrick(0,0));
+    shapeBlueprints.push(makeBombBrick(0,0));
+    shapeBlueprints.push(makeBall(0,0));
+    shapeBlueprints.push(makePaddle(0,0));
+    shapeBlueprints.push(makePowerupGrowPaddle(0,0));
+    shapeBlueprints.push(makePowerupShrinkPaddle(0,0));
+
+    // Count the sprites.
+    totalSprites = shapeBlueprints.length;
+
+    for (let i = 0; i < totalSprites; i++) {
+      spriteLoader(shapeBlueprints[i]);
+    }
+
+    // Count the level backgrounds
+    for (let i = 0; i < Levels.length; i++) {
+      if (Levels[i].backgroundImage) {
+        totalLevelBackgrounds++;
+      }
+    }
+    
+    for (let i = 0; i < Levels.length; i++) {
+      if (Levels[i].backgroundImage) {
+        levelBackgroundLoader(Levels[i]);
+      }
+    }
+
 
     /*let demoBrick = makeBrick(0,0);
     shapeBuffers.redBrick = sketch.createGraphics(demoBrick.width, demoBrick.height);
@@ -516,7 +737,7 @@ var breakout = function(sketch) {
     // Run the reset function to start the game at level 0
     //resetGame();
 
-    // Make sure that the right buttons are showing
+    // Start the game with the preloader.
     switchScreen('loading');
   }
 
@@ -1005,7 +1226,7 @@ var breakout = function(sketch) {
   }
 
   function titleScreen() {
-    sketch.background(90,90,200);
+    sketch.fill(90,90,200);
     //sketch.fill(90,90,200);
     //strokeWeight(4);
     //stroke(0,0,200);
@@ -1026,7 +1247,7 @@ var breakout = function(sketch) {
   }
 
   function loadingScreen() {
-    sketch.background(30,200,30);
+    sketch.background(0,200,0);
     sketch.fill(0);
     sketch.stroke(255);
     sketch.strokeWeight(4);
@@ -1065,36 +1286,46 @@ var breakout = function(sketch) {
   let lastLoop = new Date();
   sketch.draw = function() {
     // put drawing code here
-    if (gameConfig.mode == 'loading') {
-      loadingScreen();
-    }
-    else if (gameConfig.mode == 'title') {
-      titleScreen();
-    }
-    else if (gameConfig.mode == 'pause') {
-      pauseScreen();
-    }
-    else if (gameConfig.mode == 'play') {
-      gameLoop();
+
+
+    // If everything is loaded, run the game normally.
+    let loaded = checkLoading();
+    if (loaded) {
+
+      // Show the right screen for each mode.
+      if (gameConfig.mode == 'title') {
+        titleScreen();
+      }
+      else if (gameConfig.mode == 'pause') {
+        pauseScreen();
+      }
+      else if (gameConfig.mode == 'play') {
+        gameLoop();
+      }
+
+      // Show FPS
+      let thisLoop = new Date();
+      let fps = 1000 / (thisLoop - lastLoop);
+      lastLoop = thisLoop;
+      if (fps < 50) {
+        sketch.fill(200,0,0);
+      }
+      else {
+        sketch.fill(0,200,0);
+      }
+      sketch.textAlign(sketch.LEFT);
+      sketch.textSize(50 * gameConfig.scale);
+      sketch.text(
+        "FPS: " + Math.floor(fps),
+        500 * gameConfig.scale,
+        50 * gameConfig.scale
+      );
     }
 
-    // Show FPS
-    let thisLoop = new Date();
-    let fps = 1000 / (thisLoop - lastLoop);
-    lastLoop = thisLoop;
-    if (fps < 50) {
-      sketch.fill(200,0,0);
-    }
+    // Else, show the preloader.
     else {
-      sketch.fill(0,200,0);
+      loadingScreen();
     }
-    sketch.textAlign(sketch.LEFT);
-    sketch.textSize(50 * gameConfig.scale);
-    sketch.text(
-      "FPS: " + Math.floor(fps),
-      500 * gameConfig.scale,
-      50 * gameConfig.scale
-    );
   }
 
   // Simple overlap collision test
