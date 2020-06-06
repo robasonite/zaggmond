@@ -92,7 +92,7 @@ var breakout = function(sketch) {
   // Keep in mind that every other row is stagger!
   // The pattern goes 7 bricks, 6 bricks, 7 bricks, etc.
   let level0 = {}
-  level0.backgroundImage = 'img/background1.png';
+  level0.backgroundImage = 'img/background1.jpg';
   level0.bricks = [
     [0],
      [0],
@@ -112,7 +112,7 @@ var breakout = function(sketch) {
   ];
  
   let level1 = {};
-  level1.backgroundImage = 'img/background2.png';
+  level1.backgroundImage = 'img/background2.jpg';
   level1.bricks = [
     [0],
      [0],
@@ -1505,7 +1505,7 @@ var breakout = function(sketch) {
     let mypowerup = makePowerupGrowPaddle(x, y);
     mypowerup.shapeName = 'shrinkPaddle';
     mypowerup.points = 150;
-    mypowerup.sprite = 'img/powerUpShrinkPaddle.png';
+    mypowerup.sprite = 'img/powerUpShrinkPaddle.jpg';
     
     mypowerup.effect = function() {
       let newsize = player.width - (player.width * 0.15);
@@ -1532,7 +1532,7 @@ var breakout = function(sketch) {
     // Also award the player some points.
     mypowerup.points = 50;
     
-    mypowerup.sprite = 'img/powerUpGrowPaddle.png';
+    mypowerup.sprite = 'img/powerUpGrowPaddle.jpg';
     mypowerup.makeShape = function(buffer) {
       // This function should never run as long as the sprite file exists.
 
