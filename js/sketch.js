@@ -420,7 +420,9 @@ var breakout = function(sketch) {
 
       // Set the volume of the sound file.
       soundEffects[effectName].setVolume(volume);
-      
+
+      // Change playback mode to restart
+      //soundEffects[effectName].playMode('restart');
 
       //console.log("File: " + sound.file);
       //console.log("volume: " + volume);
@@ -554,6 +556,7 @@ var breakout = function(sketch) {
   }
 
 
+  // >> END ACTIVE LOADER SECTION
  
 
   sketch.preload = function() {
@@ -634,8 +637,9 @@ var breakout = function(sketch) {
     // Load audio files
     let audioArray = [
       ['ballHitWall', 'sounds/hitWall.ogg', 0.2],
-      ['ballHitBrick', 'sounds/hitBrick.ogg'],
+      ['ballHitBrick', 'sounds/hitBrick.ogg', 0.5],
       ['ballHitPaddle', 'sounds/hitPaddle.ogg', 0.2],
+      ['powerupCollect', 'sounds/powerupCollect.ogg',]
     ];
 
     // Tell the program how many audi files there are.
@@ -975,10 +979,8 @@ var breakout = function(sketch) {
 
         // Check for paddle collisions.
         if (collider(balls[x], player)) {
-          // Play the right sound, but not if it's already playing.
-          if (!soundEffects.ballHitPaddle.isPlaying()) {
-            soundEffects.ballHitPaddle.play();
-          }
+          
+          soundEffects.ballHitPaddle.play();
           
 
           // Send the ball back up.
@@ -1098,6 +1100,7 @@ var breakout = function(sketch) {
 
           // Mark powerup as dead.
           powerups[p].alive = false;
+          soundEffects.powerupCollect.play();
         }
 
         // Else, move the powerup
@@ -1626,7 +1629,7 @@ var breakout = function(sketch) {
     let mypowerup = makePowerupGrowPaddle(x, y);
     mypowerup.shapeName = 'shrinkPaddle';
     mypowerup.points = 150;
-    mypowerup.sprite = 'img/powerUpShrinkPaddle.jpg';
+    mypowerup.sprite = 'img/powerUpShrinkPaddle.png';
     
     mypowerup.effect = function() {
       let newsize = player.width - (player.width * 0.15);
@@ -1653,7 +1656,7 @@ var breakout = function(sketch) {
     // Also award the player some points.
     mypowerup.points = 50;
     
-    mypowerup.sprite = 'img/powerUpGrowPaddle.jpg';
+    mypowerup.sprite = 'img/powerUpGrowPaddle.png';
     mypowerup.makeShape = function(buffer) {
       // This function should never run as long as the sprite file exists.
 
@@ -1946,18 +1949,18 @@ var breakout = function(sketch) {
     // Color, red by default
     mybrick.color = sketch.color(255,0,0);
 
+    // Brick borders
+    mybrick.border = 2;
+    mybrick.borderColor = sketch.color(155);
+
     // Draw diamonds instead of circles.
     mybrick.makeShape = function(buffer) {
       //buffer.noStroke();
 
-      // Fill with specified color.
-      buffer.fill(mybrick.color);
+      // Fill with the border color.
+      buffer.fill(mybrick.borderColor);
      
-      // Add an outline.
-      buffer.stroke(0);
-      buffer.strokeWeight(2);
-      
-      // Draw a diamond.
+      // Draw the border.
       buffer.quad(
 
         // Left corner XY
@@ -1976,7 +1979,27 @@ var breakout = function(sketch) {
         mybrick.x + (mybrick.width / 2),
         mybrick.y + mybrick.height,
       );
-      buffer.noStroke();
+      
+      // Make the diamond.
+      buffer.fill(mybrick.color);
+      buffer.quad(
+
+        // Left corner XY
+        mybrick.x + mybrick.border,
+        mybrick.y + (mybrick.height / 2),
+
+        // Top center XY
+        mybrick.x + (mybrick.width / 2),
+        mybrick.y + (mybrick.border / 2),
+
+        // Right corner XY
+        mybrick.x + mybrick.width - mybrick.border,
+        mybrick.y + (mybrick.height / 2),
+
+        // Lower center XY
+        mybrick.x + (mybrick.width / 2),
+        mybrick.y + mybrick.height - (mybrick.border / 2),
+      );
     }
    
     // Or they could be invincible
