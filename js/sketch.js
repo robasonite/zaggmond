@@ -829,9 +829,9 @@ var breakout = function(sketch) {
     let pauseBtn = makeUiButton(
       //'&#9613;&#9613;',
       '&#10074;&#10074;',
-      gameConfig.areaWidth - 90,
+      gameConfig.areaWidth - gameConfig.uiBarHeight,
       gameConfig.areaHeight - gameConfig.uiBarHeight,
-      90,
+      gameConfig.uiBarHeight,
       gameConfig.uiBarHeight,
       'play',
       40
