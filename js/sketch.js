@@ -91,9 +91,9 @@ var breakout = function(sketch) {
 
   // Keep in mind that every other row is stagger!
   // The pattern goes 7 bricks, 6 bricks, 7 bricks, etc.
-  let level0 = {}
-  level0.backgroundImage = 'img/background1.jpg';
-  level0.bricks = [
+  let level1 = {}
+  level1.backgroundImage = 'img/background1.jpg';
+  level1.bricks = [
     [0],
      [0],
     [0],
@@ -111,9 +111,9 @@ var breakout = function(sketch) {
     [5,5,5,5,5,5,5],
   ];
  
-  let level1 = {};
-  level1.backgroundImage = 'img/background2.jpg';
-  level1.bricks = [
+  let level2 = {};
+  level2.backgroundImage = 'img/background2.jpg';
+  level2.bricks = [
     [0],
      [0],
     [0],
@@ -133,9 +133,117 @@ var breakout = function(sketch) {
     [1,2,3,4,5,6,7],
      [1,2,3,4,5,6]
   ];
-  Levels.push(level1);
-  Levels.push(level0);
   
+  let level3 = {};
+  level3.backgroundImage = 'img/background3.jpg';
+  level3.bricks = [
+    [0],
+     [0],
+    [0],
+     [0],
+    [0,6,0,0,0,6,0],
+     [0,6,0,0,6,0],
+    [0,0,6,0,6,0,0],
+     [0,0,6,6,0,0],
+    [1,2,1,10,1,2,1],
+     [7,6,7,7,6,7],
+    [1,2,1,10,1,2,1],
+     [5,7,5,5,7,5],
+    [1,2,1,10,1,2,1],
+     [5,7,5,5,7,5],
+    [1,2,1,10,1,2,1],
+     [7,6,7,7,6,7],
+    [0,0,0,10,0,0,0],
+     [0,0,6,6,0,0],
+    [0,0,0,10,0,0,0],
+     [0,0,6,6,0,0],
+    [0,0,0,10,0,0,0],
+     [0,0,6,6,0,0],
+    [0,0,0,10,0,0,0],
+     [0,0,6,6,0,0],
+    [0,0,0,10,0,0,0],
+     [0,0,6,6,0,0],
+    [0,0,0,10,0,0,0],
+     [0,0,6,6,0,0],
+    [0,0,0,10,0,0,0],
+     [0,0,6,6,0,0],
+    [0,0,0,6,0,0,0],
+  ];
+  
+  let level4 = {};
+  level4.backgroundImage = 'img/background4.jpg';
+  level4.bricks = [
+    [0],
+     [0],
+    [0],
+     [0],
+    [0,0,0,2,0,0,0],
+     [0,0,2,2,0,0],
+    [0,0,2,6,2,0,0],
+     [0,2,6,6,2,0],
+    [0,2,6,0,6,2,0],
+     [2,6,0,0,6,2],
+    [2,6,0,9,0,6,2],
+     [6,0,9,9,0,6],
+    [2,0,9,10,9,0,2],
+     [6,0,10,10,0,6],
+    [2,0,9,10,9,0,2],
+     [6,0,10,10,0,6],
+    [2,0,9,9,9,0,2],
+     [6,0,0,0,0,6],
+    [2,6,0,0,0,6,2],
+     [0,6,0,0,6,0],
+    [6,0,6,0,6,0,6],
+     [0],
+    [6,0,6,0,6,0,6],
+     [0],
+    [6,0,6,0,6,0,6],
+     [0],
+    [6,0,9,0,9,0,6],
+     [0],
+    [9,0,0,0,0,0,9],
+  ];
+  
+  let level5 = {};
+  level5.backgroundImage = 'img/background5.jpg';
+  level5.bricks = [
+    [0],
+     [0],
+    [0],
+     [10,10,10,10,10,10],
+    [10,1,1,10,1,1,10],
+     [0,0,10,0,0,0],
+    [10,0,0,10,0,0,10],
+     [2,2,10,2,2,2],
+    [10,2,2,10,2,2,10],
+     [0,0,10,0,10,0],
+    [10,0,0,10,0,0,10],
+     [3,3,10,3,10,3],
+    [10,3,3,10,3,3,10],
+     [0,0,10,0,10,0],
+    [10,0,0,10,0,0,10],
+     [4,4,10,4,10,4],
+    [10,4,4,10,4,4,10],
+     [0,0,10,0,10,0],
+    [10,0,0,10,0,0,10],
+     [5,5,10,5,10,5],
+    [10,5,5,10,5,5,10],
+     [0,0,10,0,10,0],
+    [10,0,0,10,0,0,10],
+     [6,6,10,6,10,6],
+    [10,6,6,10,6,6,10],
+     [0,0,10,0,10,0],
+    [10,0,0,10,0,0,10],
+     [7,7,10,7,7,10],
+    [0,7,7,10,7,7,7],
+     [0,0,9,9,0,0],
+  ];
+
+  Levels.push(level5);
+  Levels.push(level1);
+  Levels.push(level2);
+  Levels.push(level3);
+  Levels.push(level4);
 
 
   
@@ -1237,13 +1345,26 @@ var breakout = function(sketch) {
       gameConfig.areaHeight * gameConfig.scale
     );
     sketch.fill(0);
+    sketch.stroke(255);
+    sketch.strokeWeight(4);
     sketch.textAlign(sketch.CENTER);
     sketch.textSize(90 * gameConfig.scale);
     sketch.text(
-      "Title here",
+      "Balls",
       (gameConfig.areaWidth / 2) * gameConfig.scale,
-      (gameConfig.areaHeight * 0.2) * gameConfig.scale
+      (gameConfig.areaHeight * 0.15) * gameConfig.scale
     );
+    sketch.text(
+      "and",
+      (gameConfig.areaWidth / 2) * gameConfig.scale,
+      (gameConfig.areaHeight * 0.24) * gameConfig.scale
+    );
+    sketch.text(
+      "Diamonds",
+      (gameConfig.areaWidth / 2) * gameConfig.scale,
+      (gameConfig.areaHeight * 0.32) * gameConfig.scale
+    );
+    sketch.noStroke();
   }
 
   function loadingScreen() {
@@ -1283,7 +1404,7 @@ var breakout = function(sketch) {
   }
 
   // Needed to report FPS
-  let lastLoop = new Date();
+  //let lastLoop = new Date();
   sketch.draw = function() {
     // put drawing code here
 
@@ -1304,7 +1425,7 @@ var breakout = function(sketch) {
       }
 
       // Show FPS
-      let thisLoop = new Date();
+      /*let thisLoop = new Date();
       let fps = 1000 / (thisLoop - lastLoop);
       lastLoop = thisLoop;
       if (fps < 50) {
@@ -1319,7 +1440,7 @@ var breakout = function(sketch) {
         "FPS: " + Math.floor(fps),
         500 * gameConfig.scale,
         50 * gameConfig.scale
-      );
+      );*/
     }
 
     // Else, show the preloader.
