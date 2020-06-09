@@ -10,6 +10,7 @@
 // - *DONE* Set up a basic loading screen
 // - *DONE* Design a some level backgrounds
 // - *DONE* Implement some kind of power-up system
+// - Get moving bricks working
 
 var breakout = function(sketch) {
   gameConfig = {
@@ -27,17 +28,17 @@ var breakout = function(sketch) {
     font: '',
     fontName: '',
     level: 0
-  }
+  };
 
   // Give gameConfig a function for getting the current style rules and the current buttonOffsetX.
   gameConfig.getCompStyle = function() {
     // Get the style rules
-    let targetElement = gameConfig.canvas.elt
+    let targetElement = gameConfig.canvas.elt;
     gameConfig.compStyle = targetElement.currentStyle || window.getComputedStyle(targetElement);
 
     // Get the current left margin as a floating point number.
     gameConfig.buttonOffsetX = parseFloat(gameConfig.compStyle.marginLeft);
-  }
+  };
 
   // Global pause variable; Nothing should be moving if true.
   let gamePaused = false;
@@ -238,18 +239,48 @@ var breakout = function(sketch) {
     [0,7,7,10,7,7,7],
      [0,0,9,9,0,0],
   ];
+  
+  let level6 = {};
+  level6.backgroundImage = 'img/background5.jpg';
+  level6.bricks = [
+    [0],
+     [0],
+    [0],
+     [0],
+    [0,0,0,1,0,0,0],
+     [0,0,1,1,0,0],
+    [0,0,0,1,0,0,0],
+  ];
 
-  Levels.push(level5);
+  // This level has special bricks.
+  level6.specialBricks = [];
+
+  function movingBrick1() {
+    let mybrick = makeMovingBrickDiagonal(
+      makeBrick,
+      gameConfig.brickSpacing,
+      gameConfig.uiBarHeight + gameConfig.brickSpacing,
+      3
+    );
+    
+    bricks.push(mybrick);
+  }
+
+  level6.specialBricks.push(movingBrick1);
+
+
+  Levels.push(level6);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
   Levels.push(level4);
+  Levels.push(level5);
 
 
   
 
   function levelReader(level) {
-    // Grab the level bricks
+    // Grab the level bricks.
     let levelBricks = level.bricks;
 
     // Make a brick to use as a model.
@@ -262,6 +293,7 @@ var breakout = function(sketch) {
     // Whether or not we are on a staggered row.
     let stagRow = false;
 
+    // > NORMAL BRICK HANDLING
     // Each outer element is an array.
     for (let rowNum = 0; rowNum < levelBricks.length; rowNum++) {
 
@@ -281,7 +313,8 @@ var breakout = function(sketch) {
         // The brick making function
         let spawnBrick;
 
-        // Choose which brick spawning function to run
+        // Brick guide
+        // Choose which brick spawning function to run.
         switch (levelBricks[rowNum][brickNum]) {
           // A value of 0 means no brick spawns
           case 1:
@@ -341,6 +374,18 @@ var breakout = function(sketch) {
       }
       else {
         stagRow = true;
+      }
+    }
+    
+    // > END NORMAL BRICK HANDLING
+
+    // Custom brick processing.
+    // These are special functions for non-standard bricks.
+    if (level.specialBricks) {
+      let sb = level.specialBricks;
+      for (let i = 0; i < sb.length; i++) {
+        // Run the special brick function.
+        sb[i]();
       }
     }
   }
@@ -669,6 +714,9 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makePowerupGrowPaddle(0,0));
     shapeBlueprints.push(makePowerupShrinkPaddle(0,0));
     shapeBlueprints.push(makePowerupKillPaddle(0,0));
+    shapeBlueprints.push(makeNoBorderInvincibleBrick(0,0));
+    shapeBlueprints.push(makeNoBorderGrayBrick(0,0));
+    shapeBlueprints.push(makeNoBorderWhiteBrick(0,0));
 
     // Count the sprites.
     totalSprites = shapeBlueprints.length;
@@ -971,12 +1019,7 @@ var breakout = function(sketch) {
         aliveBalls.push(balls[x]);
 
         // Take top and bottom bars into account for bounds checks.
-        balls[x].boundsCheck(
-          0,
-          gameConfig.uiBarHeight,
-          gameConfig.areaWidth,
-          gameConfig.areaHeight - gameConfig.uiBarHeight 
-        );
+        balls[x].boundsCheck();
 
         // Check for paddle collisions.
         if (collider(balls[x], player)) {
@@ -1072,12 +1115,7 @@ var breakout = function(sketch) {
         if (bricks[x].visible) {
 
           // Next, do a bounds check.
-          bricks[x].boundsCheck(
-            0,
-            0,
-            gameConfig.areaWidth,
-            gameConfig.areaHeight
-          );
+          bricks[x].boundsCheck();
 
           // Then move the brick.
           bricks[x].move(gameConfig.scale);
@@ -1132,7 +1170,7 @@ var breakout = function(sketch) {
 
 
     // Update the player
-    player.boundsCheck(0, gameConfig.areaWidth);
+    player.boundsCheck();
     player.move(gameConfig.scale);
   }
   
@@ -1625,15 +1663,15 @@ var breakout = function(sketch) {
   function pickPowerup(x, y) {
     let pick = sketch.random();
     let powerup = '';
-    if (pick > 0.15) {
-      powerup = makePowerupShrinkPaddle(x, y);
+    if (pick < 0.10) {
+      powerup = makePowerupKillPaddle(x, y);
     }
-    else if (pick > 0.50) {
+    else if (pick < 0.25) {
       powerup = makePowerupGrowPaddle(x, y);
     }
 
-    else {
-      powerup = makePowerupKillPaddle(x, y);
+    else if (pick < 0.50) {
+      powerup = makePowerupShrinkPaddle(x, y);
     }
 
     return powerup;
@@ -1894,6 +1932,14 @@ var breakout = function(sketch) {
     myball.width = 30;
     myball.height = 30;
 
+    // Balls are the first shape to require bounds checking.
+    myball.bounds = {
+      x: 0,
+      y: gameConfig.uiBarHeight,
+      width: gameConfig.areaWidth,
+      height: gameConfig.areaHeight - gameConfig.uiBarHeight
+    }
+
     myball.shapeName = 'blueBall';
     myball.makeShape = function(buffer) {
       buffer.noStroke();
@@ -1919,28 +1965,31 @@ var breakout = function(sketch) {
       );
     }
 
-    myball.boundsCheck = function (x, y, width, height) {
+    // Use custom paramters
+    //myball.boundsCheck = function (x, y, width, height) {
+    myball.boundsCheck = function () {
+      let b = myball.bounds;
       let hitWall = false;
-      if (myball.x + myball.width > x + width) {
-        myball.x = x + width - myball.width - 1;
+      if (myball.x + myball.width > b.x + b.width) {
+        myball.x = b.x + b.width - myball.width - 1;
         myball.vx *= -1;
         hitWall = true;
       }
-      else if (myball.x < x) {
-        myball.x = x + 1;
+      else if (myball.x < b.x) {
+        myball.x = b.x + 1;
         myball.vx *= -1;
         hitWall = true;
       }
 
       // If the ball falls through the bottom of the screen, kill it.
-      else if (myball.y + myball.height > y + height) {
-        myball.y = y + height - myball.height -1;
+      else if (myball.y + myball.height > b.y + b.height) {
+        myball.y = b.y + b.height - myball.height -1;
         myball.vy *= -1;
         //hitWall = true;
         myball.alive = false;
       }
-      else if (myball.y < y) {
-        myball.y = y + 1;
+      else if (myball.y < b.y) {
+        myball.y = b.y + 1;
         myball.vy *= -1;
         hitWall = true;
       }
@@ -1954,8 +2003,7 @@ var breakout = function(sketch) {
     return myball;
   }
 
-  function makeBrick(x, y, powerup) {
-    //let mybrick = makeBall(x, y, w);
+  function makeBrick(x, y) {
     let mybrick = makeBall(x, y);
 
     // Bricks do not move by default.
@@ -2033,7 +2081,35 @@ var breakout = function(sketch) {
    
     // Or they could be invincible
     mybrick.noDie = false;
+    
+    mybrick.bounds = {
+      x: 0,
+      y: gameConfig.uiBarHeight,
+      width: gameConfig.areaWidth,
+      height: gameConfig.areaHeight - gameConfig.uiBarHeight
+    }
 
+    // Bricks don't die when the hit the bottom of their 'bounds box'.
+    mybrick.boundsCheck = function () {
+      let b = mybrick.bounds;
+      if (mybrick.x + mybrick.width > b.x + b.width) {
+        mybrick.x = b.x + b.width - mybrick.width - 1;
+        mybrick.vx *= -1;
+      }
+      else if (mybrick.x < b.x) {
+        mybrick.x = b.x + 1;
+        mybrick.vx *= -1;
+      }
+
+      else if (mybrick.y + mybrick.height > b.y + b.height) {
+        mybrick.y = b.y + b.height - mybrick.height -1;
+        mybrick.vy *= -1;
+      }
+      else if (mybrick.y < b.y) {
+        mybrick.y = b.y + 1;
+        mybrick.vy *= -1;
+      }
+    }
 
     return mybrick;
   }
@@ -2081,11 +2157,26 @@ var breakout = function(sketch) {
     }*/
     return mybrick;
   }
+
+  // Bricks with no borders will be needed to render armored bricks.
+  function makeNoBorderWhiteBrick(x, y) {
+    let mybrick = makeWhiteBrick(x, y);
+    mybrick.shapeName = 'whiteBrickNoBorder';
+    mybrick.border = 0;
+    return mybrick;
+  }
   
   function makeGrayBrick(x, y) {
     let mybrick = makeBrick(x, y);
-    mybrick.color = sketch.color(128);
+    mybrick.color = sketch.color(155);
     mybrick.shapeName = 'grayBrick';
+    return mybrick;
+  }
+  
+  function makeNoBorderGrayBrick(x, y) {
+    let mybrick = makeGrayBrick(x, y);
+    mybrick.shapeName = 'grayBrickNoBorder';
+    mybrick.border = 0;
     return mybrick;
   }
   
@@ -2096,6 +2187,15 @@ var breakout = function(sketch) {
     mybrick.color = sketch.color(0);
     mybrick.shapeName = 'invincibleBrick';
     mybrick.noDie = true;
+    mybrick.border = 4;
+    mybrick.borderColor = sketch.color(255);
+    return mybrick;
+  }
+  
+  function makeNoBorderInvincibleBrick(x, y) {
+    let mybrick = makeInvincibleBrick(x, y);
+    mybrick.shapeName = 'invincibleBrickNoBorder';
+    mybrick.border = 0;
     return mybrick;
   }
 
@@ -2105,6 +2205,8 @@ var breakout = function(sketch) {
     let mybrick = makeBrick(x, y);
     mybrick.color = sketch.color(0);
     mybrick.shapeName = 'bombBrick';
+    mybrick.border = 4;
+    mybrick.borderColor = sketch.color(255);
 
     // Make resolveBrickDamage() create explosionPoints.
     mybrick.type = 'bomb';
@@ -2143,7 +2245,7 @@ var breakout = function(sketch) {
     let mybrick = makeBrick(x, y);
     mybrick.hp = 4;
 
-    // These need a different kind of draw function to shop HP left.
+    // These need a different kind of draw function to whow HP.
     mybrick.draw = function(scale, buffer) {
       // Draw the main brick first like normal
       sketch.image(
@@ -2159,15 +2261,19 @@ var breakout = function(sketch) {
       let xyMultiplier = whMultiplier / 2;
 
       // By default, we want the inner diamond to be black, which is going to use the invincibleBrick shape buffer.
-      let innerBuffer = shapeBuffers.invincibleBrick;
+      let innerBuffer;
+
+      if (mybrick.hp > 3) {
+        innerBuffer = shapeBuffers.invincibleBrickNoBorder;
+      }
 
       // Next, we use the HP to determine which buffer to replace this with.
       if (mybrick.hp == 3) {
-        innerBuffer = shapeBuffers.grayBrick;
+        innerBuffer = shapeBuffers.grayBrickNoBorder;
       }
 
       else if (mybrick.hp == 2) {
-        innerBuffer = shapeBuffers.whiteBrick;
+        innerBuffer = shapeBuffers.whiteBrickNoBorder;
       }
       
 
@@ -2183,6 +2289,32 @@ var breakout = function(sketch) {
       }
     }
     
+    return mybrick;
+  }
+
+  // Make diagonally moving bricks.
+  // Distance is a multiple of brick height and width.
+  // the starting position.
+  function makeMovingBrickDiagonal(brickMaker, x, y, distance) {
+    let mybrick = brickMaker(
+      gameConfig.brickSpacing,
+      gameConfig.uiBarHeight + gameConfig.brickSpacing
+    );
+
+    // Ball has to travel:
+    // 300 pixels to right.
+    // 150 down.
+    mybrick.speed = 1;
+    mybrick.vx = mybrick.speed;
+    mybrick.vy = mybrick.speed * ((gameConfig.brickSpacing + mybrick.height) / (mybrick.width + gameConfig.brickSpacing));
+
+    mybrick.bounds = {
+      x: x,
+      y: y,
+      width: ((mybrick.width + gameConfig.brickSpacing) * distance) - gameConfig.brickSpacing,
+      height: ((mybrick.height + gameConfig.brickSpacing) * distance) - gameConfig.brickSpacing
+    }
+
     return mybrick;
   }
 
@@ -2226,15 +2358,21 @@ var breakout = function(sketch) {
       buffer.noStroke();
     }
 
+    mypaddle.bounds = {
+      x: 0,
+      width: gameConfig.areaWidth
+    }
+
     // Because the paddle is player controlled, this needs an overhaul.
     // The paddle only moves left and right.
-    mypaddle.boundsCheck = function (x, width) {
-      if (mypaddle.x < x) {
-        mypaddle.x = x + 1;
+    mypaddle.boundsCheck = function () {
+      let b = mypaddle.bounds;
+      if (mypaddle.x < b.x) {
+        mypaddle.x = b.x + 1;
       }
 
-      else if (mypaddle.x + mypaddle.width > x + width) {
-        mypaddle.x = x + width - mypaddle.width - 1;
+      else if (mypaddle.x + mypaddle.width > b.x + b.width) {
+        mypaddle.x = b.x + b.width - mypaddle.width - 1;
       }
     }
 
