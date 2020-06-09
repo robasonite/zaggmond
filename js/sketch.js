@@ -668,6 +668,7 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makePaddle(0,0));
     shapeBlueprints.push(makePowerupGrowPaddle(0,0));
     shapeBlueprints.push(makePowerupShrinkPaddle(0,0));
+    shapeBlueprints.push(makePowerupKillPaddle(0,0));
 
     // Count the sprites.
     totalSprites = shapeBlueprints.length;
@@ -1095,15 +1096,21 @@ var breakout = function(sketch) {
       if (powerups[p].y < gameConfig.areaHeight) {
         // Check for a collision with the player.
         if (collider(powerups[p], player)) {
-          // Apply the effect.
-          powerups[p].effect();
-
+         
+          // Play the sound effect.
+          soundEffects.powerupCollect.play();
+        
+          // Update the score.
+          playerScore += powerups[p].points;
+          
           // Mark powerup as dead.
           powerups[p].alive = false;
-          soundEffects.powerupCollect.play();
+          
+          // Apply the effect.
+          powerups[p].effect();
         }
 
-        // Else, move the powerup
+        // Else, move the powerup.
         else {
           powerups[p].move(gameConfig.scale);
         }
@@ -1271,9 +1278,14 @@ var breakout = function(sketch) {
     );
 
 
-    // Draw the player's lives.
+    // Draw the player's lives, but NOT if it's a negative number.
+    let showNumber = 0;
+    if (playerLives >= 0) {
+      showNumber = playerLives;
+    }
+
     showBarText(
-      "Lives: " + playerLives,
+      "Lives: " + showNumber,
       420 * gameConfig.scale,
       1250 * gameConfig.scale
     );
@@ -1613,14 +1625,32 @@ var breakout = function(sketch) {
   function pickPowerup(x, y) {
     let pick = sketch.random();
     let powerup = '';
-    if (pick > 0.5) {
+    if (pick > 0.15) {
       powerup = makePowerupShrinkPaddle(x, y);
     }
-    else {
+    else if (pick > 0.50) {
       powerup = makePowerupGrowPaddle(x, y);
     }
 
+    else {
+      powerup = makePowerupKillPaddle(x, y);
+    }
+
     return powerup;
+  }
+
+  // Kill the player
+  function makePowerupKillPaddle(x, y) {
+    let mypowerup = makePowerupShrinkPaddle(x, y);
+    mypowerup.shapeName = 'killPaddle';
+    mypowerup.points = 2000;
+    mypowerup.sprite = 'img/powerUpKillPaddle.png';
+    
+    mypowerup.effect = function() {
+      balls = [];
+    }
+
+    return mypowerup;
   }
  
 
@@ -1635,7 +1665,6 @@ var breakout = function(sketch) {
       let newsize = player.width - (player.width * 0.15);
       if (newsize > player.minWidth) {
         player.width = newsize;
-        playerScore += mypowerup.points;
       }
     }
 
