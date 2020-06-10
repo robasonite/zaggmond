@@ -215,3 +215,18 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - Moved brick updating and movement code from 'resolveBrickDamage()' to just after the call to 'simUpdate()' in 'gameLoop()'.
 
 - Made a new UFO level with a sweet oscillating band of armored and invincible bricks. Kind of looks like it's spinning! I origianlly wanted to put 14 bricks in the band, but the invincible one turned out to be a little too much. The ball would always get stuck above the band. After a bit of playtesting, I settled on 10 bricks. It's still a bit annoying, but manageable.
+
+
+2020-06-10:
+
+- Found a good collection of sound effects on Open Game Art and replaced some of the sound effects.
+
+- Added a new file called '3rdPartyResources.txt' to collect and maintain information on 3rd party resources used in the game.
+
+- Added copyright information to the level background images using the Comments box on the Export dialog in Gimp.
+
+- Made a simple undersea background for the next level.
+
+- Move the XCF files into their own directory.
+
+
