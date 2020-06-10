@@ -241,7 +241,7 @@ var breakout = function(sketch) {
   ];
   
   let level6 = {};
-  level6.backgroundImage = 'img/background5.jpg';
+  level6.backgroundImage = 'img/background2.jpg';
   level6.bricks = [
     [0],
      [0],
@@ -317,12 +317,12 @@ var breakout = function(sketch) {
   level6.specialBricks.push(movingBrick1);
 
 
-  Levels.push(level6);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
   Levels.push(level4);
   Levels.push(level5);
+  Levels.push(level6);
 
 
   
