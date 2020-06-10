@@ -179,3 +179,39 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 
 ## END Preloader experiment (branch: preloader)
+
+
+2020-06-08:
+
+- Decided to change background 5 to a mountain and moon at night. The water reflection isn't very good, but oh well. I'm still learning how to use the effects in Gimp.
+
+- Decided to change how borders were drawn around the bricks. Instead of using the stroke functions in P5, I decided to draw 2 diamonds in the same spot, the main color over the outline shape. Once I figured out the math, I shrunk the borders down to a thickness of 2 pixels. Now the border only really shows up if the background color is bright. It's just enough for the eye to detect the edge of the shape.
+
+- Added a new sound effect that plays whenever the player collects a powerup.
+
+- Replaced the the JPEG powerup images with PNG files. The PNGs were smaller.
+
+- Made the pause button exactly square by using gameConfig.uiBarHeight for width and height values. The X position is set to gameConfig.areaWidth - gameConfig.uiBarHeight, and the Y position is set to gameConfig.areaHeight - gameConfig.uiBarHeight.
+
+- Life counter now won't show anything less than 0.
+
+- Introduced a new "power down" function called 'makePowerupKillPaddle()', which kills the player by clearing the balls array. I tried to run 'killPaddle()' directly, but it gave me an error.
+
+
+2020-06-09:
+
+- Started messing around with the concept of "Special bricks". These are bricks with different functionality programmed into them on a level by level basis. Actually, they're functions that *spawn* bricks, but wathever. If a given level object has a 'specialBricks' array, 'levelReader()' will iterate over it after spawning all of the normal bricks. And of course each 'specialBrick' is a function for 'levelReader()' to execute. Furthermore, the functions that represent the special bricks don't return brick objects. Instead, they inject them directly into the 'bricks' array.
+
+  The first special brick I made just bounces a regular brick back and forth diagonally within a 3x3 section of the grid. Maybe I'll break some of the code out into a seperate function to cut down on code duplication. Anyway, my next task will be to make a chain of invincible bricks that travels around a group of regular bricks. Basically, it's a shield for the first "boss battle".
+
+- Added a white outline to black bricks so that they show up better when using dark backgrounds.
+
+- Made "no border" versions of the gray, white, and black bricks for use on armored bricks.
+
+- Added a new function called 'makeMovingBrickDiagonal()'. I just moved the bouncing brick code into it's own function. It even takes a 'distance' argument, which specifies how many multiples of brick height + padding and brick width + padding to move. It starts in the upper left corner of its bounding box and moves to the lower right corner. May add a bit more functionality later. This is also the first brick making function that takes another brick maker as a parameter! That means ANY brick can be a moving brick.
+
+- Corrected all of the level backgrounds for 'gameConfig.uiBarHeight'.
+
+- Moved brick updating and movement code from 'resolveBrickDamage()' to just after the call to 'simUpdate()' in 'gameLoop()'.
+
+- Made a new UFO level with a sweet oscillating band of armored and invincible bricks. Kind of looks like it's spinning! I origianlly wanted to put 14 bricks in the band, but the invincible one turned out to be a little too much. The ball would always get stuck above the band. After a bit of playtesting, I settled on 10 bricks. It's still a bit annoying, but manageable.
