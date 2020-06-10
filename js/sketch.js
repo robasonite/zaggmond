@@ -247,23 +247,71 @@ var breakout = function(sketch) {
      [0],
     [0],
      [0],
-    [0,0,0,1,0,0,0],
-     [0,0,1,1,0,0],
-    [0,0,0,1,0,0,0],
+    [0,0,0,4,0,0,0],
+     [0],
+    [0,0,0,4,0,0,0],
+     [0,4,6,6,4,0],
+    [0,5,5,5,5,5,0],
+     [6,6,6,6,6,6],
+    [1,2,1,2,1,2,1],
+     [6,6,6,6,6,6],
+    [0],
+     [0],
+    [6,1,1,1,1,1,6],
+     [6,6,6,6,6,6],
+    [0,6,6,6,6,6,0],
+     [0,3,3,3,3,0],
+    [0,0,3,3,3,0,0],
+     [0,0,3,3,0,0],
+    [0,0,0,3,0,0,0],
   ];
 
   // This level has special bricks.
   level6.specialBricks = [];
 
   function movingBrick1() {
-    let mybrick = makeMovingBrickDiagonal(
-      makeBrick,
-      gameConfig.brickSpacing,
-      gameConfig.uiBarHeight + gameConfig.brickSpacing,
-      3
-    );
-    
-    bricks.push(mybrick);
+    let brickTotal = 10;
+    let armored = true;
+    let demoBrick = makeBrick(0,0);
+    for (let i = 0; i < brickTotal; i++) {
+
+      // Flip between armored and invincible bricks.
+      let brickMaker;
+      if (armored) {
+        brickMaker = makeArmoredBrick;
+        armored = false;
+      }
+      else {
+        brickMaker = makeInvincibleBrick;
+        armored = true;
+      }
+
+
+      // Make the required brick.
+      let mybrick = makeMovingBrickHorizontal(
+        brickMaker,
+        gameConfig.brickSpacing + ((gameConfig.brickSpacing + demoBrick.width) * i),
+        gameConfig.uiBarHeight + ((gameConfig.brickSpacing + demoBrick.height) * 6.4),
+        7
+      );
+
+      // Make sure the bounding box starts all the way to the left.
+      mybrick.bounds.x = gameConfig.brickSpacing;
+
+      // Make them move faster
+      mybrick.vx = 8;
+      mybrick.speed = 8;
+
+      // If we're over 7, reverse the direction and correct the initial X position.
+      if (i > 6) {
+        let over = brickTotal - i;
+        mybrick.vx *= -1;
+        mybrick.x = (gameConfig.brickSpacing + demoBrick.width) * (0.5 + over);
+      }
+     
+      // Add the brick.
+      bricks.push(mybrick);
+    }
   }
 
   level6.specialBricks.push(movingBrick1);
@@ -387,6 +435,7 @@ var breakout = function(sketch) {
         // Run the special brick function.
         sb[i]();
       }
+      //console.log(sb.length);
     }
   }
 
@@ -1103,29 +1152,6 @@ var breakout = function(sketch) {
 
 
     
-    // This part is mainly used for moving bricks, but it's also a good time to remove dead bricks.
-    let aliveBricks = [];
-    for (let x = 0; x < bricks.length; x++) {
-      // Check if a brick is alive first
-      if (bricks[x].alive) {
-        // Is so, than it is alive and should be added to aliveBricks.
-        aliveBricks.push(bricks[x]);
-       
-        // Next check if the brick is visible.
-        if (bricks[x].visible) {
-
-          // Next, do a bounds check.
-          bricks[x].boundsCheck();
-
-          // Then move the brick.
-          bricks[x].move(gameConfig.scale);
-        }
-      }
-    }
-    
-    // Remove bricks that are no longer alive.
-    bricks = aliveBricks;
-
     // Powerups
     alivePowerups = [];
     for (let p = 0; p < powerups.length; p++) {
@@ -1213,6 +1239,30 @@ var breakout = function(sketch) {
     if (!gamePaused) {
       simUpdate();
     }
+    
+    // This part is mainly used for moving bricks, but it's also a good time to remove dead bricks.
+    let aliveBricks = [];
+    for (let x = 0; x < bricks.length; x++) {
+      // Check if a brick is alive first
+      if (bricks[x].alive) {
+        // Is so, than it is alive and should be added to aliveBricks.
+        aliveBricks.push(bricks[x]);
+       
+        // Next check if the brick is visible.
+        if (bricks[x].visible) {
+
+          // Next, do a bounds check.
+          bricks[x].boundsCheck();
+
+          // Then move the brick.
+          bricks[x].move(gameConfig.scale);
+        }
+      }
+    }
+    
+    // Remove bricks that are no longer alive.
+    bricks = aliveBricks;
+
 
     // Draw the balls.
     for (let x = 0; x < balls.length; x++) {
@@ -2168,7 +2218,7 @@ var breakout = function(sketch) {
   
   function makeGrayBrick(x, y) {
     let mybrick = makeBrick(x, y);
-    mybrick.color = sketch.color(155);
+    mybrick.color = sketch.color(125);
     mybrick.shapeName = 'grayBrick';
     return mybrick;
   }
@@ -2295,11 +2345,8 @@ var breakout = function(sketch) {
   // Make diagonally moving bricks.
   // Distance is a multiple of brick height and width.
   // the starting position.
-  function makeMovingBrickDiagonal(brickMaker, x, y, distance) {
-    let mybrick = brickMaker(
-      gameConfig.brickSpacing,
-      gameConfig.uiBarHeight + gameConfig.brickSpacing
-    );
+  function makeMovingBrickDiagonal(brickMaker, x, y, distance, boundStart) {
+    let mybrick = brickMaker(x, y);
 
     // Ball has to travel:
     // 300 pixels to right.
@@ -2315,6 +2362,13 @@ var breakout = function(sketch) {
       height: ((mybrick.height + gameConfig.brickSpacing) * distance) - gameConfig.brickSpacing
     }
 
+    return mybrick;
+  }
+
+  function makeMovingBrickHorizontal(brickMaker, x, y, distance) {
+    let mybrick = makeMovingBrickDiagonal(brickMaker, x, y, distance);
+    mybrick.vy = 0;
+    
     return mybrick;
   }
 
