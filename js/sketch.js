@@ -2120,53 +2120,84 @@ var breakout = function(sketch) {
     mybrick.border = 2;
     mybrick.borderColor = sketch.color(155);
 
-    // Draw diamonds instead of circles.
+    // Draw the right shape
     mybrick.makeShape = function(buffer) {
-      //buffer.noStroke();
-
-      // Fill with the border color.
-      buffer.fill(mybrick.borderColor);
-     
-      // Draw the border.
-      buffer.quad(
-
-        // Left corner XY
-        mybrick.x,
-        mybrick.y + (mybrick.height / 2),
-
-        // Top center XY
-        mybrick.x + (mybrick.width / 2),
-        mybrick.y,
-
-        // Right corner XY
-        mybrick.x + mybrick.width,
-        mybrick.y + (mybrick.height / 2),
-
-        // Lower center XY
-        mybrick.x + (mybrick.width / 2),
-        mybrick.y + mybrick.height,
-      );
+      // Make absolutely sure we don't have a an outline
+      // stroke.
+      buffer.noStroke();
       
-      // Make the diamond.
-      buffer.fill(mybrick.color);
-      buffer.quad(
+      // If border is 0, don't draw 2 diamonds
+      if (mybrick.border > 0) {
+        // Fill with the border color.
+        buffer.fill(mybrick.borderColor);
+       
+        // Draw the border.
+        buffer.quad(
 
-        // Left corner XY
-        mybrick.x + mybrick.border,
-        mybrick.y + (mybrick.height / 2),
+          // Left corner XY
+          mybrick.x,
+          mybrick.y + (mybrick.height / 2),
 
-        // Top center XY
-        mybrick.x + (mybrick.width / 2),
-        mybrick.y + (mybrick.border / 2),
+          // Top center XY
+          mybrick.x + (mybrick.width / 2),
+          mybrick.y,
 
-        // Right corner XY
-        mybrick.x + mybrick.width - mybrick.border,
-        mybrick.y + (mybrick.height / 2),
+          // Right corner XY
+          mybrick.x + mybrick.width,
+          mybrick.y + (mybrick.height / 2),
 
-        // Lower center XY
-        mybrick.x + (mybrick.width / 2),
-        mybrick.y + mybrick.height - (mybrick.border / 2),
-      );
+          // Lower center XY
+          mybrick.x + (mybrick.width / 2),
+          mybrick.y + mybrick.height,
+        );
+        
+        // Make the diamond.
+        buffer.fill(mybrick.color);
+        buffer.quad(
+
+          // Left corner XY
+          mybrick.x + mybrick.border,
+          mybrick.y + (mybrick.height / 2),
+
+          // Top center XY
+          mybrick.x + (mybrick.width / 2),
+          mybrick.y + (mybrick.border / 2),
+
+          // Right corner XY
+          mybrick.x + mybrick.width - mybrick.border,
+          mybrick.y + (mybrick.height / 2),
+
+          // Lower center XY
+          mybrick.x + (mybrick.width / 2),
+          mybrick.y + mybrick.height - (mybrick.border / 2),
+        );
+      }
+
+      else {
+        // Fill with the border color.
+        buffer.fill(mybrick.color);
+       
+        // Draw the border.
+        buffer.quad(
+
+          // Left corner XY
+          mybrick.x,
+          mybrick.y + (mybrick.height / 2),
+
+          // Top center XY
+          mybrick.x + (mybrick.width / 2),
+          mybrick.y,
+
+          // Right corner XY
+          mybrick.x + mybrick.width,
+          mybrick.y + (mybrick.height / 2),
+
+          // Lower center XY
+          mybrick.x + (mybrick.width / 2),
+          mybrick.y + mybrick.height,
+        );
+      }
+
     }
    
     // Or they could be "invincible".
