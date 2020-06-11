@@ -762,9 +762,9 @@ var breakout = function(sketch) {
 
     // Load audio files
     let audioArray = [
-      ['ballHitWall', 'sounds/hitWall.ogg', 0.2],
-      ['ballHitBrick', 'sounds/hitBrick.ogg', 0.5],
-      ['ballHitPaddle', 'sounds/hitPaddle.ogg', 0.2],
+      ['ballHitWall', 'sounds/hitWall.ogg'],
+      ['ballHitBrick', 'sounds/hitBrick.ogg'],
+      ['ballHitPaddle', 'sounds/hitPaddle.ogg'],
       ['powerupCollect', 'sounds/powerupCollect.ogg',]
     ];
 
@@ -986,12 +986,10 @@ var breakout = function(sketch) {
   // The damage resolution function for bricks
   function resolveBrickDamage(brick) {
     // Damage the brick if it can be dstroyed.
-    if (!brick.noDie) {
-      brick.hp -= 1;
-    }
+    brick.hp -= 1;
 
-    // Destroy the brick if HP is less than 1 AND noDie is false.
-    if (brick.hp < 1 && brick.noDie == false) {
+    // Destroy the brick if HP is less than 1
+    if (brick.hp < 1) {
       // Brick is "destroyed"
       brick.visible = false;
       brick.alive = false;
@@ -1054,7 +1052,7 @@ var breakout = function(sketch) {
     // Check for destructable bricks first.
     let regularBrickCount = 0;
     for (let x = 0; x < bricks.length; x++) {
-      // If the brick is destructable, count it.
+      // If the brick is not supposed to be destroyed, don't count it.
       if (bricks[x].noDie == false) {
         regularBrickCount++;
       }
@@ -2171,7 +2169,8 @@ var breakout = function(sketch) {
       );
     }
    
-    // Or they could be invincible
+    // Or they could be "invincible".
+    // This is just used to denote a brick with a crazy high HP, like 20. Such bricks DO NOT have to be destroyed to move to the next level.
     mybrick.noDie = false;
     
     mybrick.bounds = {
@@ -2279,6 +2278,7 @@ var breakout = function(sketch) {
     mybrick.color = sketch.color(0);
     mybrick.shapeName = 'invincibleBrick';
     mybrick.noDie = true;
+    mybrick.hp = 20;
     mybrick.border = 4;
     mybrick.borderColor = sketch.color(255);
     return mybrick;
