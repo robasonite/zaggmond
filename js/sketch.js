@@ -1,4 +1,4 @@
-// Robert's breakout
+// Robert's breakout, Zaggmond
 // Copyright 2020 Robasonite.com
 // License: MIT
 //
@@ -1493,19 +1493,9 @@ var breakout = function(sketch) {
     sketch.textAlign(sketch.CENTER);
     sketch.textSize(90 * gameConfig.scale);
     sketch.text(
-      "Balls",
+      "ZaGgMoNd",
       (gameConfig.areaWidth / 2) * gameConfig.scale,
       (gameConfig.areaHeight * 0.15) * gameConfig.scale
-    );
-    sketch.text(
-      "and",
-      (gameConfig.areaWidth / 2) * gameConfig.scale,
-      (gameConfig.areaHeight * 0.24) * gameConfig.scale
-    );
-    sketch.text(
-      "Diamonds",
-      (gameConfig.areaWidth / 2) * gameConfig.scale,
-      (gameConfig.areaHeight * 0.32) * gameConfig.scale
     );
     sketch.noStroke();
   }
@@ -2788,11 +2778,6 @@ var breakout = function(sketch) {
     // Player loses a life.
     playerLives--;
 
-    // Clear all onscreen powerups.
-    powerups = [];
-
-    // Clear any other balls in play.
-    balls = [];
 
     // If the player has no lives left, game over.
     if (playerLives < 0) {
@@ -2832,9 +2817,16 @@ var breakout = function(sketch) {
       1100
     );
     player.visible = true;
+    
+    // Clear all onscreen powerups and effect items.
+    powerups = [];
+    particles = [];
+    explosionPoints = [];
 
-    // Make the ball.
+    // Make sure balls are cleared befor making a new one.
     balls = [];
+
+    // Make a new ball.
     let newBall = (makeBall(0,0));
 
     // Position the ball over the paddle.
@@ -2851,7 +2843,6 @@ var breakout = function(sketch) {
 
     // Reset all of the relevent values.
     bricks = [];
-    particles = [];
     powerups = [];
     playerScore = 0;
     playerLives = 2;
