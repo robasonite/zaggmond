@@ -1146,10 +1146,20 @@ var breakout = function(sketch) {
             resolveBrickDamage(bricks[b]);
 
             // Decide how to bounce the ball
-            let ballMidX = balls[x].x + (balls[x].height / 2);
-            let brickMidX= bricks[b].x + (bricks[b].height / 2);
+            let ballMidX = balls[x].x + (balls[x].width / 2);
+            let brickMidX= bricks[b].x + (bricks[b].width / 2);
+            let ballMidY = balls[x].y + (balls[x].height / 2);
+            let brickMidY= bricks[b].y + (bricks[b].height / 2);
 
-            balls[x].vy *= -1;
+            // Up and down
+            if (
+                balls[x].vy > 0 && ballMidY < brickMidY ||
+                balls[x].vy < 0 && ballMidY > brickMidY
+              ) {
+              balls[x].vy *= -1;
+            }
+
+            // Left and right
             if (
                 balls[x].vx > 0 && ballMidX < brickMidX ||
                 balls[x].vx < 0 && ballMidX > brickMidX
