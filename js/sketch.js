@@ -270,7 +270,7 @@ var breakout = function(sketch) {
   level6.specialBricks = [];
 
   function movingBrick1() {
-    let brickTotal = 10;
+    let brickTotal = 8;
     let armored = true;
     let demoBrick = makeBrick(0,0);
     for (let i = 0; i < brickTotal; i++) {
@@ -348,13 +348,13 @@ var breakout = function(sketch) {
   
 
 
+  Levels.push(level6);
   Levels.push(level7);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
   Levels.push(level4);
   Levels.push(level5);
-  Levels.push(level6);
 
 
   
