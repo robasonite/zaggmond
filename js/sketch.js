@@ -317,6 +317,38 @@ var breakout = function(sketch) {
   level6.specialBricks.push(movingBrick1);
 
 
+  let level7 = {};
+  level7.backgroundImage = 'img/background6.jpg';
+  level7.bricks = [
+    [0],
+     [0],
+    [0],
+     [0],
+    [0],
+     [0],
+    [0],
+     [0,0,3,3,0,0],
+    [1,1,0,0,0,1,1],
+     [10,0,6,6,0,8],
+    [1,1,0,0,0,1,1],
+     [8,0,6,6,0,10],
+    [6,6,7,7,7,6,6],
+     [6,7,10,10,7,6],
+    [0,6,7,10,7,6,0],
+     [0,7,6,6,7,0],
+    [0,0,6,6,6,0,0],
+     [0,6,6,6,6,0],
+    [0,6,0,0,0,6,0],
+     [6,0,6,6,0,6],
+    [0,0,6,0,6,0,0],
+     [6,0,0,0,0,6],
+    [0,0,9,0,9,0,0],
+     [9,0,0,0,0,9]
+  ];
+  
+
+
+  Levels.push(level7);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
