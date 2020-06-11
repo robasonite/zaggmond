@@ -229,4 +229,8 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 - Move the XCF files into their own directory.
 
+- Made a new level with a crab made of bricks.
 
+- Made the UFO level a bit easier to clear by reducing the moving brick total to 8.
+
+- Improved the ball/brick collision code so that moving bricks can no long "stab" the ball and push it into a wall. The problem was caused by a slight issue with Y axis adjustments on the ball.
