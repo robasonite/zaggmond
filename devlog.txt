@@ -234,3 +234,5 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - Made the UFO level a bit easier to clear by reducing the moving brick total to 8.
 
 - Improved the ball/brick collision code so that moving bricks can no long "stab" the ball and push it into a wall. The problem was caused by a slight issue with Y axis adjustments on the ball.
+
+- Modified 'makeInvincibleBrick()' so that the black bricks have HP set to 20. Also modified the code so that "invincible" bricks can take damage, the player doesn't need to destroy them to progress to the next level. These modification prevent infinite cycles, where a ball gets stuck bouncing between the wall and the same invincible brick.
