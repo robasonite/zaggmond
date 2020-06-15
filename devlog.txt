@@ -236,3 +236,12 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - Improved the ball/brick collision code so that moving bricks can no long "stab" the ball and push it into a wall. The problem was caused by a slight issue with Y axis adjustments on the ball.
 
 - Modified 'makeInvincibleBrick()' so that the black bricks have HP set to 20. Also modified the code so that "invincible" bricks can take damage, the player doesn't need to destroy them to progress to the next level. These modification prevent infinite cycles, where a ball gets stuck bouncing between the wall and the same invincible brick.
+
+
+2020-06-11:
+
+- 'makeBrick.makeShape()' now only draws a second diamond over the first one if 'border' is greater than 0.
+
+- Modified 'resetPlayer()' to clear the 'explosionPoints' array so that bomb brick chain-reactions do NOT resume after respawn.
+
+- My game now has a unique name that doesn't show up in search results: Zaggmond!
