@@ -318,7 +318,7 @@ var breakout = function(sketch) {
 
 
   let level7 = {};
-  level7.backgroundImage = 'img/background6.jpg';
+  level7.backgroundImage = 'img/background7.jpg';
   level7.bricks = [
     [0],
      [0],
@@ -346,15 +346,127 @@ var breakout = function(sketch) {
      [9,0,0,0,0,9]
   ];
   
+  let level8 = {};
+  level8.backgroundImage = 'img/background7.jpg';
+  level8.bricks = [
+    [0],
+     [0],
+    [0],
+     [0]
+  ]
+  
+  // This level has special bricks.
+  level8.specialBricks = [];
+
+  function movingBricksLv8() {
+    let armored = true;
+    let demoBrick = makeBrick(0,0);
+    let initSpeed = 10;
+
+    let initBounds = {
+      x: gameConfig.brickSpacing,
+      y: gameConfig.brickSpacing + gameConfig.uiBarHeight,
+      width: gameConfig.areaWidth,
+      height: gameConfig.uiBarHeight + ((gameConfig.brickSpacing + demoBrick.width) * 7) + gameConfig.brickSpacing
+    }
 
 
-  Levels.push(level6);
-  Levels.push(level7);
+    // First horizontal row
+    for (let i = 0; i < 7; i++) {
+      let offsetX = gameConfig.brickSpacing + (i * (gameConfig.brickSpacing + demoBrick.width)) + gameConfig.brickSpacing;
+      let mybrick = makeMovingBrickRectPath(
+        makeArmoredBrick,
+        offsetX,
+        initBounds.y,
+        1
+      );
+
+      mybrick.speed = initSpeed;
+      mybrick.vx = initSpeed;
+      mybrick.vy = 0;
+
+      mybrick.bounds = initBounds;
+
+      // Add the brick.
+      bricks.push(mybrick);
+    }
+    
+    // Vertical down the right side
+    for (let i = 1; i < 7; i++) {
+      let offsetX = gameConfig.brickSpacing + (7 * (gameConfig.brickSpacing + demoBrick.width));
+      let offsetY = gameConfig.brickSpacing + ((gameConfig.brickSpacing + demoBrick.width) * i);
+      let mybrick = makeMovingBrickRectPath(
+        makeInvincibleBrick,
+        offsetX,
+        initBounds.y + offsetY,
+        1
+      );
+
+      mybrick.speed = initSpeed;
+      mybrick.vx = 0;
+      mybrick.vy = initSpeed;
+
+      mybrick.bounds = initBounds;
+
+      // Add the brick.
+      bricks.push(mybrick);
+    }
+    
+    // Second horizontal row, across the bottom
+    for (let i = 0; i < 6; i++) {
+      let offsetX = gameConfig.brickSpacing + (i * (gameConfig.brickSpacing + demoBrick.width)) + gameConfig.brickSpacing;
+      let offsetY = gameConfig.brickSpacing + ((gameConfig.brickSpacing + demoBrick.width) * 8);
+      let mybrick = makeMovingBrickRectPath(
+        makeArmoredBrick,
+        offsetX,
+        initBounds.y + offsetY,
+        1
+      );
+
+      mybrick.speed = initSpeed;
+      mybrick.vx = initSpeed * -1;
+      mybrick.vy = 0;
+
+      mybrick.bounds = initBounds;
+
+      // Add the brick.
+      bricks.push(mybrick);
+    }
+    
+    // Vertical down the left side
+    for (let i = 1; i < 8; i++) {
+      let offsetX = gameConfig.brickSpacing;
+      let offsetY = gameConfig.brickSpacing + ((gameConfig.brickSpacing + demoBrick.width) * i);
+      let mybrick = makeMovingBrickRectPath(
+        makeInvincibleBrick,
+        offsetX,
+        initBounds.y + offsetY,
+        1
+      );
+
+      mybrick.speed = initSpeed;
+      mybrick.vx = 0;
+      mybrick.vy = initSpeed * -1;
+
+      mybrick.bounds = initBounds;
+
+      // Add the brick.
+      bricks.push(mybrick);
+    }
+    
+  }
+
+  level8.specialBricks.push(movingBricksLv8);
+
+
+  //Levels.push(level8);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
   Levels.push(level4);
   Levels.push(level5);
+  Levels.push(level6);
+  Levels.push(level7);
 
 
   
@@ -2428,9 +2540,56 @@ var breakout = function(sketch) {
     return mybrick;
   }
 
+  // These bricks only move back and forth.
   function makeMovingBrickHorizontal(brickMaker, x, y, distance) {
     let mybrick = makeMovingBrickDiagonal(brickMaker, x, y, distance);
+   
     mybrick.vy = 0;
+    
+    return mybrick;
+  }
+ 
+
+  // These bricks move in rectangular paths.
+  function makeMovingBrickRectPath(brickMaker, x, y, distance) {
+    let mybrick = makeMovingBrickDiagonal(brickMaker, x, y, distance);
+
+    mybrick.speed = 0;
+    mybrick.vx = 0;
+    mybrick.vy = 0;
+    
+    // To make this work right, this function must be overwritten.
+    mybrick.boundsCheck = function () {
+      let b = mybrick.bounds;
+
+      // Right side of bounds
+      if (mybrick.x + mybrick.width > b.x + b.width) {
+        mybrick.x = b.x + b.width - mybrick.width - 1;
+        mybrick.vx = 0;
+        mybrick.vy = mybrick.speed;
+      }
+
+      // Left side
+      else if (mybrick.x < b.x) {
+        mybrick.x = b.x + 1;
+        mybrick.vx = 0;
+        mybrick.vy = mybrick.speed * -1;
+      }
+
+      // Bottom
+      else if (mybrick.y + mybrick.height > b.y + b.height) {
+        mybrick.y = b.y + b.height - mybrick.height - 1;
+        mybrick.vy = 0;
+        mybrick.vx = mybrick.speed * -1;
+      }
+
+      // Top
+      else if (mybrick.y < b.y) {
+        mybrick.y = b.y + 1;
+        mybrick.vy = 0;
+        mybrick.vx = mybrick.speed;
+      }
+    }
     
     return mybrick;
   }
