@@ -318,7 +318,7 @@ var breakout = function(sketch) {
 
 
   let level7 = {};
-  level7.backgroundImage = 'img/background7.jpg';
+  level7.backgroundImage = 'img/background6.jpg';
   level7.bricks = [
     [0],
      [0],
@@ -885,6 +885,7 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makeNoBorderInvincibleBrick(0,0));
     shapeBlueprints.push(makeNoBorderGrayBrick(0,0));
     shapeBlueprints.push(makeNoBorderWhiteBrick(0,0));
+    shapeBlueprints.push(makeNoBorderBrick(0,0));
 
     // Count the sprites.
     totalSprites = shapeBlueprints.length;
@@ -2202,8 +2203,8 @@ var breakout = function(sketch) {
     mybrick.color = sketch.color(255,0,0);
 
     // Brick borders
-    mybrick.border = 2;
-    mybrick.borderColor = sketch.color(155);
+    mybrick.border = 4;
+    mybrick.borderColor = sketch.color(200);
 
     // Draw the right shape
     mybrick.makeShape = function(buffer) {
@@ -2396,13 +2397,19 @@ var breakout = function(sketch) {
     mybrick.noDie = true;
     mybrick.hp = 20;
     mybrick.border = 4;
-    mybrick.borderColor = sketch.color(255);
     return mybrick;
   }
   
   function makeNoBorderInvincibleBrick(x, y) {
     let mybrick = makeInvincibleBrick(x, y);
     mybrick.shapeName = 'invincibleBrickNoBorder';
+    mybrick.border = 0;
+    return mybrick;
+  }
+  
+  function makeNoBorderBrick(x, y) {
+    let mybrick = makeBrick(x, y);
+    mybrick.shapeName = 'redBrickNoBorder';
     mybrick.border = 0;
     return mybrick;
   }
@@ -2414,7 +2421,6 @@ var breakout = function(sketch) {
     mybrick.color = sketch.color(0);
     mybrick.shapeName = 'bombBrick';
     mybrick.border = 4;
-    mybrick.borderColor = sketch.color(255);
 
     // Make resolveBrickDamage() create explosionPoints.
     mybrick.type = 'bomb';
@@ -2436,7 +2442,7 @@ var breakout = function(sketch) {
 
       // Render a small red brick for the center
       sketch.image(
-        shapeBuffers.redBrick,
+        shapeBuffers.redBrickNoBorder,
         (mybrick.x + (mybrick.width * xyMultiplier)) * scale,
         (mybrick.y + (mybrick.height * xyMultiplier)) * scale,
         (mybrick.width - (mybrick.width * whMultiplier)) * scale,
