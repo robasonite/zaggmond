@@ -352,114 +352,71 @@ var breakout = function(sketch) {
     [0],
      [0],
     [0],
+     [0],
+    [0,1,9,1,9,1,0],
      [0]
   ]
+
+  // Special properties required for the special function.
+  // Max number of bricks to spawn
+  level8.maxBricks = 22;
   
-  // This level has special bricks.
-  level8.specialBricks = [];
+  // A reference model for normal bricks
+  level8.demoBrick = makeBrick(0,0);
 
-  function movingBricksLv8() {
-    let armored = true;
-    let demoBrick = makeBrick(0,0);
-    let initSpeed = 10;
+  // Default brick speed
+  level8.brickSpeed = 8;
 
-    let initBounds = {
-      x: gameConfig.brickSpacing,
-      y: gameConfig.brickSpacing + gameConfig.uiBarHeight,
-      width: gameConfig.areaWidth,
-      height: gameConfig.uiBarHeight + ((gameConfig.brickSpacing + demoBrick.width) * 7) + gameConfig.brickSpacing
+  // Brick step and delay values
+  level8.brickStep = gameConfig.brickSpacing + level8.demoBrick.width;
+  level8.spawnDelay = level8.brickStep / level8.brickSpeed;
+  level8.spawnDelaySave = level8.spawnDelay;
+
+  // Tell the function to stop.
+  level8.stopSpawn = false;
+
+  // Whether to spawn an armored brick.
+  level8.spawnArmored = false
+  
+  // This level has a special function.
+  level8.specialFunction = function() {
+    if (!level8.stopSpawn) {
+      if (level8.spawnDelay > 0) {
+        level8.spawnDelay--;
+      }
+      else {
+        if (level8.maxBricks > 0) {
+          let brickMaker;
+          if (level8.spawnArmored) {
+            brickMaker = makeArmoredBrick;
+            level8.spawnArmored = false;
+          }
+          else {
+            brickMaker = makeBlueBrick;
+            level8.spawnArmored = true;
+          }
+          mybrick = makeMovingBrickRectPath(
+            brickMaker,
+            gameConfig.brickSpacing,
+            gameConfig.uiBarHeight + gameConfig.brickSpacing,
+            7
+          );
+          mybrick.bounds.height = ((mybrick.width + gameConfig.brickSpacing) * 7) - gameConfig.brickSpacing
+          mybrick.speed = 8;
+          mybrick.vx = mybrick.speed;
+          bricks.push(mybrick);
+
+          // Make sure to decrement this number to prevent infinite spawning
+          level8.maxBricks--;
+        }
+
+        level8.spawnDelay = level8.spawnDelaySave;
+      }
     }
-
-
-    // First horizontal row
-    for (let i = 0; i < 7; i++) {
-      let offsetX = gameConfig.brickSpacing + (i * (gameConfig.brickSpacing + demoBrick.width)) + gameConfig.brickSpacing;
-      let mybrick = makeMovingBrickRectPath(
-        makeArmoredBrick,
-        offsetX,
-        initBounds.y,
-        1
-      );
-
-      mybrick.speed = initSpeed;
-      mybrick.vx = initSpeed;
-      mybrick.vy = 0;
-
-      mybrick.bounds = initBounds;
-
-      // Add the brick.
-      bricks.push(mybrick);
-    }
-    
-    // Vertical down the right side
-    for (let i = 1; i < 7; i++) {
-      let offsetX = gameConfig.brickSpacing + (7 * (gameConfig.brickSpacing + demoBrick.width));
-      let offsetY = gameConfig.brickSpacing + ((gameConfig.brickSpacing + demoBrick.width) * i);
-      let mybrick = makeMovingBrickRectPath(
-        makeInvincibleBrick,
-        offsetX,
-        initBounds.y + offsetY,
-        1
-      );
-
-      mybrick.speed = initSpeed;
-      mybrick.vx = 0;
-      mybrick.vy = initSpeed;
-
-      mybrick.bounds = initBounds;
-
-      // Add the brick.
-      bricks.push(mybrick);
-    }
-    
-    // Second horizontal row, across the bottom
-    for (let i = 0; i < 6; i++) {
-      let offsetX = gameConfig.brickSpacing + (i * (gameConfig.brickSpacing + demoBrick.width)) + gameConfig.brickSpacing;
-      let offsetY = gameConfig.brickSpacing + ((gameConfig.brickSpacing + demoBrick.width) * 8);
-      let mybrick = makeMovingBrickRectPath(
-        makeArmoredBrick,
-        offsetX,
-        initBounds.y + offsetY,
-        1
-      );
-
-      mybrick.speed = initSpeed;
-      mybrick.vx = initSpeed * -1;
-      mybrick.vy = 0;
-
-      mybrick.bounds = initBounds;
-
-      // Add the brick.
-      bricks.push(mybrick);
-    }
-    
-    // Vertical down the left side
-    for (let i = 1; i < 8; i++) {
-      let offsetX = gameConfig.brickSpacing;
-      let offsetY = gameConfig.brickSpacing + ((gameConfig.brickSpacing + demoBrick.width) * i);
-      let mybrick = makeMovingBrickRectPath(
-        makeInvincibleBrick,
-        offsetX,
-        initBounds.y + offsetY,
-        1
-      );
-
-      mybrick.speed = initSpeed;
-      mybrick.vx = 0;
-      mybrick.vy = initSpeed * -1;
-
-      mybrick.bounds = initBounds;
-
-      // Add the brick.
-      bricks.push(mybrick);
-    }
-    
   }
 
-  level8.specialBricks.push(movingBricksLv8);
 
-
-  //Levels.push(level8);
+  Levels.push(level8);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
@@ -573,6 +530,7 @@ var breakout = function(sketch) {
 
     // Custom brick processing.
     // These are special functions for non-standard bricks.
+    // They run as soon as a level is started, when the rest of the bricks spawn in.
     if (level.specialBricks) {
       let sb = level.specialBricks;
       for (let i = 0; i < sb.length; i++) {
@@ -580,6 +538,12 @@ var breakout = function(sketch) {
         sb[i]();
       }
       //console.log(sb.length);
+    }
+
+    // If the level has no special function declared, set it to false.
+    // This is really just to make sure that the property exists so that 'simUpdate()' doesn't freak out.
+    if (!level.hasOwnProperty('specialFunction')) {
+      level.specialFunction = false;
     }
   }
 
@@ -1345,6 +1309,14 @@ var breakout = function(sketch) {
 
     // Scrub dead powerups
     powerups = alivePowerups;
+
+
+    // Run special functions for the current level
+    let cl = Levels[gameConfig.level];
+    if (typeof cl.specialFunction === 'function') {
+      // If so, run it.
+      cl.specialFunction();
+    }
 
 
     // Update the player
@@ -2520,7 +2492,7 @@ var breakout = function(sketch) {
   // Make diagonally moving bricks.
   // Distance is a multiple of brick height and width.
   // the starting position.
-  function makeMovingBrickDiagonal(brickMaker, x, y, distance, boundStart) {
+  function makeMovingBrickDiagonal(brickMaker, x, y, distance) {
     let mybrick = brickMaker(x, y);
 
     // Ball has to travel:
