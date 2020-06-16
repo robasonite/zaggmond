@@ -458,7 +458,6 @@ var breakout = function(sketch) {
   ];
 
 
-  Levels.push(level9);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
@@ -467,6 +466,7 @@ var breakout = function(sketch) {
   Levels.push(level6);
   Levels.push(level7);
   Levels.push(level8);
+  Levels.push(level9);
 
 
   
@@ -918,6 +918,8 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makeNoBorderGrayBrick(0,0));
     shapeBlueprints.push(makeNoBorderWhiteBrick(0,0));
     shapeBlueprints.push(makeNoBorderBrick(0,0));
+    shapeBlueprints.push(makeNoBorderYellowBrick(0,0));
+    shapeBlueprints.push(makeNoBorderGreenBrick(0,0));
 
     // Count the sprites.
     totalSprites = shapeBlueprints.length;
@@ -1889,7 +1891,7 @@ var breakout = function(sketch) {
   function makePowerupKillPaddle(x, y) {
     let mypowerup = makePowerupShrinkPaddle(x, y);
     mypowerup.shapeName = 'killPaddle';
-    mypowerup.points = 2000;
+    mypowerup.points = 1000;
     mypowerup.sprite = 'img/powerUpKillPaddle.png';
     
     mypowerup.effect = function() {
@@ -1904,7 +1906,7 @@ var breakout = function(sketch) {
   function makePowerupShrinkPaddle(x, y) {
     let mypowerup = makePowerupGrowPaddle(x, y);
     mypowerup.shapeName = 'shrinkPaddle';
-    mypowerup.points = 150;
+    mypowerup.points = 250;
     mypowerup.sprite = 'img/powerUpShrinkPaddle.png';
     
     mypowerup.effect = function() {
@@ -1929,7 +1931,7 @@ var breakout = function(sketch) {
     mypowerup.width = 90;
 
     // Also award the player some points.
-    mypowerup.points = 50;
+    mypowerup.points = 150;
     
     mypowerup.sprite = 'img/powerUpGrowPaddle.png';
     mypowerup.makeShape = function(buffer) {
@@ -2408,7 +2410,7 @@ var breakout = function(sketch) {
   
   function makeGrayBrick(x, y) {
     let mybrick = makeBrick(x, y);
-    mybrick.color = sketch.color(125);
+    mybrick.color = sketch.color(90);
     mybrick.shapeName = 'grayBrick';
     return mybrick;
   }
@@ -2424,7 +2426,7 @@ var breakout = function(sketch) {
   // These bricks can not be destroyed.
   function makeInvincibleBrick(x, y) {
     let mybrick = makeBrick(x, y);
-    mybrick.color = sketch.color(0);
+    mybrick.color = sketch.color(115,0,115);
     mybrick.shapeName = 'invincibleBrick';
     mybrick.noDie = true;
     mybrick.hp = 20;
@@ -2446,6 +2448,20 @@ var breakout = function(sketch) {
     return mybrick;
   }
 
+  function makeNoBorderYellowBrick(x,y) {
+    let mybrick = makeYellowBrick(x, y);
+    mybrick.shapeName = 'yellowBrickNoBorder';
+    mybrick.border = 0;
+    return mybrick;
+  }
+
+  function makeNoBorderGreenBrick(x, y) {
+    let mybrick = makeGreenBrick(x, y);
+    mybrick.shapeName = 'greenBrickNoBorder';
+    mybrick.border = 0;
+    return mybrick;
+  }
+  
 
   // These bricks blow up when destroyed.
   function makeBombBrick(x, y) {
@@ -2488,10 +2504,13 @@ var breakout = function(sketch) {
   
   // These bricks take 3 hits to die and reuse existing shape buffers.
   function makeArmoredBrick(x, y) {
-    let mybrick = makeBrick(x, y);
+    let mybrick = makeGrayBrick(x, y);
     mybrick.hp = 4;
 
-    // These need a different kind of draw function to whow HP.
+    // Reward the player for popping it.
+    mybrick.points = 1000;
+
+    // These need a different kind of draw function to show HP.
     mybrick.draw = function(scale, buffer) {
       // Draw the main brick first like normal
       sketch.image(
@@ -2510,16 +2529,16 @@ var breakout = function(sketch) {
       let innerBuffer;
 
       if (mybrick.hp > 3) {
-        innerBuffer = shapeBuffers.invincibleBrickNoBorder;
+        innerBuffer = shapeBuffers.redBrickNoBorder;
       }
 
       // Next, we use the HP to determine which buffer to replace this with.
       if (mybrick.hp == 3) {
-        innerBuffer = shapeBuffers.grayBrickNoBorder;
+        innerBuffer = shapeBuffers.yellowBrickNoBorder;
       }
 
       else if (mybrick.hp == 2) {
-        innerBuffer = shapeBuffers.whiteBrickNoBorder;
+        innerBuffer = shapeBuffers.greenBrickNoBorder;
       }
       
 
