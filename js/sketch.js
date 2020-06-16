@@ -425,9 +425,40 @@ var breakout = function(sketch) {
       }
     }
   }
+  
+
+  let level9 = {};
+  level9.backgroundImage = 'img/background5.jpg';
+  level9.bricks = [
+    [0],
+     [0],
+    [0],
+     [0],
+    [0,0,0,3,0,0,0],
+     [0,0,3,3,0,0],
+    [0,0,3,10,3,0,0],
+     [0,3,1,1,3,0],
+    [0,3,1,1,1,3,0],
+     [3,1,1,1,1,3],
+    [0,3,1,1,1,3,0],
+     [3,3,1,1,3,3],
+    [0,4,3,10,3,2,0],
+     [3,4,3,3,2,3],
+    [0,4,4,3,2,2,0],
+     [3,4,10,10,2,3],
+    [0,4,4,3,2,2,0],
+     [3,4,4,2,2,3],
+    [0,10,4,3,2,10,0],
+     [3,4,4,2,2,3],
+    [0,3,4,3,2,3,0],
+     [0,3,4,2,3,0],
+    [0,0,3,3,3,0,0],
+     [0,0,3,3,0,0],
+    [0,0,0,3,0,0,0],
+  ];
 
 
-  Levels.push(level8);
+  Levels.push(level9);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
@@ -435,6 +466,7 @@ var breakout = function(sketch) {
   Levels.push(level5);
   Levels.push(level6);
   Levels.push(level7);
+  Levels.push(level8);
 
 
   
