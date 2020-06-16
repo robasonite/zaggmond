@@ -245,3 +245,22 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - Modified 'resetPlayer()' to clear the 'explosionPoints' array so that bomb brick chain-reactions do NOT resume after respawn.
 
 - My game now has a unique name that doesn't show up in search results: Zaggmond!
+
+
+2020-06-15:
+
+- Added a new level background that kind of looks like a wall of dark gray bricks.
+
+- Added an experimental level with a ring of armored and invincible bricks that "spins". It's a row of bricks that follow a rectangular path around the perimeter of the play area. Decided not to add it to the main 'Levels' array. To make the bricks "turn" the corners, I wrote a new function called 'makeMovingBrickRectPath()'. It's basically 'makeMovingBrickDiagonal' with a modified 'boundsCheck()' function.
+
+- The ring of bricks gave me an idea for level-specific "special functions" that could be run by 'simUpdate()'. 'levelReader()' was updated to make sure that every level has a property called 'specialFucntion'. If not, then 'level.specialFunction' is added and set to the boolean 'false'. In 'simUpdate()' where the special function is called, it first checks 'level.specialFunction' with 'typeof' to make absolutely sure it is a function. Then it runs that function on every frame.
+
+  Since each of the levels is a basic JavaScript object, it's easy to tack on level-specific methods and properties. I used this to make a ring of bricks that spawns in one brick at a time. All of the bricks are evenly spaced and alternate between regular and armored bricks. I originally made them all armored bricks, but found gameplay to be moderately difficult. Not quite "insane", but definitely enough to make even moderately seasoned players feel unwelcome.
+
+  This experimental level doesn't have much of an inner body. Right now, I'm leaning towards making it a castle so that players might think the moving blocks are forming a moat. Not a bad concept.
+
+- Decided to make a crown in the center of the new level.
+
+- Messed around the brick border thickness and color. Improved visibility a little more.
+
+- Added a new background image for the crown level. This time, I used the kaleidoscope distortion and Gaussian blur effects in Gimp on a simple brick-ish texture. The result looks sufficiently weird. 
