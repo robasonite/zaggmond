@@ -10,7 +10,8 @@
 // - *DONE* Set up a basic loading screen
 // - *DONE* Design a some level backgrounds
 // - *DONE* Implement some kind of power-up system
-// - Get moving bricks working
+// - *DONE* Get moving bricks working
+// - Get bullets working
 
 var breakout = function(sketch) {
   gameConfig = {
@@ -55,16 +56,20 @@ var breakout = function(sketch) {
   // Make an array of effect particles.
   let particles = [];
 
-  // Need another element for powerups
+  // Need another element for powerups.
   let powerups = [];
 
-  // Need another array for explosion points;
+  // Bullets get their own array.
+  let bullets = [];
+  let weapons = [];
+
+  // Need another array for explosion points.
   let explosionPoints = []
 
   // Make an array of buttons.
   let buttons = [];
 
-  // The player should be global
+  // The player should be global.
   let player;
 
   // Player score value
@@ -884,7 +889,8 @@ var breakout = function(sketch) {
       ['ballHitWall', 'sounds/hitWall.ogg'],
       ['ballHitBrick', 'sounds/hitBrick.ogg'],
       ['ballHitPaddle', 'sounds/hitPaddle.ogg'],
-      ['powerupCollect', 'sounds/powerupCollect.ogg',]
+      ['powerupCollect', 'sounds/powerupCollect.ogg'],
+      ['bulletFire', 'sounds/bulletFire.ogg']
     ];
 
     // Tell the program how many audi files there are.
@@ -910,7 +916,10 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makeInvincibleBrick(0,0));
     shapeBlueprints.push(makeBombBrick(0,0));
     shapeBlueprints.push(makeBall(0,0));
+    shapeBlueprints.push(makeBullet(0,0));
+    shapeBlueprints.push(makeCannon(0,0));
     shapeBlueprints.push(makePaddle(0,0));
+    shapeBlueprints.push(makePowerupCannons(0,0));
     shapeBlueprints.push(makePowerupGrowPaddle(0,0));
     shapeBlueprints.push(makePowerupShrinkPaddle(0,0));
     shapeBlueprints.push(makePowerupKillPaddle(0,0));
@@ -1199,6 +1208,10 @@ var breakout = function(sketch) {
 
         // And the powerups
         powerups = [];
+
+        // And bullets
+        bullets = [];
+        weapons = [];
         levelReader(Levels[gameConfig.level]);
         gamePaused = true;
         makeResumeCountdown();
@@ -1215,6 +1228,41 @@ var breakout = function(sketch) {
       // Kill the player
       killPlayer();
     }
+
+    // Iterate over bullets and resolve collisions.
+    let aliveBullets = [];
+
+    for (let x = 0; x < bullets.length; x++) {
+      // If the bullet is onscreen, it's alive
+      let bullet = bullets[x];
+      bullet.move();
+      
+      if (
+        bullet.x > 0 &&
+        bullet.y > 0 &&
+        bullet.x + bullet.width < gameConfig.areaWidth &&
+        bullet.y + bullet.height < gameConfig.areaHeight
+      ) {
+        for (let b = 0; b < bricks.length; b++) {
+          if (collider(bullet, bricks[b])) {
+            resolveBrickDamage(bricks[b]);
+            bullet.alive = false;
+          }
+        }
+      }
+
+      else {
+        bullet.alive = false;
+      }
+
+      if (bullet.alive) {
+        aliveBullets.push(bullet);
+      }
+    }
+
+    bullets = aliveBullets;
+
+
 
     let aliveBalls = [];
     for (let x = 0; x < balls.length; x++) {
@@ -1368,10 +1416,42 @@ var breakout = function(sketch) {
       cl.specialFunction();
     }
 
-
     // Update the player
     player.boundsCheck();
     player.move(gameConfig.scale);
+    
+    // Weapon handling
+    aliveWeapons = [];
+    for (let w = 0; w < weapons.length; w++) {
+      let wep = weapons[w];
+      // Place the weapon.
+      
+      // The Y position will always be the same as the player.
+      wep.y = player.y;
+      let place = wep.placement;
+
+      // Find the X position.
+      if (place == 'center') {
+        wep.x = player.x + (player.width / 2) - (wep.width / 2);
+      }
+
+      else if (place == 'left') {
+        wep.x = player.x;
+      }
+      else if (place == 'right') {
+        wep.x = player.x + player.width - wep.width;
+      }
+
+      // Run the fire method.
+      wep.fire();
+
+      // If the weapon is still alive, add to aliveWeapons.
+      if (wep.alive) {
+        aliveWeapons.push(wep);
+      }
+    }
+
+    weapons = aliveWeapons;
   }
   
   function gameLoop() {
@@ -1500,6 +1580,19 @@ var breakout = function(sketch) {
     if (player.visible) {
       player.draw(gameConfig.scale, shapeBuffers.normalPaddle);
     }
+   
+    // If the bullets are drawn BEFORE the weapons, then the weapons will cover the bullets as they spawn in. This is an easy way to make it looke like the bullets are coming out of the weapons.
+    // Draw bullets
+    for (let b = 0; b < bullets.length; b++) {
+      bullets[b].draw(gameConfig.scale, shapeBuffers[bullets[b].shapeName]);
+    }
+
+
+    // Draw weapons
+    for (let w = 0; w < weapons.length; w++) {
+      weapons[w].draw(gameConfig.scale, shapeBuffers[weapons[w].shapeName]);
+    }
+    
 
     // Draw timed text messages with garbage collecting.
     let activeMessages = [];
@@ -1876,7 +1969,8 @@ var breakout = function(sketch) {
   // Randomly pick a powerup
   function pickPowerup(x, y) {
     let pick = sketch.random();
-    let powerup = '';
+    let powerup = makePowerupCannons(x, y);
+    /*let powerup = '';
     if (pick < 0.10) {
       powerup = makePowerupKillPaddle(x, y);
     }
@@ -1902,7 +1996,7 @@ var breakout = function(sketch) {
     
     else if (pick < 0.70) {
       powerup = makePowerupGive1k(x, y);
-    }
+    }*/
 
     return powerup;
   }
@@ -1942,97 +2036,6 @@ var breakout = function(sketch) {
         mypowerup.width - 8,
         mypowerup.height - 8
       );
-
-      /*
-      // Draw the arrows
-      buffer.fill(255);
-      
-      // RIGHT ARROW
-
-      buffer.beginShape();
-
-      // Right arrow point
-      buffer.vertex(
-        mypowerup.x + (mypowerup.width - 6),
-        mypowerup.y + (mypowerup.height / 2)
-      );
-
-      // Right arrow top point
-      buffer.vertex(
-        mypowerup.x + (mypowerup.width - 20),
-        mypowerup.y + 6
-      );
-
-      // Right arrow top recess
-      buffer.vertex(
-        mypowerup.x + (mypowerup.width - 14),
-        mypowerup.y + 18
-      );
-
-      // Right arrow inner endpoint
-      buffer.vertex(
-        mypowerup.x + (mypowerup.width / 2),
-        mypowerup.y + (mypowerup.height / 2)
-      );
-      
-      // Right arrow bottom recess
-      buffer.vertex(
-        mypowerup.x + (mypowerup.width - 20),
-        mypowerup.y + (mypowerup.height - 18)
-      );
-
-      // Right arrow bottom point
-      buffer.vertex(
-        mypowerup.x + (mypowerup.width - 20),
-        mypowerup.y + (mypowerup.height - 6)
-      );
-
-      // Close off the shape
-      buffer.endShape(buffer.CLOSE);
-
-
-      // LEFT ARROW
-
-      buffer.beginShape();
-
-      // Left arrow point
-      buffer.vertex(
-        mypowerup.x + 6,
-        mypowerup.y + (mypowerup.height / 2)
-      );
-
-      // Left arrow top point
-      buffer.vertex(
-        mypowerup.x + 20,
-        mypowerup.y + 6
-      );
-
-      // Left arrow top recess
-      buffer.vertex(
-        mypowerup.x + 20,
-        mypowerup.y + 18
-      );
-
-      // Left arrow inner endpoint
-      buffer.vertex(
-        mypowerup.x + (mypowerup.width / 2),
-        mypowerup.y + (mypowerup.height / 2)
-      );
-      
-      // Left arrow bottom recess
-      buffer.vertex(
-        mypowerup.x + 20,
-        mypowerup.y + (mypowerup.height - 18)
-      );
-
-      // Left arrow bottom point
-      buffer.vertex(
-        mypowerup.x + 20,
-        mypowerup.y + (mypowerup.height - 6)
-      );
-
-      // Close off the shape
-      buffer.endShape(buffer.CLOSE);*/
     }
 
     // Decide what the powerup does when the user collects it.
@@ -2079,6 +2082,30 @@ var breakout = function(sketch) {
     return mypowerup;
   }
  
+ 
+  // Give the player a weapon.
+  function makePowerupCannons(x, y) {
+    let mypowerup = makePowerupGrowPaddle(x, y);
+    mypowerup.shapeName = 'giveCannons';
+    mypowerup.points = 300;
+    mypowerup.sprite = 'img/powerUpCannons.png';
+    
+    mypowerup.effect = function() {
+      // Remove previous weapons
+      weapons = []
+
+      // Grant a pair of cannons.
+      let wep1 = makeCannon(player.x, player.y);
+      let wep2 = makeCannon(player.x, player.y);
+      wep1.placement = 'left';
+      wep2.placement = 'right';
+
+      weapons.push(wep1);
+      weapons.push(wep2);
+    }
+
+    return mypowerup;
+  }
 
   
   // Give the player extra points
@@ -2196,6 +2223,111 @@ var breakout = function(sketch) {
     }
 
     return bspark;
+  }
+
+
+  // Bullet making function
+  function makeBullet(x, y) {
+    let mybullet = makeParticle(x, y);
+    mybullet.shapeName = 'regularBullet';
+    mybullet.speed = 10;
+    mybullet.height = 20;
+    mybullet.width = 10;
+    mybullet.makeShape = function(buffer) {
+      buffer.fill(0,0,255);
+      buffer.rect(
+        mybullet.x,
+        mybullet.y,
+        mybullet.width,
+        mybullet.height
+      );
+    }
+
+    return mybullet;
+  }
+
+  function makeCannon(x, y) {
+    let mycannon = makeBullet(x, y);
+
+    mycannon.shapeName = 'cannon';
+    mycannon.speed = 10;
+    mycannon.height = 40;
+    mycannon.width = 24;
+
+    // Weapon specific variables
+    
+    // Which side of the player is it on?
+    mycannon.placement = 'center';
+    
+    // This is how long the weapon will last
+    mycannon.timer = 300;
+
+    // Fire rate
+    mycannon.rate = 20;
+    mycannon.rateSave = mycannon.rate;
+
+    // What the cannon does when it fires.
+    // This function will run every frame.
+    mycannon.fire = function() {
+      //console.log("Weapon fired");
+      if (mycannon.timer > 0) {
+
+        // Decrement the timer.
+        mycannon.timer--;
+
+        if (mycannon.rate > 0) {
+          // Decrement the counter.
+          mycannon.rate--;
+        }
+
+        else {
+          // The Y value should be the that of the cannon.
+          let bullet = makeBullet(0,mycannon.y);
+
+          // Line the bullet X position up with the middle of the cannon.
+          bullet.x = mycannon.x + (mycannon.width / 2) - (bullet.width / 2);
+
+          // Set the bullet to travel straight up.
+          bullet.speed = 8;
+          bullet.vy = bullet.speed * -1;
+
+          // Play the sound effect.
+          soundEffects.bulletFire.play();
+
+          // Add the bullet to the array
+          bullets.push(bullet);
+
+          // Reset rate counter.
+          mycannon.rate = mycannon.rateSave;
+        }
+      }
+
+      // Weapon has expired.
+      else {
+        mycannon.alive = false;
+      }
+    }
+
+    // This one will have an outline
+    mycannon.makeShape = function(buffer) {
+      buffer.fill(155);
+      buffer.rect(
+        mycannon.x,
+        mycannon.y,
+        mycannon.width,
+        mycannon.height
+      );
+      buffer.fill(200,200,0);
+      buffer.rect(
+        mycannon.x + 8,
+        mycannon.y + 8,
+        mycannon.width - 16,
+        mycannon.height - 16
+      );
+    }
+
+    return mycannon;
+
   }
 
 
@@ -3033,7 +3165,7 @@ var breakout = function(sketch) {
     player.visible = false;
 
     // Determine how many explosions to triger.
-    let step = 35;
+    let step = 15;
     for (let xp = 0; xp < player.width; xp += step) {
       makeEffectExplosion(
         player.x + xp,
@@ -3091,6 +3223,8 @@ var breakout = function(sketch) {
     powerups = [];
     particles = [];
     explosionPoints = [];
+    bullets = [];
+    weapons = [];
 
     // Make sure balls are cleared befor making a new one.
     balls = [];
@@ -3113,6 +3247,8 @@ var breakout = function(sketch) {
     // Reset all of the relevent values.
     bricks = [];
     powerups = [];
+    bullets = [];
+    weapons = [];
     playerScore = 0;
     playerLives = 2;
     gameConfig.level = 0;
