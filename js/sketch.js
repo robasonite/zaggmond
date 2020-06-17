@@ -2206,9 +2206,9 @@ var breakout = function(sketch) {
     let myball = makeParticle(x, y);
     myball.x = x;
     myball.y = y;
-    myball.vx = 8;
-    myball.vy = 8;
-    myball.speed = 8;
+    myball.vx = 10;
+    myball.vy = 10;
+    myball.speed = 10;
     myball.width = 30;
     myball.height = 30;
 
