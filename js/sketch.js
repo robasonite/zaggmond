@@ -206,7 +206,7 @@ var breakout = function(sketch) {
   ];
   
   let level5 = {};
-  level5.backgroundImage = 'img/background5.jpg';
+  level5.backgroundImage = 'img/background6.jpg';
   level5.bricks = [
     [0],
      [0],
@@ -241,7 +241,7 @@ var breakout = function(sketch) {
   ];
   
   let level6 = {};
-  level6.backgroundImage = 'img/background2.jpg';
+  level6.backgroundImage = 'img/background1.jpg';
   level6.bricks = [
     [0],
      [0],
@@ -914,6 +914,10 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makePowerupGrowPaddle(0,0));
     shapeBlueprints.push(makePowerupShrinkPaddle(0,0));
     shapeBlueprints.push(makePowerupKillPaddle(0,0));
+    shapeBlueprints.push(makePowerupGive100(0, 0));
+    shapeBlueprints.push(makePowerupGive200(0, 0));
+    shapeBlueprints.push(makePowerupGive500(0, 0));
+    shapeBlueprints.push(makePowerupGive1k(0, 0));
     shapeBlueprints.push(makeNoBorderInvincibleBrick(0,0));
     shapeBlueprints.push(makeNoBorderGrayBrick(0,0));
     shapeBlueprints.push(makeNoBorderWhiteBrick(0,0));
@@ -1883,42 +1887,26 @@ var breakout = function(sketch) {
     else if (pick < 0.50) {
       powerup = makePowerupShrinkPaddle(x, y);
     }
+    
+    else if (pick < 0.55) {
+      powerup = makePowerupGive100(x, y);
+    }
+    
+    else if (pick < 0.60) {
+      powerup = makePowerupGive200(x, y);
+    }
+    
+    else if (pick < 0.65) {
+      powerup = makePowerupGive500(x, y);
+    }
+    
+    else if (pick < 0.70) {
+      powerup = makePowerupGive1k(x, y);
+    }
 
     return powerup;
   }
 
-  // Kill the player
-  function makePowerupKillPaddle(x, y) {
-    let mypowerup = makePowerupShrinkPaddle(x, y);
-    mypowerup.shapeName = 'killPaddle';
-    mypowerup.points = 1000;
-    mypowerup.sprite = 'img/powerUpKillPaddle.png';
-    
-    mypowerup.effect = function() {
-      balls = [];
-    }
-
-    return mypowerup;
-  }
- 
-
-  // Shrink the player paddle
-  function makePowerupShrinkPaddle(x, y) {
-    let mypowerup = makePowerupGrowPaddle(x, y);
-    mypowerup.shapeName = 'shrinkPaddle';
-    mypowerup.points = 250;
-    mypowerup.sprite = 'img/powerUpShrinkPaddle.png';
-    
-    mypowerup.effect = function() {
-      let newsize = player.width - (player.width * 0.15);
-      if (newsize > player.minWidth) {
-        player.width = newsize;
-      }
-    }
-
-    return mypowerup;
-
-  }
 
   
   // Grow the paddle.
@@ -2057,6 +2045,88 @@ var breakout = function(sketch) {
     }
 
     return mypowerup;
+  }
+  
+  // Shrink the player paddle
+  function makePowerupShrinkPaddle(x, y) {
+    let mypowerup = makePowerupGrowPaddle(x, y);
+    mypowerup.shapeName = 'shrinkPaddle';
+    mypowerup.points = 250;
+    mypowerup.sprite = 'img/powerUpShrinkPaddle.png';
+    
+    mypowerup.effect = function() {
+      let newsize = player.width - (player.width * 0.15);
+      if (newsize > player.minWidth) {
+        player.width = newsize;
+      }
+    }
+
+    return mypowerup;
+
+  }
+  
+  // Kill the player
+  function makePowerupKillPaddle(x, y) {
+    let mypowerup = makePowerupShrinkPaddle(x, y);
+    mypowerup.shapeName = 'killPaddle';
+    mypowerup.points = 1000;
+    mypowerup.sprite = 'img/powerUpKillPaddle.png';
+    
+    mypowerup.effect = function() {
+      balls = [];
+    }
+
+    return mypowerup;
+  }
+ 
+
+  
+  // Give the player extra points
+  function makePowerupGive100(x, y) {
+    let mypowerup = makePowerupGrowPaddle(x, y);
+    mypowerup.shapeName = 'give100';
+    mypowerup.points = 100;
+    mypowerup.sprite = 'img/powerUp100Points.png';
+    
+    mypowerup.effect = function() {
+      return false
+    }
+
+    return mypowerup;
+
+  }
+
+
+  function makePowerupGive200(x, y) {
+    let mypowerup = makePowerupGive100(x, y);
+    mypowerup.shapeName = 'give200';
+    mypowerup.points = 200;
+    mypowerup.sprite = 'img/powerUp200Points.png';
+    
+    return mypowerup;
+
+  }
+
+
+  function makePowerupGive500(x, y) {
+    let mypowerup = makePowerupGive100(x, y);
+    mypowerup.shapeName = 'give500';
+    mypowerup.points = 500;
+    mypowerup.sprite = 'img/powerUp500Points.png';
+    
+    return mypowerup;
+
+  }
+  
+
+  function makePowerupGive1k(x, y) {
+    let mypowerup = makePowerupGive100(x, y);
+    mypowerup.shapeName = 'give1k';
+    mypowerup.points = 1000;
+    mypowerup.sprite = 'img/powerUp1kPoints.png';
+    
+    return mypowerup;
+
   }
 
   
