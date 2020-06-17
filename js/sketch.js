@@ -2718,7 +2718,7 @@ var breakout = function(sketch) {
     mypaddle.vy = 0
 
     // Set a separate speed variable
-    mypaddle.speed = 10;
+    mypaddle.speed = 12;
 
     // Need to adjust the width and height
     mypaddle.width = 140;
