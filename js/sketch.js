@@ -2234,7 +2234,7 @@ var breakout = function(sketch) {
     mybullet.height = 20;
     mybullet.width = 10;
     mybullet.makeShape = function(buffer) {
-      buffer.fill(0,0,255);
+      buffer.fill(0,255,0);
       buffer.rect(
         mybullet.x,
         mybullet.y,
