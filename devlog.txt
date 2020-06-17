@@ -263,4 +263,21 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 - Messed around the brick border thickness and color. Improved visibility a little more.
 
-- Added a new background image for the crown level. This time, I used the kaleidoscope distortion and Gaussian blur effects in Gimp on a simple brick-ish texture. The result looks sufficiently weird. 
+- Added a new background image for the crown level. This time, I used the kaleidoscope distortion and Gaussian blur effects in Gimp on a simple brick-ish texture. The result looks sufficiently weird.
+
+
+2020-06-16:
+
+- Made a new level that I'm calling The Box. It was supposed to be the number 9, but I decided to make it look like a cube.
+
+- Made the armored bricks a purple color to differentiate them a bit better from the other bricks
+
+- Made the gray brick a darker shade of gray.
+
+- Made the colors on armored bricks run from red to yellow to green. I think it looks more interesting.
+
+- Chnaged the point values on the "grow paddle", "shrink paddle", and "kill paddle" powerups to 150, 250, and 1000 respectively.
+
+- "Invincible" bricks now give 1000 points when destroyed. May motivate some players to destroy these difficult non-essential bricks.
+
+- Discovered that the now purple armored bricks pose a visibility problem against the creepy treehouse background. On the UFO level, I replaced the treehouse (background #2) with the starry sky (background #1). Looks better and makes more sense.
