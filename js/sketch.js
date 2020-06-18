@@ -1969,8 +1969,7 @@ var breakout = function(sketch) {
   // Randomly pick a powerup
   function pickPowerup(x, y) {
     let pick = sketch.random();
-    let powerup = makePowerupCannons(x, y);
-    /*let powerup = '';
+    let powerup = '';
     if (pick < 0.10) {
       powerup = makePowerupKillPaddle(x, y);
     }
@@ -1996,7 +1995,11 @@ var breakout = function(sketch) {
     
     else if (pick < 0.70) {
       powerup = makePowerupGive1k(x, y);
-    }*/
+    }
+    
+    else if (pick < 0.80) {
+      powerup = makePowerupCannons(x, y);
+    }
 
     return powerup;
   }
