@@ -306,3 +306,12 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - Updated 'simUpdate()' to handle weapons.
 
 - Added a new sound effect to the game for the cannon!
+
+- Added my first Git tag, *v0.4*. It's the halfway mark. Most of the features I wanted to implement are done. Just a few more powerups and levels, and this thing will be ready for the world to enjoy.
+
+- Lowered the message time (gameConfig.msgMaxTime) to 40.
+
+- Encountered a game breaking bug after clearing the final level. The exact cause was a non-existant "special function" error ('cl.specialFunction' on line 1417). This happened because the end-of-game check statement (an 'if' on line 1200) incremented the level counter and sent the flow of gameplay back to the title screen. So basically, it was trying to 'simUpdate' on the very next frame, and because the level didn't exist, neither did the special function it was trying to call.
+
+I fixed by by putting a call to 'resetGame()' directly after the "switchScreen('title')" statement. That allowed the game to switch back to the title screen without crashing. This worked because 'resetGame()' resets the level counter back to 0.
+
