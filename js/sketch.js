@@ -892,7 +892,8 @@ var breakout = function(sketch) {
       ['ballHitBrick', 'sounds/hitBrick.ogg'],
       ['ballHitPaddle', 'sounds/hitPaddle.ogg'],
       ['powerupCollect', 'sounds/powerupCollect.ogg'],
-      ['bulletFire', 'sounds/bulletFire.ogg']
+      ['bulletFire', 'sounds/bulletFire.ogg'],
+      ['extraLife', 'sounds/1up.ogg']
     ];
 
     // Tell the program how many audi files there are.
@@ -3159,10 +3160,17 @@ var breakout = function(sketch) {
 
     gameConfig.currentPaddlePoints += points;
 
+    // If the accumulated value is over the required amount to grant an extra life,
+    // the leftover points are put towards earning the next life.
     if (gameConfig.currentPaddlePoints > gameConfig.extraPaddlePoints) {
       let leftover = gameConfig.extraPaddlePoints - gameConfig.currentPaddlePoints;
       gameConfig.currentPaddlePoints = leftover;
-      playerLives += 1;
+
+      // Increment player lives
+      playerLives++;
+
+      // Player the sound effect.
+      soundEffects.extraLife.play();
     }
   }
 
