@@ -26,6 +26,8 @@ var breakout = function(sketch) {
     mode: 'loading',
     uiBarHeight: 100,
     msgMaxTime: 40,
+    extraPaddlePoints: 5000,
+    currentPaddlePoints: 0,
     font: '',
     fontName: '',
     level: 0
@@ -1133,7 +1135,7 @@ var breakout = function(sketch) {
       soundEffects.ballHitBrick.play();
       
       // Award points
-      playerScore += brick.points;
+      addPlayerScore(brick.points);
 
       // If the brick had a power up, spawn it.
       /*if (brick.dropPowerup) {
@@ -1220,6 +1222,7 @@ var breakout = function(sketch) {
       else {
         //console.log("You win!");
         switchScreen('title');
+        resetGame();
       }
     }
 
@@ -1379,7 +1382,7 @@ var breakout = function(sketch) {
           soundEffects.powerupCollect.play();
         
           // Update the score.
-          playerScore += powerups[p].points;
+          addPlayerScore(powerups[p].points);
           
           // Mark powerup as dead.
           powerups[p].alive = false;
@@ -2046,7 +2049,7 @@ var breakout = function(sketch) {
       let newsize = player.width + (player.width * 0.15);
       if (newsize < player.maxWidth) {
         player.width = newsize;
-        playerScore += mypowerup.points;
+        addPlayerScore(mypowerup.points);
       }
     }
 
@@ -3159,6 +3162,20 @@ var breakout = function(sketch) {
   }
 
 
+  // Increment player score and check if they earned a new life.
+  function addPlayerScore(points) {
+    playerScore += points;
+
+    gameConfig.currentPaddlePoints += points;
+
+    if (gameConfig.currentPaddlePoints > gameConfig.extraPaddlePoints) {
+      let leftover = gameConfig.extraPaddlePoints - gameConfig.currentPaddlePoints;
+      gameConfig.currentPaddlePoints = leftover;
+      playerLives += 1;
+    }
+  }
+
+
   // Kill the player and show an explosion
   function killPlayer() {
     // Pause the game.
@@ -3256,6 +3273,7 @@ var breakout = function(sketch) {
     playerLives = 2;
     gameConfig.level = 0;
     gamePaused = false;
+    gameConfig.currentPaddlePoints = 0;
 
     // Reset player and ball
     resetPlayer();
