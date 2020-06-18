@@ -51,7 +51,7 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 - Added a bunch of different colored bricks.
 
-- Made a few minore adjustments to audio volume and the effect files. Removed most of the reverb/echo from hitWall.ogg. Shortened hitPaddle.ogg and added a slight fade out. Reducing the hitWall.ogg effect to about 20% volume, and reducing the other 2 effects to 70% volume yields better results than before. Still don't like the hitPaddle.ogg effect. Maybe I'll replace it with a metallic bouncing sound later.
+- Made a few minor adjustments to audio volume and the effect files. Removed most of the reverb/echo from hitWall.ogg. Shortened hitPaddle.ogg and added a slight fade out. Reducing the hitWall.ogg effect to about 20% volume, and reducing the other 2 effects to 70% volume yields better results than before. Still don't like the hitPaddle.ogg effect. Maybe I'll replace it with a metallic bouncing sound later.
 
 - The game now starts the next level when all of the bricks on the current level are destroyed. If there are no more levels, the game resets and the player is taken back to the title screen.
 
@@ -219,7 +219,7 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 2020-06-10:
 
-- Found a good collection of sound effects on Open Game Art and replaced some of the sound effects.
+- Found a good collection of sound effects on Open Game Art and replaced some of the sound effects. The archive I found contained sounds from old homebrew NES ROMS. Since the ROMS are in the public domain, these effects should be okay to use. They sound great!
 
 - Added a new file called '3rdPartyResources.txt' to collect and maintain information on 3rd party resources used in the game.
 
@@ -281,3 +281,28 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 - "Invincible" bricks now give 1000 points when destroyed. May motivate some players to destroy these difficult non-essential bricks.
 
 - Discovered that the now purple armored bricks pose a visibility problem against the creepy treehouse background. On the UFO level, I replaced the treehouse (background #2) with the starry sky (background #1). Looks better and makes more sense.
+
+
+2020-06-17:
+
+- Increased the ball speed from 8 to 10 to help speed up gameplay a bit.
+
+- Increased paddle speed to 12.
+
+- Upped the particle explosion for player death.
+
+- Added the arrays for bullets and weapons to the game.
+
+- Added a new 'makeBullet' function based on 'makeParticle()'. Bullets work a lot like powerups in that they are only "alive" when they are on the screen. These bullets are just little green rectangles for right now.
+
+- Updated 'simUpdate()' to resolve collisions between bullets and bricks. Bullets that hit a brick or leave the play area are scrubbed on the next frame.
+
+- Added a new 'makeCannon' function based on 'makeBullet()'. It's the first weapon object. For right now, its 'move()' method doesn't get used at all. Instead, it constantly "warps" to follow the player's paddle. It has a 'placement' property that tells 'simUpdate()' to put it on the player's right side, left side, or center. This works quite well and provides the illusion that the cannons are "attached" to the player's paddle.
+
+  Furthermore, all weapon objects have a 'timer' property that is never disclosed to the player. When the timer runs out, 'alive' is set to 'false', and the weapon gets removed from the main 'weapons' array on the next frame.
+
+  And of course, all weapon objects have a 'fire()' method, which gets called on every frame. This is a very important method that decrements the 'timer' and controls the spawn rate of bullets.
+
+- Updated 'simUpdate()' to handle weapons.
+
+- Added a new sound effect to the game for the cannon!
