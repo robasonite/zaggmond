@@ -25,7 +25,7 @@ var breakout = function(sketch) {
     brickSpacing: 10,
     mode: 'loading',
     uiBarHeight: 100,
-    msgMaxTime: 60,
+    msgMaxTime: 40,
     font: '',
     fontName: '',
     level: 0
