@@ -1205,15 +1205,6 @@ var breakout = function(sketch) {
         // Clear the the bricks to get rid of non-dstructable brick.
         bricks = [];
 
-        // Also clear the particles
-        particles = [];
-
-        // And the powerups
-        powerups = [];
-
-        // And bullets
-        bullets = [];
-        weapons = [];
         levelReader(Levels[gameConfig.level]);
         gamePaused = true;
         makeResumeCountdown();
