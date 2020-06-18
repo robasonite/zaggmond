@@ -26,7 +26,7 @@ var breakout = function(sketch) {
     mode: 'loading',
     uiBarHeight: 100,
     msgMaxTime: 40,
-    extraPaddlePoints: 5000,
+    extraPaddlePoints: 10000,
     currentPaddlePoints: 0,
     font: '',
     fontName: '',
@@ -889,7 +889,7 @@ var breakout = function(sketch) {
     // Load audio files
     let audioArray = [
       ['ballHitWall', 'sounds/hitWall.ogg'],
-      ['ballHitBrick', 'sounds/hitBrick.ogg'],
+      ['ballHitBrick', 'sounds/hitBrick.ogg', 0.5],
       ['ballHitPaddle', 'sounds/hitPaddle.ogg'],
       ['powerupCollect', 'sounds/powerupCollect.ogg'],
       ['bulletFire', 'sounds/bulletFire.ogg'],
@@ -1133,7 +1133,7 @@ var breakout = function(sketch) {
       brick.alive = false;
       
       // Play the sound effect
-      soundEffects.ballHitBrick.play();
+      soundEffects.ballHitBrick.play(0,1,0.5);
       
       // Award points
       addPlayerScore(brick.points);
@@ -3193,7 +3193,7 @@ var breakout = function(sketch) {
     }
     
     // Play the explosion sound effect.
-    soundEffects.ballHitBrick.play();
+    soundEffects.ballHitBrick.play(0,1,2);
     
     // Player loses a life.
     playerLives--;
