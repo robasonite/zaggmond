@@ -1271,8 +1271,11 @@ var breakout = function(sketch) {
 
         // Check for paddle collisions.
         if (collider(balls[x], player)) {
-          
-          soundEffects.ballHitPaddle.play();
+
+          let ef = soundEffects.ballHitPaddle;
+          if (!ef.isPlaying()) {
+            ef.play();
+          }
           
 
           // Send the ball back up.
