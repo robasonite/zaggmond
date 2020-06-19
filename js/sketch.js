@@ -567,7 +567,6 @@ var breakout = function(sketch) {
   ];
 
 
-  Levels.push(level12);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
@@ -579,6 +578,7 @@ var breakout = function(sketch) {
   Levels.push(level9);
   Levels.push(level10);
   Levels.push(level11);
+  Levels.push(level12);
 
 
   
