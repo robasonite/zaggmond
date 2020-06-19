@@ -534,9 +534,40 @@ var breakout = function(sketch) {
      [0,0,0,0,0,0],
     [5,0,0,0,0,0,5],
   ];
+  let level12 = {}
+  level12.backgroundImage = 'img/background1.jpg';
+  level12.bricks = [
+    [0],
+     [0],
+    [0],
+     [0],
+    [0],
+     [0],
+    [1,0,0,0,0,0,0],
+     [1,0,0,0,0,0],
+    [1,2,0,0,0,0,0],
+     [1,2,0,0,0,0],
+    [1,2,3,0,0,0,0],
+     [1,2,3,0,0,0],
+    [1,2,3,4,0,0,0],
+     [1,2,3,4,0,0],
+    [1,2,3,4,5,0,0],
+     [1,2,3,4,5,0],
+    [1,2,3,4,5,6,0],
+     [1,2,3,4,5,6],
+    [1,2,3,4,5,6,0],
+     [1,2,3,4,5,6],
+    [1,2,3,4,5,6,0],
+     [1,2,3,4,5,6],
+    [1,2,3,4,5,6,0],
+     [1,2,3,4,5,6],
+    [1,2,3,4,5,6,0],
+     [1,2,3,4,5,6],
+    [8,8,8,8,8,0,0],
+  ];
 
 
-  Levels.push(level11);
+  Levels.push(level12);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
@@ -547,6 +578,7 @@ var breakout = function(sketch) {
   Levels.push(level8);
   Levels.push(level9);
   Levels.push(level10);
+  Levels.push(level11);
 
 
   
@@ -992,10 +1024,12 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makeInvincibleBrick(0,0));
     shapeBlueprints.push(makeBombBrick(0,0));
     shapeBlueprints.push(makeBall(0,0));
+    shapeBlueprints.push(makeSuperBall(0,0));
     shapeBlueprints.push(makeBullet(0,0));
     shapeBlueprints.push(makeCannon(0,0));
     shapeBlueprints.push(makePaddle(0,0));
     shapeBlueprints.push(makePowerupCannons(0,0));
+    shapeBlueprints.push(makePowerupSuperBall(0,0));
     shapeBlueprints.push(makePowerupGrowPaddle(0,0));
     shapeBlueprints.push(makePowerupShrinkPaddle(0,0));
     shapeBlueprints.push(makePowerupKillPaddle(0,0));
@@ -1196,10 +1230,17 @@ var breakout = function(sketch) {
   }
 
   // The damage resolution function for bricks
-  function resolveBrickDamage(brick) {
+  function resolveBrickDamage(brick, ball=false) {
     // Damage the brick if it can be dstroyed.
     brick.hp -= 1;
-
+    
+    // Getting hit by the Super Ball means instant kill.
+    if (ball) {
+      if (ball.shapeName == 'superBall') {
+        brick.hp -= 100;
+      }
+    }
+    
     // Destroy the brick if HP is less than 1
     if (brick.hp < 1) {
       // Brick is "destroyed"
@@ -1387,28 +1428,33 @@ var breakout = function(sketch) {
         // Ball and brick collisions
         for (let b = 0; b < bricks.length; b++) {
           if (collider(balls[x], bricks[b]) && bricks[b].visible) {
-            resolveBrickDamage(bricks[b]);
+            // Apply damage.
+            resolveBrickDamage(bricks[b], balls[x]);
 
-            // Decide how to bounce the ball
-            let ballMidX = balls[x].x + (balls[x].width / 2);
-            let brickMidX= bricks[b].x + (bricks[b].width / 2);
-            let ballMidY = balls[x].y + (balls[x].height / 2);
-            let brickMidY= bricks[b].y + (bricks[b].height / 2);
+            // If we're dealing with a Super Ball, no bouncing occurs. They punch straight through bricks.
+            if (balls[x].shapeName != 'superBall') {
 
-            // Up and down
-            if (
-                balls[x].vy > 0 && ballMidY < brickMidY ||
-                balls[x].vy < 0 && ballMidY > brickMidY
-              ) {
-              balls[x].vy *= -1;
-            }
+              // Decide how to bounce the ball
+              let ballMidX = balls[x].x + (balls[x].width / 2);
+              let brickMidX= bricks[b].x + (bricks[b].width / 2);
+              let ballMidY = balls[x].y + (balls[x].height / 2);
+              let brickMidY= bricks[b].y + (bricks[b].height / 2);
 
-            // Left and right
-            if (
-                balls[x].vx > 0 && ballMidX < brickMidX ||
-                balls[x].vx < 0 && ballMidX > brickMidX
-              ) {
-              balls[x].vx *= -1;
+              // Up and down
+              if (
+                  balls[x].vy > 0 && ballMidY < brickMidY ||
+                  balls[x].vy < 0 && ballMidY > brickMidY
+                ) {
+                balls[x].vy *= -1;
+              }
+
+              // Left and right
+              if (
+                  balls[x].vx > 0 && ballMidX < brickMidX ||
+                  balls[x].vx < 0 && ballMidX > brickMidX
+                ) {
+                balls[x].vx *= -1;
+              }
             }
           }
         }
@@ -2042,14 +2088,14 @@ var breakout = function(sketch) {
   function pickPowerup(x, y) {
     let pick = sketch.random();
     let powerup = '';
-    if (pick < 0.10) {
+    if (pick < 0.05) {
       powerup = makePowerupKillPaddle(x, y);
     }
     else if (pick < 0.25) {
       powerup = makePowerupGrowPaddle(x, y);
     }
 
-    else if (pick < 0.50) {
+    else if (pick < 0.35) {
       powerup = makePowerupShrinkPaddle(x, y);
     }
     
@@ -2077,6 +2123,10 @@ var breakout = function(sketch) {
       powerup = makePowerupBallsX2(x, y);
     }
     
+    else if (pick < 0.90) {
+      powerup = makePowerupSuperBall(x, y);
+    }
+
     return powerup;
   }
 
@@ -2207,6 +2257,24 @@ var breakout = function(sketch) {
       // Add them to the main balls array.
       for (let x = 0; x < newballs.length; x++) {
         balls.push(newballs[x]);
+      }
+    }
+
+    return mypowerup;
+  }
+  
+
+  // The coveted and ultra rare super ball
+  function makePowerupSuperBall(x, y) {
+    let mypowerup = makePowerupBallsX2(x, y);
+    mypowerup.shapeName = 'superBallPowerup';
+    mypowerup.sprite = 'img/powerUpSuperBall.png';
+
+    mypowerup.effect = function() {
+
+      // Turn all balls into Super Balls
+      for (let i = 0; i < balls.length; i++) {
+        balls[i].shapeName = 'superBall';
       }
     }
 
@@ -2519,6 +2587,39 @@ var breakout = function(sketch) {
     }
     
     return myball;
+  }
+
+  // The Super Ball
+  function makeSuperBall(x, y) {
+    let myball = makeBall(x, y);
+    myball.shapeName = 'superBall';
+    
+    myball.makeShape = function(buffer) {
+      buffer.noStroke();
+      buffer.ellipseMode(buffer.CORNER);
+
+      // Outer circle
+      buffer.fill(155);
+      buffer.ellipse(
+        myball.x,
+        myball.y,
+        myball.width,
+        myball.height
+      );
+
+
+      // Inner circle
+      buffer.fill(255,255,0);
+      buffer.ellipse(
+        myball.x + 2,
+        myball.y + 2,
+        myball.width - 4,
+        myball.height - 4
+      );
+    }
+
+    return myball;
+
   }
 
   function makeBrick(x, y) {
