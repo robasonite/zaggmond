@@ -472,17 +472,53 @@ var breakout = function(sketch) {
      [0,0,3,3,0,0],
     [0,0,0,3,0,0,0],
   ];
+  
+  // Jack o lantern
+  let level10 = {};
+  level10.backgroundImage = 'img/background9.jpg';
+  level10.bricks = [
+    [0],
+     [0],
+    [0,0,0,0,0,0,0],
+     [0,0,0,8,0,0],
+    [0,0,0,8,8,0,0],
+     [0,0,8,8,0,0],
+    [0,0,4,4,4,0,0],
+     [0,4,4,4,4,0],
+    [0,4,4,4,4,4,0],
+     [4,4,4,4,4,4],
+    [0,4,4,4,4,4,0],
+     [4,5,4,4,5,4],
+    [0,5,5,4,5,5,0],
+     [4,10,4,4,10,4],
+    [0,5,5,4,5,5,0],
+     [4,5,4,4,5,4],
+    [0,4,4,5,4,4,0],
+     [4,4,5,5,4,4],
+    [0,4,4,6,4,4,0],
+     [4,4,4,4,4,4],
+    [0,5,4,4,4,5,0],
+     [4,5,4,4,5,4],
+    [0,5,6,6,6,5,0],
+     [4,5,6,6,5,4],
+    [0,4,5,5,5,4,0],
+     [0,4,4,4,4,0],
+    [0,0,4,4,4,0,0],
+     [0,0,4,4,0,0],
+    [0,0,0,4,0,0,0]
+  ];
 
 
-  Levels.push(level6);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
   Levels.push(level4);
   Levels.push(level5);
+  Levels.push(level6);
   Levels.push(level7);
   Levels.push(level8);
   Levels.push(level9);
+  Levels.push(level10);
 
 
   
@@ -2616,7 +2652,7 @@ var breakout = function(sketch) {
   
   function makeOrangeBrick(x, y) {
     let mybrick = makeBrick(x, y);
-    mybrick.color = sketch.color(255,165,0);
+    mybrick.color = sketch.color(255,114,0);
     mybrick.shapeName = 'orangeBrick';
     return mybrick;
   }
