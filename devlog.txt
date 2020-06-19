@@ -315,3 +315,40 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 I fixed by by putting a call to 'resetGame()' directly after the "switchScreen('title')" statement. That allowed the game to switch back to the title screen without crashing. This worked because 'resetGame()' resets the level counter back to 0.
 
+
+2020-06-18:
+
+- Added a new sound effect that plays when the player earns an extra life.
+
+- Upped the "extra life" points to 10000. Thought getting a new life every 5000 was too easy.
+
+- Lowered explosion volume to half.
+
+- Made explosion sound louder on player death.
+
+- Fixed the overlapping "ballHitPaddle" effect. Now the sound only plays if it's not already playing.
+
+- Removed the space between the "1" and the "K" for the "give 1000 points" powerup.
+
+
+2020-06-19:
+
+- Restored audio levels on all effects to 1.0.
+
+- Gave the sound effect for player death amp of 3.0.
+
+- Replaced the moon and mountain background with a dark green grid of arrows tiled across a black background. Looks interesting without being too distracting.
+
+- Made a new graveyard background.
+
+- Made a new starfield background.
+
+- Added a new Jack O Lantern level with the graveyard background.
+
+- Added a vaguely star-shaped level. Diamonds make it difficult to make a 5 point star.
+
+- Added a new bar chart level.
+
+- Added a new Super Ball powerup. It goes right through bricks and destroys them instantly.
+
+
