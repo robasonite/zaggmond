@@ -97,8 +97,9 @@ var breakout = function(sketch) {
 
   // >> LEVEL SECTION START
 
-  // Keep in mind that every other row is stagger!
+  // Keep in mind that every other row is staggered!
   // The pattern goes 7 bricks, 6 bricks, 7 bricks, etc.
+  // Simple bars, basic starter level.
   let level1 = {}
   level1.backgroundImage = 'img/background1.jpg';
   level1.bricks = [
@@ -118,7 +119,8 @@ var breakout = function(sketch) {
      [0],
     [5,5,5,5,5,5,5],
   ];
- 
+
+  // diagonal stripes
   let level2 = {};
   level2.backgroundImage = 'img/background2.jpg';
   level2.bricks = [
@@ -141,7 +143,8 @@ var breakout = function(sketch) {
     [1,2,3,4,5,6,7],
      [1,2,3,4,5,6]
   ];
-  
+ 
+  // Dragonfly
   let level3 = {};
   level3.backgroundImage = 'img/background3.jpg';
   level3.bricks = [
@@ -177,9 +180,10 @@ var breakout = function(sketch) {
      [0,0,6,6,0,0],
     [0,0,0,6,0,0,0],
   ];
-  
+ 
+  // The jellyfish
   let level4 = {};
-  level4.backgroundImage = 'img/background4.jpg';
+  level4.backgroundImage = 'img/background6.jpg';
   level4.bricks = [
     [0],
      [0],
@@ -211,9 +215,10 @@ var breakout = function(sketch) {
      [0],
     [9,0,0,0,0,0,9],
   ];
-  
+ 
+  // Explosive chain reaction
   let level5 = {};
-  level5.backgroundImage = 'img/background6.jpg';
+  level5.backgroundImage = 'img/background5.jpg';
   level5.bricks = [
     [0],
      [0],
@@ -246,9 +251,10 @@ var breakout = function(sketch) {
     [0,7,7,10,7,7,7],
      [0,0,9,9,0,0],
   ];
-  
+ 
+  // UFO
   let level6 = {};
-  level6.backgroundImage = 'img/background1.jpg';
+  level6.backgroundImage = 'img/background8.jpg';
   level6.bricks = [
     [0],
      [0],
@@ -324,6 +330,7 @@ var breakout = function(sketch) {
   level6.specialBricks.push(movingBrick1);
 
 
+  // Crab
   let level7 = {};
   level7.backgroundImage = 'img/background6.jpg';
   level7.bricks = [
@@ -352,7 +359,8 @@ var breakout = function(sketch) {
     [0,0,9,0,9,0,0],
      [9,0,0,0,0,9]
   ];
-  
+ 
+  // Crown
   let level8 = {};
   level8.backgroundImage = 'img/background7.jpg';
   level8.bricks = [
@@ -434,6 +442,7 @@ var breakout = function(sketch) {
   }
   
 
+  // Cube box
   let level9 = {};
   level9.backgroundImage = 'img/background5.jpg';
   level9.bricks = [
@@ -465,12 +474,12 @@ var breakout = function(sketch) {
   ];
 
 
+  Levels.push(level6);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
   Levels.push(level4);
   Levels.push(level5);
-  Levels.push(level6);
   Levels.push(level7);
   Levels.push(level8);
   Levels.push(level9);
@@ -889,7 +898,7 @@ var breakout = function(sketch) {
     // Load audio files
     let audioArray = [
       ['ballHitWall', 'sounds/hitWall.ogg'],
-      ['ballHitBrick', 'sounds/hitBrick.ogg', 0.5],
+      ['ballHitBrick', 'sounds/hitBrick.ogg'],
       ['ballHitPaddle', 'sounds/hitPaddle.ogg'],
       ['powerupCollect', 'sounds/powerupCollect.ogg'],
       ['bulletFire', 'sounds/bulletFire.ogg'],
@@ -930,6 +939,7 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makePowerupGive200(0, 0));
     shapeBlueprints.push(makePowerupGive500(0, 0));
     shapeBlueprints.push(makePowerupGive1k(0, 0));
+    shapeBlueprints.push(makePowerupBallsX2(0, 0));
     shapeBlueprints.push(makeNoBorderInvincibleBrick(0,0));
     shapeBlueprints.push(makeNoBorderGrayBrick(0,0));
     shapeBlueprints.push(makeNoBorderWhiteBrick(0,0));
@@ -1998,7 +2008,11 @@ var breakout = function(sketch) {
     else if (pick < 0.80) {
       powerup = makePowerupCannons(x, y);
     }
-
+    
+    else if (pick < 0.85) {
+      powerup = makePowerupBallsX2(x, y);
+    }
+    
     return powerup;
   }
 
@@ -2103,6 +2117,33 @@ var breakout = function(sketch) {
 
       weapons.push(wep1);
       weapons.push(wep2);
+    }
+
+    return mypowerup;
+  }
+
+  // Double the number of balls onscreen.
+  function makePowerupBallsX2(x, y) {
+    let mypowerup = makePowerupGrowPaddle(x, y);
+    mypowerup.shapeName = 'ballsX2';
+    mypowerup.sprite = 'img/powerUpBallsX2.png';
+
+    mypowerup.effect = function() {
+
+      // Make a set of new balls.
+      let newballs = [];
+      for (let i = 0; i < balls.length; i++) {
+        // Each ball will "split" from away from an existing ball.
+        let nb = makeBall(balls[i].x, balls[i].y);
+        nb.vy = balls[i].speed * -1;
+        nb.vx = balls[i].vx * -1;
+        newballs.push(nb);
+      }
+
+      // Add them to the main balls array.
+      for (let x = 0; x < newballs.length; x++) {
+        balls.push(newballs[x]);
+      }
     }
 
     return mypowerup;
@@ -3196,7 +3237,7 @@ var breakout = function(sketch) {
     }
     
     // Play the explosion sound effect.
-    soundEffects.ballHitBrick.play(0,1,2);
+    soundEffects.ballHitBrick.play(0,1,3);
     
     // Player loses a life.
     playerLives--;
