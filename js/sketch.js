@@ -575,7 +575,7 @@ var breakout = function(sketch) {
 
 
   Levels.push(level1);
-  Levels.push(level2);
+  /*Levels.push(level2);
   Levels.push(level3);
   Levels.push(level4);
   Levels.push(level5);
@@ -585,7 +585,7 @@ var breakout = function(sketch) {
   Levels.push(level9);
   Levels.push(level10);
   Levels.push(level11);
-  Levels.push(level12);
+  Levels.push(level12);*/
 
 
   
@@ -1323,9 +1323,13 @@ var breakout = function(sketch) {
   // The main game loop.
   // Updating function
   function simUpdate() {
+    // Run special functions for the current level
+    let cl = Levels[gameConfig.level];
+    if (typeof cl.specialFunction === 'function') {
+      // If so, run it.
+      cl.specialFunction();
+    }
 
-    // Before doing ANYTHING, check for bricks.
-    
     // Check for destructable bricks first.
     let regularBrickCount = 0;
     for (let x = 0; x < bricks.length; x++) {
@@ -1339,18 +1343,22 @@ var breakout = function(sketch) {
     // When there are no more destructible bricks, the level is "cleared".
     if (regularBrickCount == 0) {
       // If so, move the player to the next level, if there is one.
-      gameConfig.level++
-      if (Levels[gameConfig.level]) {
+      gamePaused = true;
+
+      // Before incrementing the level counter, make sure it is safe to do so.
+      if (Levels[gameConfig.level] + 1 < Levels.length) {
+        gameConfig.level++
         resetPlayer();
+        
         // Clear the the bricks to get rid of non-dstructable brick.
         bricks = [];
 
         levelReader(Levels[gameConfig.level]);
-        gamePaused = true;
         makeResumeCountdown();
       }
 
       else {
+        bricks = [];
         //console.log("You win!");
         let gameOver = makeMessage("YOU WIN!");
         gameOver.endAction = function() {
@@ -1554,13 +1562,6 @@ var breakout = function(sketch) {
     // Scrub dead powerups
     powerups = alivePowerups;
 
-
-    // Run special functions for the current level
-    let cl = Levels[gameConfig.level];
-    if (typeof cl.specialFunction === 'function') {
-      // If so, run it.
-      cl.specialFunction();
-    }
 
     // Update the player
     player.boundsCheck();
