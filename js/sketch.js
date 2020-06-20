@@ -541,6 +541,9 @@ var breakout = function(sketch) {
      [0,0,0,0,0,0],
     [5,0,0,0,0,0,5],
   ];
+  
+
+  // Chart
   let level12 = {}
   level12.backgroundImage = 'img/background1.jpg';
   level12.bricks = [
@@ -572,6 +575,38 @@ var breakout = function(sketch) {
      [1,2,3,4,5,6],
     [8,8,8,8,8,0,0],
   ];
+  
+
+  // Zig Zag
+  let level13 = {}
+  level13.backgroundImage = 'img/background5.jpg';
+  level13.bricks = [
+    [0],
+     [0],
+    [0],
+     [0],
+    [9,10,1,9,10,0,0],
+     [9,10,2,9,10,0],
+    [0,9,10,3,9,10,0],
+     [0,9,10,4,9,10],
+    [0,0,9,10,5,9,10],
+     [0,0,9,10,6,9],
+    [0,0,9,10,5,9,10],
+     [0,9,10,4,9,10],
+    [0,9,10,3,9,10,0],
+     [9,10,2,9,10,0],
+    [9,10,1,9,10,0,0],
+     [9,10,2,9,10,0],
+    [0,9,10,3,9,10,0],
+     [0,9,10,4,9,10],
+    [0,0,9,10,5,9,10],
+     [0,0,9,10,6,9],
+    [0,0,9,10,7,9,10],
+     [0,9,10,6,9,10],
+    [0,9,10,5,9,10,0],
+     [9,10,4,9,10,0],
+    [9,10,3,9,10,0,0],
+  ];
 
 
   Levels.push(level1);
@@ -586,6 +621,7 @@ var breakout = function(sketch) {
   Levels.push(level10);
   Levels.push(level11);
   Levels.push(level12);
+  Levels.push(level13);
 
 
   
