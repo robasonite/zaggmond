@@ -352,3 +352,10 @@ I fixed by by putting a call to 'resetGame()' directly after the "switchScreen('
 - Added a new Super Ball powerup. It goes right through bricks and destroys them instantly.
 
 
+2020-06-20:
+
+- Added a Results screen that shows the player their score.
+
+- Added a "You Win!" message that pops up when the player beats the final level.
+
+- Found a very annoying bug and smashed its face in! Right after completing the final level in a set, the game crashed and the console reported an error about 'cl.specialFunction' not found, or something like that. The real problem turned out to be the level counter increment statement around line #1347. I changed the 'if' statement on line 1349 to check if 'gameConfig.level + 1' was less than 'Levels.length' *before* trying to increment the level counter. That fixed the problem! The "You Win!" message displayed, followed by the Results screen. I'm going call this bug the VICTORY CRASH.
