@@ -7,11 +7,18 @@
 // A huge thankyou goes out to the great people of the Internet. Though we have never met, on or offline, this work would have been impossible without the efforts of the many YouTubers, Redditors, and bloggers who post content about JavaScript, Android, and game development. It's like a college education without a rigid schedule, classrooms, crappy professors, or rediculous debt. Thank you all so very much.
 //
 // TODO:
-// - *DONE* Set up a basic loading screen
-// - *DONE* Design a some level backgrounds
-// - *DONE* Implement some kind of power-up system
-// - *DONE* Get moving bricks working
-// - Get bullets working
+// - Add an Info screen.
+// - Add a Help screen.
+// - Game over screen that shows the final score.
+// - A little fireworks show or special message when the player completes the final level.
+// - Add at least 4 more levels, preferably with matching backgrounds.
+//
+// - *DONE* Set up a basic loading screen.
+// - *DONE* Design a some level backgrounds.
+// - *DONE* Implement some kind of power-up system.
+// - *DONE* Get moving bricks working.
+// - *DONE* Get bullets working.
+
 
 var breakout = function(sketch) {
   gameConfig = {
@@ -1201,6 +1208,23 @@ var breakout = function(sketch) {
     
     buttons.push(resumeBtn);
     
+    let resultsOkBtn = makeUiButton(
+      'OK',
+      (gameConfig.areaWidth / 2) - (240 / 2),
+      gameConfig.areaHeight * 0.8,
+      240,
+      140,
+      'results',
+      70
+    );
+    
+    resultsOkBtn.mousePressed(function() {
+      resetGame();
+      switchScreen('title');
+    });
+    
+    buttons.push(resultsOkBtn);
+    
     // makeUiButton(label, x, y, w, h, screen, fontSize)
     let pauseBtn = makeUiButton(
       //'&#9613;&#9613;',
@@ -1328,8 +1352,12 @@ var breakout = function(sketch) {
 
       else {
         //console.log("You win!");
-        switchScreen('title');
-        resetGame();
+        let gameOver = makeMessage("YOU WIN!");
+        gameOver.endAction = function() {
+          switchScreen('results');
+        }
+        gameOver.maxTime = 120;
+        messages.push(gameOver);
       }
     }
 
@@ -1820,9 +1848,48 @@ var breakout = function(sketch) {
     // Change the screen
     gameConfig.mode = screenName;
   }
+ 
+  // Show the player's final score.
+  function resultsScreen() {
+    sketch.fill(0,125,0);
+    //sketch.fill(90,90,200);
+    //strokeWeight(4);
+    //stroke(0,0,200);
+    sketch.rect(
+      0,
+      0,
+      gameConfig.areaWidth * gameConfig.scale,
+      gameConfig.areaHeight * gameConfig.scale
+    );
+    sketch.fill(0);
+    sketch.stroke(255);
+    sketch.strokeWeight(4);
+    sketch.textAlign(sketch.CENTER);
+    sketch.textSize(90 * gameConfig.scale);
+    sketch.text(
+      "Results",
+      (gameConfig.areaWidth / 2) * gameConfig.scale,
+      (gameConfig.areaHeight * 0.15) * gameConfig.scale
+    );
+    
+    sketch.textSize(60 * gameConfig.scale);
+    sketch.text(
+      "Final score: ",
+      (gameConfig.areaWidth / 2) * gameConfig.scale,
+      (gameConfig.areaHeight * 0.30) * gameConfig.scale
+    );
+   
+    sketch.noStroke();
+    sketch.fill(255,185,0);
+    sketch.text(
+      playerScore,
+      (gameConfig.areaWidth / 2) * gameConfig.scale,
+      (gameConfig.areaHeight * 0.38) * gameConfig.scale
+    );
+  }
 
   function titleScreen() {
-    sketch.fill(90,90,200);
+    sketch.fill(0,155,0);
     //sketch.fill(90,90,200);
     //strokeWeight(4);
     //stroke(0,0,200);
@@ -1897,6 +1964,9 @@ var breakout = function(sketch) {
       }
       else if (gameConfig.mode == 'pause') {
         pauseScreen();
+      }
+      else if (gameConfig.mode == 'results') {
+        resultsScreen();
       }
       else if (gameConfig.mode == 'play') {
         gameLoop();
@@ -3413,7 +3483,7 @@ var breakout = function(sketch) {
       // If not, game over.
       let gameOver = makeMessage("GAME OVER!");
       gameOver.endAction = function() {
-        switchScreen('title');
+        switchScreen('results');
       }
       gameOver.maxTime = 120;
       messages.push(gameOver);
