@@ -575,7 +575,7 @@ var breakout = function(sketch) {
 
 
   Levels.push(level1);
-  /*Levels.push(level2);
+  Levels.push(level2);
   Levels.push(level3);
   Levels.push(level4);
   Levels.push(level5);
@@ -585,7 +585,7 @@ var breakout = function(sketch) {
   Levels.push(level9);
   Levels.push(level10);
   Levels.push(level11);
-  Levels.push(level12);*/
+  Levels.push(level12);
 
 
   
@@ -1346,7 +1346,7 @@ var breakout = function(sketch) {
       gamePaused = true;
 
       // Before incrementing the level counter, make sure it is safe to do so.
-      if (Levels[gameConfig.level] + 1 < Levels.length) {
+      if (gameConfig.level + 1 < Levels.length) {
         gameConfig.level++
         resetPlayer();
         
@@ -1887,6 +1887,23 @@ var breakout = function(sketch) {
       (gameConfig.areaWidth / 2) * gameConfig.scale,
       (gameConfig.areaHeight * 0.38) * gameConfig.scale
     );
+
+    sketch.fill(0);
+    sketch.stroke(255);
+    sketch.strokeWeight(4);
+    sketch.textSize(60 * gameConfig.scale);
+    sketch.text(
+      "Thanks for",
+      (gameConfig.areaWidth / 2) * gameConfig.scale,
+      (gameConfig.areaHeight * 0.48) * gameConfig.scale
+    );
+    sketch.text(
+      "playing!",
+      (gameConfig.areaWidth / 2) * gameConfig.scale,
+      (gameConfig.areaHeight * 0.58) * gameConfig.scale
+    );
+    sketch.noStroke();
+   
   }
 
   function titleScreen() {
