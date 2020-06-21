@@ -9,10 +9,10 @@
 // TODO:
 // - Add an Info screen.
 // - Add a Help screen.
-// - Game over screen that shows the final score.
 // - A little fireworks show or special message when the player completes the final level.
-// - Add at least 4 more levels, preferably with matching backgrounds.
+// - Add at least 3 more levels, preferably with matching backgrounds.
 //
+// - *DONE* Game over screen that shows the final score.
 // - *DONE* Set up a basic loading screen.
 // - *DONE* Design a some level backgrounds.
 // - *DONE* Implement some kind of power-up system.
