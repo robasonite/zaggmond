@@ -2058,16 +2058,23 @@ var breakout = function(sketch) {
   }
 
   function titleScreen() {
-    sketch.fill(0,155,0);
-    //sketch.fill(90,90,200);
-    //strokeWeight(4);
-    //stroke(0,0,200);
-    sketch.rect(
-      0,
+    sketch.image(
+      Levels[7].background,
+      0, 
       0,
       gameConfig.areaWidth * gameConfig.scale,
       gameConfig.areaHeight * gameConfig.scale
     );
+    //sketch.fill(0,155,0);
+    //sketch.fill(90,90,200);
+    //strokeWeight(4);
+    //stroke(0,0,200);
+    /*sketch.rect(
+      0,
+      0,
+      gameConfig.areaWidth * gameConfig.scale,
+      gameConfig.areaHeight * gameConfig.scale
+    );*/
     /*sketch.fill(0);
     sketch.stroke(255);
     sketch.strokeWeight(4);
@@ -2082,6 +2089,19 @@ var breakout = function(sketch) {
     gameConfig.titleObj.draw(
       gameConfig.scale,
       shapeBuffers[gameConfig.titleObj.shapeName]
+    );
+    sketch.fill(255);
+    sketch.textAlign(sketch.CENTER);
+    sketch.textSize(30 * gameConfig.scale);
+    sketch.text(
+      "Copyright 2020 Robasonite",
+      (gameConfig.areaWidth / 2) * gameConfig.scale,
+      (gameConfig.areaHeight * 0.9) * gameConfig.scale
+    );
+    sketch.text(
+      "All rights reserved",
+      (gameConfig.areaWidth / 2) * gameConfig.scale,
+      (gameConfig.areaHeight * 0.93) * gameConfig.scale
     );
   }
 
