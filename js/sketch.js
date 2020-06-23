@@ -709,7 +709,6 @@ var breakout = function(sketch) {
   ];
 
 
-  Levels.push(level12);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
@@ -722,6 +721,7 @@ var breakout = function(sketch) {
   Levels.push(level10);
   Levels.push(level11);
   Levels.push(level13);
+  Levels.push(level12);
   Levels.push(level14);
   Levels.push(level15);
   Levels.push(level16);
@@ -2777,10 +2777,10 @@ var breakout = function(sketch) {
       // Inner circle
       buffer.fill(0,0,255);
       buffer.ellipse(
-        myball.x + 2,
-        myball.y + 2,
-        myball.width - 4,
-        myball.height - 4
+        myball.x + 4,
+        myball.y + 4,
+        myball.width - 8,
+        myball.height - 8
       );
     }
 
@@ -2847,10 +2847,10 @@ var breakout = function(sketch) {
       // Inner circle
       buffer.fill(255,255,0);
       buffer.ellipse(
-        myball.x + 2,
-        myball.y + 2,
-        myball.width - 4,
-        myball.height - 4
+        myball.x + 4,
+        myball.y + 4,
+        myball.width - 8,
+        myball.height - 8
       );
     }
 
