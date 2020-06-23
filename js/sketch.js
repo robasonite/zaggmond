@@ -1411,6 +1411,9 @@ var breakout = function(sketch) {
       brick.alive = false;
       
       // Play the sound effect
+      if (soundEffects.ballHitBrick.isPlaying()) {
+        soundEffects.ballHitBrick.stop();
+      }
       soundEffects.ballHitBrick.play(0,1,0.5);
       
       // Award points
@@ -1455,6 +1458,9 @@ var breakout = function(sketch) {
 
     // If the brick is not destroyed, play the normal wall hit sound.
     else {
+      if (soundEffects.ballHitWall.isPlaying()) {
+        soundEffects.ballHitWall.stop();
+      }
       soundEffects.ballHitWall.play();
     }
   }
@@ -2809,6 +2815,9 @@ var breakout = function(sketch) {
 
       // If the ball hit a wall, play the sound effect.
       if (hitWall) {
+        if (soundEffects.ballHitWall.isPlaying()) {
+          soundEffects.ballHitWall.stop();
+        }
         soundEffects.ballHitWall.play();
       }
     }
