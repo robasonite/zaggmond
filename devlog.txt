@@ -359,3 +359,27 @@ I fixed by by putting a call to 'resetGame()' directly after the "switchScreen('
 - Added a "You Win!" message that pops up when the player beats the final level.
 
 - Found a very annoying bug and smashed its face in! Right after completing the final level in a set, the game crashed and the console reported an error about 'cl.specialFunction' not found, or something like that. The real problem turned out to be the level counter increment statement around line #1347. I changed the 'if' statement on line 1349 to check if 'gameConfig.level + 1' was less than 'Levels.length' *before* trying to increment the level counter. That fixed the problem! The "You Win!" message displayed, followed by the Results screen. I'm going call this bug the VICTORY CRASH.
+
+- Added "Thanks for playing!" to the results screen.
+
+- Added a new Zig Zag level that looks weird. That's all that matters.
+
+
+2020-06-21:
+
+- Made all of the Give Points powerups bold and disable antialiasing.
+
+- Added a new hourglass-pretzel-thing level.
+
+- Added a creepy smiley face level.
+
+- Added a rainbow level.
+
+
+2020-06-22:
+
+- Gave the buttons a rounded border.
+
+- Changed the demo text to make it not show up on mobile devices.
+
+- Changed the code that plays the "ball hit brick" and "ball hit wall" sound effects so that it checks to see if the sound is already playing. If the sound is playing, it stops the sound *before* playing it. I think think this sounds better when the ball hits multiple bricks in rapid succession.
