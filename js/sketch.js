@@ -393,6 +393,7 @@ var breakout = function(sketch) {
   // Special properties required for the special function.
   // Max number of bricks to spawn
   level8.maxBricks = 22;
+  level8.currentBricks = 0;
   
   // A reference model for normal bricks
   level8.demoBrick = makeBrick(0,0);
@@ -405,46 +406,48 @@ var breakout = function(sketch) {
   level8.spawnDelay = level8.brickStep / level8.brickSpeed;
   level8.spawnDelaySave = level8.spawnDelay;
 
-  // Tell the function to stop.
-  level8.stopSpawn = false;
-
   // Whether to spawn an armored brick.
   level8.spawnArmored = false
+
+  // Reset function
+  // This resets the currentBricks to 0.
+  level8.resetSpecial = function() {
+    level8.currentBricks = 0;
+  }
   
-  // This level has a special function.
+  // This level has a special function that spawns a bunch of bricks that move
+  // in a rectangle along the perimeter of the play area.
   level8.specialFunction = function() {
-    if (!level8.stopSpawn) {
-      if (level8.spawnDelay > 0) {
-        level8.spawnDelay--;
-      }
-      else {
-        if (level8.maxBricks > 0) {
-          let brickMaker;
-          if (level8.spawnArmored) {
-            brickMaker = makeArmoredBrick;
-            level8.spawnArmored = false;
-          }
-          else {
-            brickMaker = makeBlueBrick;
-            level8.spawnArmored = true;
-          }
-          mybrick = makeMovingBrickRectPath(
-            brickMaker,
-            gameConfig.brickSpacing,
-            gameConfig.uiBarHeight + gameConfig.brickSpacing,
-            7
-          );
-          mybrick.bounds.height = ((mybrick.width + gameConfig.brickSpacing) * 7) - gameConfig.brickSpacing
-          mybrick.speed = 8;
-          mybrick.vx = mybrick.speed;
-          bricks.push(mybrick);
-
-          // Make sure to decrement this number to prevent infinite spawning
-          level8.maxBricks--;
+    if (level8.spawnDelay > 0) {
+      level8.spawnDelay--;
+    }
+    else {
+      if (level8.currentBricks < level8.maxBricks) {
+        let brickMaker;
+        if (level8.spawnArmored) {
+          brickMaker = makeArmoredBrick;
+          level8.spawnArmored = false;
         }
+        else {
+          brickMaker = makeBlueBrick;
+          level8.spawnArmored = true;
+        }
+        mybrick = makeMovingBrickRectPath(
+          brickMaker,
+          gameConfig.brickSpacing,
+          gameConfig.uiBarHeight + gameConfig.brickSpacing,
+          7
+        );
+        mybrick.bounds.height = ((mybrick.width + gameConfig.brickSpacing) * 7) - gameConfig.brickSpacing
+        mybrick.speed = 8;
+        mybrick.vx = mybrick.speed;
+        bricks.push(mybrick);
 
-        level8.spawnDelay = level8.spawnDelaySave;
+        // Make sure to increment this number to prevent infinite spawning
+        level8.currentBricks++;
       }
+
+      level8.spawnDelay = level8.spawnDelaySave;
     }
   }
   
@@ -709,6 +712,7 @@ var breakout = function(sketch) {
   ];
 
 
+  Levels.push(level8);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
@@ -716,7 +720,6 @@ var breakout = function(sketch) {
   Levels.push(level5);
   Levels.push(level6);
   Levels.push(level7);
-  Levels.push(level8);
   Levels.push(level9);
   Levels.push(level10);
   Levels.push(level11);
@@ -3772,6 +3775,14 @@ var breakout = function(sketch) {
 
   // Reset the level, balls, and bricks.
   function resetGame() {
+    // Check for and run all level reset functions.
+    for (let i = 0; i < Levels.length; i++) {
+      let cl = Levels[i];
+      if (typeof cl.resetSpecial === 'function') {
+        cl.resetSpecial();
+      }
+    }
+
 
     // Reset all of the relevent values.
     bricks = [];
