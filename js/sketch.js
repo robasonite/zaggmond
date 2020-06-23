@@ -545,7 +545,7 @@ var breakout = function(sketch) {
 
   // Chart
   let level12 = {}
-  level12.backgroundImage = 'img/background1.jpg';
+  level12.backgroundImage = 'img/background10.jpg';
   level12.bricks = [
     [0],
      [0],
@@ -563,16 +563,16 @@ var breakout = function(sketch) {
      [1,2,3,4,0,0],
     [1,2,3,4,5,0,0],
      [1,2,3,4,5,0],
-    [1,2,3,4,5,6,0],
-     [1,2,3,4,5,6],
-    [1,2,3,4,5,6,0],
-     [1,2,3,4,5,6],
-    [1,2,3,4,5,6,0],
-     [1,2,3,4,5,6],
-    [1,2,3,4,5,6,0],
-     [1,2,3,4,5,6],
-    [1,2,3,4,5,6,0],
-     [1,2,3,4,5,6],
+    [1,2,3,4,5,7,0],
+     [1,2,3,4,5,7],
+    [1,2,3,4,5,7,0],
+     [1,2,3,4,5,7],
+    [1,2,3,4,5,7,0],
+     [1,2,3,4,5,7],
+    [1,2,3,4,5,7,0],
+     [1,2,3,4,5,7],
+    [1,2,3,4,5,7,0],
+     [1,2,3,4,5,7],
     [8,8,8,8,8,0,0],
   ];
   
@@ -709,6 +709,7 @@ var breakout = function(sketch) {
   ];
 
 
+  Levels.push(level12);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
@@ -720,7 +721,6 @@ var breakout = function(sketch) {
   Levels.push(level9);
   Levels.push(level10);
   Levels.push(level11);
-  Levels.push(level12);
   Levels.push(level13);
   Levels.push(level14);
   Levels.push(level15);
