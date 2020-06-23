@@ -972,7 +972,7 @@ var breakout = function(sketch) {
   let loadedSprites = 0;
   let spriteLoadingDone = false;
 
-  // This function process shap blueprint objects.
+  // This function processes shape blueprint objects.
   function spriteLoader(blueprint) {
 
     // Success callback
@@ -998,6 +998,11 @@ var breakout = function(sketch) {
     else {
       blueprint.makeShape(shapeBuffers[blueprint.shapeName]);
       spriteLoaded();
+    }
+
+    // If the object is the title, make a title object and add it to config
+    if (blueprint.shapeName == 'gameTitle') {
+      gameConfig.titleObj = makeTitle(0,100);
     }
   }
 
@@ -1170,6 +1175,7 @@ var breakout = function(sketch) {
     shapeBlueprints.push(makeInvincibleBrick(0,0));
     shapeBlueprints.push(makeBombBrick(0,0));
     shapeBlueprints.push(makeBall(0,0));
+    shapeBlueprints.push(makeTitle(0,0));
     shapeBlueprints.push(makeSuperBall(0,0));
     shapeBlueprints.push(makeBullet(0,0));
     shapeBlueprints.push(makeCannon(0,0));
@@ -2062,7 +2068,7 @@ var breakout = function(sketch) {
       gameConfig.areaWidth * gameConfig.scale,
       gameConfig.areaHeight * gameConfig.scale
     );
-    sketch.fill(0);
+    /*sketch.fill(0);
     sketch.stroke(255);
     sketch.strokeWeight(4);
     sketch.textAlign(sketch.CENTER);
@@ -2072,7 +2078,11 @@ var breakout = function(sketch) {
       (gameConfig.areaWidth / 2) * gameConfig.scale,
       (gameConfig.areaHeight * 0.15) * gameConfig.scale
     );
-    sketch.noStroke();
+    sketch.noStroke();*/
+    gameConfig.titleObj.draw(
+      gameConfig.scale,
+      shapeBuffers[gameConfig.titleObj.shapeName]
+    );
   }
 
   function loadingScreen() {
@@ -2312,6 +2322,41 @@ var breakout = function(sketch) {
     return myparticle;
 
   }
+
+  // Title logo
+  function makeTitle(x, y) {
+    let mytitle = makeParticle(x, y);
+    mytitle.shapeName = 'gameTitle';
+    mytitle.speed = 0;
+    mytitle.vx = 0;
+    mytitle.vy = 0;
+    mytitle.width = 720;
+    mytitle.height = 154;
+    mytitle.sprite = 'img/title.png';
+    mytitle.makeShape = function() {
+      sketch.fill(0,155,0);
+      sketch.rect(
+        0,
+        0,
+        gameConfig.areaWidth * gameConfig.scale,
+        gameConfig.areaHeight * gameConfig.scale
+      );
+      sketch.fill(0);
+      sketch.stroke(255);
+      sketch.strokeWeight(4);
+      sketch.textAlign(sketch.CENTER);
+      sketch.textSize(90 * gameConfig.scale);
+      sketch.text(
+        "ZaGgMoNd",
+        (gameConfig.areaWidth / 2) * gameConfig.scale,
+        (gameConfig.areaHeight * 0.15) * gameConfig.scale
+      );
+      sketch.noStroke();
+    }
+
+    return mytitle;
+  }
+  
 
 
   // Powerups
@@ -2883,7 +2928,7 @@ var breakout = function(sketch) {
 
     // Brick borders
     mybrick.border = 4;
-    mybrick.borderColor = sketch.color(200);
+    mybrick.borderColor = sketch.color(155);
 
     // Draw the right shape
     mybrick.makeShape = function(buffer) {
