@@ -31,7 +31,8 @@
     .buttons {
       color: black;
       background-color: gold;
-      border: none;
+      border: black solid 0.1rem;
+      border-radius: 0.6rem;
       /*font-size: 16px;
       font-weight: bold;
       padding: 8px;*/
@@ -40,8 +41,9 @@
     #fontTest {
       color: black;
       position: fixed;
-      top: 0;
-      left: 0;
+      left: 50%;
+      bottom: -100px;
+      text-align: center;
     }
   </style>
   <script src="js/p5.min.js"></script>
@@ -49,8 +51,8 @@
 </head>
 
 <body>
-  <p id="fontTest">demo text</p>
   <script src="js/sketch.js"></script>
+  <p id="fontTest">Copyright 2020 Robasonite. This is demo text to make the font load for buttons.</p>
 </body>
 
 </html>
