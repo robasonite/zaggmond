@@ -712,7 +712,6 @@ var breakout = function(sketch) {
   ];
 
 
-  Levels.push(level8);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
@@ -720,6 +719,7 @@ var breakout = function(sketch) {
   Levels.push(level5);
   Levels.push(level6);
   Levels.push(level7);
+  Levels.push(level8);
   Levels.push(level9);
   Levels.push(level10);
   Levels.push(level11);
@@ -844,11 +844,6 @@ var breakout = function(sketch) {
       //console.log(sb.length);
     }
 
-    // If the level has no special function declared, set it to false.
-    // This is really just to make sure that the property exists so that 'simUpdate()' doesn't freak out.
-    if (!level.hasOwnProperty('specialFunction')) {
-      level.specialFunction = false;
-    }
   }
 
   /*
