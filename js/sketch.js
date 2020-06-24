@@ -1330,7 +1330,7 @@ var breakout = function(sketch) {
     );
     
     exitBtn.mousePressed(function() {
-      window.location.href = 'https://www.robasonite.com/games/main/index.html';
+      window.location.href = 'https://www.robasonite.com/games/';
     });
     
     buttons.push(exitBtn);
