@@ -3671,7 +3671,7 @@ var breakout = function(sketch) {
     // If the accumulated value is over the required amount to grant an extra life,
     // the leftover points are put towards earning the next life.
     if (gameConfig.currentPaddlePoints > gameConfig.extraPaddlePoints) {
-      let leftover = gameConfig.extraPaddlePoints - gameConfig.currentPaddlePoints;
+      let leftover = gameConfig.currentPaddlePoints - gameConfig.extraPaddlePoints;
       gameConfig.currentPaddlePoints = leftover;
 
       // Increment player lives
