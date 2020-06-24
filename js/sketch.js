@@ -1278,7 +1278,8 @@ var breakout = function(sketch) {
 
     // Add button to array
     buttons.push(fsBtn);
-    
+   
+    // Start button
     let startBtn = makeUiButton(
       'START',
       (gameConfig.areaWidth / 2) - (270 / 2),
@@ -1316,7 +1317,26 @@ var breakout = function(sketch) {
     });
     
     buttons.push(startBtn);
+   
+    // Close the current tab/window
+    let exitBtn = makeUiButton(
+      'EXIT',
+      (gameConfig.areaWidth / 2) - (270 / 2),
+      gameConfig.areaHeight * 0.6,
+      270,
+      140,
+      'title',
+      70
+    );
     
+    exitBtn.mousePressed(function() {
+      window.location.href = 'https://www.robasonite.com/games/main/index.html';
+    });
+    
+    buttons.push(exitBtn);
+   
+
+    // Quit to title
     let quitBtn = makeUiButton(
       'QUIT',
       (gameConfig.areaWidth / 2) - (280 / 2),
