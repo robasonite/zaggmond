@@ -1372,10 +1372,10 @@ var breakout = function(sketch) {
     let pauseBtn = makeUiButton(
       //'&#9613;&#9613;',
       '&#10074;&#10074;',
-      gameConfig.areaWidth - gameConfig.uiBarHeight,
-      gameConfig.areaHeight - gameConfig.uiBarHeight,
-      gameConfig.uiBarHeight,
-      gameConfig.uiBarHeight,
+      gameConfig.areaWidth - gameConfig.uiBarHeight + 4,
+      gameConfig.areaHeight - gameConfig.uiBarHeight + 4,
+      gameConfig.uiBarHeight - 8,
+      gameConfig.uiBarHeight - 8,
       'play',
       40
     );
@@ -1904,7 +1904,7 @@ var breakout = function(sketch) {
     
     // Draw the top and bottom bars AFTER drawing all of the game elements.
     // Top bar
-    sketch.fill(100);
+    sketch.fill(0,90,0);
     sketch.noStroke();
     sketch.rect(
       0,
@@ -1912,7 +1912,7 @@ var breakout = function(sketch) {
       gameConfig.areaWidth * gameConfig.scale,
       gameConfig.uiBarHeight * gameConfig.scale
     );
-
+    
     // Bottom bar
     sketch.rect(
       0,
@@ -1920,6 +1920,44 @@ var breakout = function(sketch) {
       gameConfig.areaWidth * gameConfig.scale,
       gameConfig.uiBarHeight * gameConfig.scale
     );
+
+    let borderWidth = 4
+   
+    // Top border
+    sketch.fill(155);
+    sketch.noStroke();
+    sketch.rect(
+      0,
+      (gameConfig.uiBarHeight - borderWidth) * gameConfig.scale,
+      gameConfig.areaWidth * gameConfig.scale,
+      borderWidth * gameConfig.scale
+    );
+
+    // Bottem border
+    sketch.rect(
+      0,
+      (gameConfig.areaHeight - gameConfig.uiBarHeight - borderWidth) * gameConfig.scale,
+      gameConfig.areaWidth * gameConfig.scale,
+      borderWidth * gameConfig.scale
+    );
+
+    // Left border
+    sketch.rect(
+      0,
+      (gameConfig.uiBarHeight - borderWidth) * gameConfig.scale,
+      borderWidth * gameConfig.scale,
+      (gameConfig.areaHeight - (gameConfig.uiBarHeight * 2)) * gameConfig.scale,
+    );
+
+    // Right border
+    sketch.rect(
+      (gameConfig.areaWidth - borderWidth) * gameConfig.scale,
+      (gameConfig.uiBarHeight - borderWidth) * gameConfig.scale,
+      borderWidth * gameConfig.scale,
+      (gameConfig.areaHeight - (gameConfig.uiBarHeight * 2)) * gameConfig.scale,
+    );
+
+
 
     // Draw the player's score.
     showBarText(
