@@ -399,4 +399,15 @@ I fixed by by putting a call to 'resetGame()' directly after the "switchScreen('
 
 - Added copyright to the title screen.
 
-- Fixed a bug on Level 8 where the moving bricks wouldn't spawn. When the game first loads, and the player makes it to the Crown level, the bricks spawned in properly. Any time after that point, if the player gets back to the title screen (win, lose, or quit), those bricks didn't spawn the *next* time the player made it to the Crown level. I fixed this by attaching a 'resetSpecial' function to level 8 that resets the current currentBricks counter back to 0; The 'resetGame()' function was updated to check for run 'resetSpecial()' for each level. 
+- Fixed a bug on Level 8 where the moving bricks wouldn't spawn. When the game first loads, and the player makes it to the Crown level, the bricks spawned in properly. Any time after that point, if the player gets back to the title screen (win, lose, or quit), those bricks didn't spawn the *next* time the player made it to the Crown level. I fixed this by attaching a 'resetSpecial' function to level 8 that resets the current currentBricks counter back to 0; The 'resetGame()' function was updated to check for run 'resetSpecial()' for each level.
+
+
+2020-06-24:
+
+- Fixed extra life points bug. The game was not granting a new life every 10000 points. I had a pair of variables in the wrong position in 'addPlayerScore()'.
+
+- The top and bottom bars are now dark green, and game border is now clearly marked.
+
+- Added an exit button that takes the user back to the game page at Robasonite.com.
+
+- Wrote a new 'build.sh' that uses Terser to compress and mangle the game. Resulting JS code found to work without problems.
