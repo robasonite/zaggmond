@@ -383,3 +383,20 @@ I fixed by by putting a call to 'resetGame()' directly after the "switchScreen('
 - Changed the demo text to make it not show up on mobile devices.
 
 - Changed the code that plays the "ball hit brick" and "ball hit wall" sound effects so that it checks to see if the sound is already playing. If the sound is playing, it stops the sound *before* playing it. I think think this sounds better when the ball hits multiple bricks in rapid succession.
+
+
+2020-06-23:
+
+- Edited backgrounds 3, 5, and 8 to reduce the size. I managed to shave off about a megabyte.
+
+- Added a new office background for the chart level.
+
+- Made brick outlines darker.
+
+- Made a logo for the title screen.
+
+- Changed the background for the title screen.
+
+- Added copyright to the title screen.
+
+- Fixed a bug on Level 8 where the moving bricks wouldn't spawn. When the game first loads, and the player makes it to the Crown level, the bricks spawned in properly. Any time after that point, if the player gets back to the title screen (win, lose, or quit), those bricks didn't spawn the *next* time the player made it to the Crown level. I fixed this by attaching a 'resetSpecial' function to level 8 that resets the current currentBricks counter back to 0; The 'resetGame()' function was updated to check for run 'resetSpecial()' for each level. 
