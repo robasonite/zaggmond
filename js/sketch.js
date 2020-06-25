@@ -2014,6 +2014,11 @@ var breakout = function(sketch) {
     if (playerLives >= 0) {
       showNumber = playerLives;
     }
+   
+    // If the player somehow gains more than 10 lives, show an X.
+    if (playerLives >= 10) {
+      showNumber = 'X';
+    }
 
     showBarText(
       "Lives: " + showNumber,
