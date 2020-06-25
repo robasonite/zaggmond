@@ -21,6 +21,11 @@
 
 
 var breakout = function(sketch) {
+  // Disable error system
+  p5.disableFriendlyErrors = true;
+
+
+  // Main game config
   gameConfig = {
     canvas: '',
     compStyle: '',
@@ -32,12 +37,14 @@ var breakout = function(sketch) {
     brickSpacing: 10,
     mode: 'loading',
     uiBarHeight: 100,
-    msgMaxTime: 40,
+    msgMaxTime: 30,
     extraPaddlePoints: 10000,
     currentPaddlePoints: 0,
     font: '',
     fontName: '',
-    level: 0
+    level: 0,
+    debug: true,
+    fps: 30
   };
 
   // Give gameConfig a function for getting the current style rules and the current buttonOffsetX.
@@ -392,7 +399,7 @@ var breakout = function(sketch) {
 
   // Special properties required for the special function.
   // Max number of bricks to spawn
-  level8.maxBricks = 22;
+  level8.maxBricks = 26;
   level8.currentBricks = 0;
   
   // A reference model for normal bricks
@@ -403,7 +410,13 @@ var breakout = function(sketch) {
 
   // Brick step and delay values
   level8.brickStep = gameConfig.brickSpacing + level8.demoBrick.width;
-  level8.spawnDelay = level8.brickStep / level8.brickSpeed;
+
+  // Get the raw delay.
+  let rawDelay = level8.brickStep / level8.brickSpeed;
+
+  // Correct for framerate.
+  level8.spawnDelay = (rawDelay / 60) * 30;
+
   level8.spawnDelaySave = level8.spawnDelay;
 
   // Whether to spawn an armored brick.
@@ -1129,8 +1142,17 @@ var breakout = function(sketch) {
 
   sketch.setup = function() {
     // put setup code here
+    
+    // Limit framerate to 30.
+    sketch.frameRate(gameConfig.fps);
 
-    // Create the canvas
+    // Try to modify speed values to fit the current FPS.
+    gameConfig.speedMultiplier = ((1 / 60) * gameConfig.fps) + 1;
+
+    // Adjust max time to smatch speed multiplier.
+    gameConfig.msgMaxTime *= (gameConfig.speedMultiplier - 1);
+
+    // Create the canvas.
     gameConfig.canvas = sketch.createCanvas(
       gameConfig.areaWidth * gameConfig.scale,
       gameConfig.areaHeight * gameConfig.scale
@@ -1550,7 +1572,7 @@ var breakout = function(sketch) {
     for (let x = 0; x < bullets.length; x++) {
       // If the bullet is onscreen, it's alive
       let bullet = bullets[x];
-      bullet.move();
+      bullet.move(gameConfig.scale, gameConfig.speedMultiplier);
       
       if (
         bullet.x > 0 &&
@@ -1665,7 +1687,7 @@ var breakout = function(sketch) {
         }
 
         // Finally, move the ball.
-        balls[x].move(gameConfig.scale);
+        balls[x].move(gameConfig.scale, gameConfig.speedMultiplier);
       }
     }
 
@@ -1713,7 +1735,7 @@ var breakout = function(sketch) {
 
         // Else, move the powerup.
         else {
-          powerups[p].move(gameConfig.scale);
+          powerups[p].move(gameConfig.scale, gameConfig.speedMultiplier);
         }
       }
 
@@ -1734,7 +1756,7 @@ var breakout = function(sketch) {
 
     // Update the player
     player.boundsCheck();
-    player.move(gameConfig.scale);
+    player.move(gameConfig.scale, gameConfig.speedMultiplier);
     
     // Weapon handling
     aliveWeapons = [];
@@ -1825,7 +1847,7 @@ var breakout = function(sketch) {
           bricks[x].boundsCheck();
 
           // Then move the brick.
-          bricks[x].move(gameConfig.scale);
+          bricks[x].move(gameConfig.scale, gameConfig.speedMultiplier);
         }
       }
     }
@@ -1875,7 +1897,7 @@ var breakout = function(sketch) {
         }*/
 
         // Move the particle.
-        particles[i].move(gameConfig.scale);
+        particles[i].move(gameConfig.scale, gameConfig.speedMultiplier);
       }
     }
 
@@ -2197,8 +2219,6 @@ var breakout = function(sketch) {
     );
   }
 
-  // Needed to report FPS
-  //let lastLoop = new Date();
   sketch.draw = function() {
     // put drawing code here
 
@@ -2222,22 +2242,16 @@ var breakout = function(sketch) {
       }
 
       // Show FPS
-      /*let thisLoop = new Date();
-      let fps = 1000 / (thisLoop - lastLoop);
-      lastLoop = thisLoop;
-      if (fps < 50) {
-        sketch.fill(200,0,0);
-      }
-      else {
+      if (gameConfig.debug) {
         sketch.fill(0,200,0);
+        sketch.textAlign(sketch.LEFT);
+        sketch.textSize(50 * gameConfig.scale);
+        sketch.text(
+          "FPS: " + Math.floor(sketch.frameRate()),
+          500 * gameConfig.scale,
+          50 * gameConfig.scale
+        );
       }
-      sketch.textAlign(sketch.LEFT);
-      sketch.textSize(50 * gameConfig.scale);
-      sketch.text(
-        "FPS: " + Math.floor(fps),
-        500 * gameConfig.scale,
-        50 * gameConfig.scale
-      );*/
     }
 
     // Else, show the preloader.
@@ -2380,9 +2394,9 @@ var breakout = function(sketch) {
       );
     }
     
-    myparticle.move = function(scale) {
-      myparticle.x += myparticle.vx;
-      myparticle.y += myparticle.vy;
+    myparticle.move = function(scale, multiplier) {
+      myparticle.x += (myparticle.vx * multiplier);
+      myparticle.y += (myparticle.vy * multiplier);
     }
     
     myparticle.draw = function(scale, buffer) {
@@ -2691,7 +2705,7 @@ var breakout = function(sketch) {
     let eparticle = makeParticle(x, y);
 
     // Set a maximum travel distance.
-    eparticle.maxDistance = 80;
+    eparticle.maxDistance = 80 * (gameConfig.speedMultiplier - 1);
 
     // When the particle travels far enough, it dies.
     eparticle.checkDistance = function() {
@@ -2787,11 +2801,11 @@ var breakout = function(sketch) {
     // Which side of the player is it on?
     mycannon.placement = 'center';
     
-    // This is how long the weapon will last
-    mycannon.timer = 300;
+    // This is how long the weapon will last.
+    mycannon.timer = 300 * (gameConfig.speedMultiplier - 1);
 
     // Fire rate
-    mycannon.rate = 20;
+    mycannon.rate = 20 * (gameConfig.speedMultiplier - 1);
     mycannon.rateSave = mycannon.rate;
 
     // What the cannon does when it fires.
