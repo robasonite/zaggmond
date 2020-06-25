@@ -43,7 +43,7 @@ var breakout = function(sketch) {
     font: '',
     fontName: '',
     level: 0,
-    debug: true,
+    debug: false,
     fps: 30
   };
 
