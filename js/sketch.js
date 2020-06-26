@@ -1511,16 +1511,8 @@ var breakout = function(sketch) {
     }
   }
 
-  // The main game loop.
-  // Updating function
+  // The primary simulation update function.
   function simUpdate() {
-    // Run special functions for the current level
-    let cl = Levels[gameConfig.level];
-    if (typeof cl.specialFunction === 'function') {
-      // If so, run it.
-      cl.specialFunction();
-    }
-
     // Check for destructable bricks first.
     let regularBrickCount = 0;
     for (let x = 0; x < bricks.length; x++) {
@@ -1831,6 +1823,17 @@ var breakout = function(sketch) {
     if (!gamePaused) {
       simUpdate();
     }
+
+    // All other updates that need to happen REGARDLESS of whether or not the
+    // game is paused should happen here.
+    
+    // Run special functions for the current level
+    let cl = Levels[gameConfig.level];
+    if (typeof cl.specialFunction === 'function') {
+      // If so, run it.
+      cl.specialFunction();
+    }
+
     
     // This part is mainly used for moving bricks, but it's also a good time to remove dead bricks.
     let aliveBricks = [];
