@@ -418,3 +418,8 @@ I fixed by by putting a call to 'resetGame()' directly after the "switchScreen('
 - Made the switch to 30 FPS. Lowering the framerate makes the game take less CPU power. Stuttering still occurs (especially sound), but the game can run for a longer period of time before it becomes noticable. 
 
 - Noticed that the pause button will cover the second digit of the life counter if the player has more than 10 lives. Tweaked the code so that values over 10 are shown as 'X'.
+
+
+2020-06-26:
+
+- Took the code that runs 'levelObject.specialFunction()' out of 'simUpdate()'. It now runs after 'simUpdate()', which means that the ring of moving bricks on the Crown level continues to spawn normally even if the player dies before spawning is complete.
