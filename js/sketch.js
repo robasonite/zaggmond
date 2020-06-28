@@ -7,10 +7,7 @@
 // A huge thankyou goes out to the great people of the Internet. Though we have never met, on or offline, this work would have been impossible without the efforts of the many YouTubers, Redditors, and bloggers who post content about JavaScript, Android, and game development. It's like a college education without a rigid schedule, classrooms, crappy professors, or rediculous debt. Thank you all so very much.
 //
 // TODO:
-// - Add an Info screen.
-// - Add a Help screen.
-// - A little fireworks show or special message when the player completes the final level.
-// - Add at least 3 more levels, preferably with matching backgrounds.
+// - A little fireworks show or special message when the player completes the final level. Something besides "You Win".
 //
 // - *DONE* Game over screen that shows the final score.
 // - *DONE* Set up a basic loading screen.
@@ -157,7 +154,7 @@ var breakout = function(sketch) {
     [1,2,3,4,5,6,7],
      [1,2,3,4,5,6]
   ];
- 
+
   // Dragonfly
   let level3 = {};
   level3.backgroundImage = 'img/background3.jpg';
@@ -194,7 +191,7 @@ var breakout = function(sketch) {
      [0,0,6,6,0,0],
     [0,0,0,6,0,0,0],
   ];
- 
+
   // The jellyfish
   let level4 = {};
   level4.backgroundImage = 'img/background6.jpg';
@@ -229,7 +226,7 @@ var breakout = function(sketch) {
      [0],
     [9,0,0,0,0,0,9],
   ];
- 
+
   // Explosive chain reaction
   let level5 = {};
   level5.backgroundImage = 'img/background5.jpg';
@@ -265,7 +262,7 @@ var breakout = function(sketch) {
     [0,7,7,10,7,7,7],
      [0,0,9,9,0,0],
   ];
- 
+
   // UFO
   let level6 = {};
   level6.backgroundImage = 'img/background8.jpg';
@@ -335,7 +332,7 @@ var breakout = function(sketch) {
         mybrick.vx *= -1;
         mybrick.x = (gameConfig.brickSpacing + demoBrick.width) * (0.5 + over);
       }
-     
+
       // Add the brick.
       bricks.push(mybrick);
     }
@@ -373,7 +370,7 @@ var breakout = function(sketch) {
     [0,0,9,0,9,0,0],
      [9,0,0,0,0,9]
   ];
- 
+
   // Crown
   let level8 = {};
   level8.backgroundImage = 'img/background7.jpg';
@@ -401,7 +398,7 @@ var breakout = function(sketch) {
   // Max number of bricks to spawn
   level8.maxBricks = 26;
   level8.currentBricks = 0;
-  
+
   // A reference model for normal bricks
   level8.demoBrick = makeBrick(0,0);
 
@@ -427,7 +424,7 @@ var breakout = function(sketch) {
   level8.resetSpecial = function() {
     level8.currentBricks = 0;
   }
-  
+
   // This level has a special function that spawns a bunch of bricks that move
   // in a rectangle along the perimeter of the play area.
   level8.specialFunction = function() {
@@ -463,7 +460,7 @@ var breakout = function(sketch) {
       level8.spawnDelay = level8.spawnDelaySave;
     }
   }
-  
+
 
   // Cube box
   let level9 = {};
@@ -495,7 +492,7 @@ var breakout = function(sketch) {
      [0,0,3,3,0,0],
     [0,0,0,3,0,0,0],
   ];
-  
+
   // Jack o lantern
   let level10 = {};
   level10.backgroundImage = 'img/background9.jpg';
@@ -530,7 +527,7 @@ var breakout = function(sketch) {
      [0,0,4,4,0,0],
     [0,0,0,4,0,0,0]
   ];
- 
+
   // Star
   let level11 = {};
   level11.backgroundImage = 'img/background8.jpg';
@@ -557,7 +554,7 @@ var breakout = function(sketch) {
      [0,0,0,0,0,0],
     [5,0,0,0,0,0,5],
   ];
-  
+
 
   // Chart
   let level12 = {}
@@ -591,7 +588,7 @@ var breakout = function(sketch) {
      [1,2,3,4,5,7],
     [8,8,8,8,8,0,0],
   ];
-  
+
 
   // Zig Zag
   let level13 = {}
@@ -623,7 +620,7 @@ var breakout = function(sketch) {
      [9,10,4,9,10,0],
     [9,10,3,9,10,0,0],
   ];
- 
+
   // pretzel
   let level14 = {}
   level14.backgroundImage = 'img/background5.jpg';
@@ -661,7 +658,7 @@ var breakout = function(sketch) {
     [0,4,4,0,4,4,0],
      [0,4,0,0,4,0],
   ];
-  
+
 
   // face
   let level15 = {};
@@ -697,7 +694,7 @@ var breakout = function(sketch) {
      [0,0,2,2,0,0],
     [0,0,0,2,0,0,0],
   ];
-  
+
 
   // Rainbow
   let level16 = {};
@@ -743,7 +740,7 @@ var breakout = function(sketch) {
   Levels.push(level16);
 
 
-  
+
 
   function levelReader(level) {
     // Grab the level bricks.
@@ -751,7 +748,7 @@ var breakout = function(sketch) {
 
     // Make a brick to use as a model.
     let demoBrick = makeBrick(0,0);
-   
+
     // Default for even rows.
     let xOffset = gameConfig.brickSpacing;
     let yOffset = gameConfig.uiBarHeight + gameConfig.brickSpacing;
@@ -810,15 +807,15 @@ var breakout = function(sketch) {
           case 7:
             spawnBrick = makeGrayBrick(x, y);
             break;
-          
+
           case 8:
             spawnBrick = makeInvincibleBrick(x, y);
             break;
-          
+
           case 9:
             spawnBrick = makeArmoredBrick(x, y);
             break;
-          
+
           case 10:
             spawnBrick = makeBombBrick(x, y);
             break;
@@ -842,7 +839,7 @@ var breakout = function(sketch) {
         stagRow = true;
       }
     }
-    
+
     // > END NORMAL BRICK HANDLING
 
     // Custom brick processing.
@@ -859,52 +856,8 @@ var breakout = function(sketch) {
 
   }
 
-  /*
-  function level_0() {
-    // Make a brick to use as a model.
-    let demoBrick = makeBrick(0,0);
-
-    // Set the number of rows.
-    let rows = 9;
-
-    // Get the starting Y axis offset.
-    let yOffset = gameConfig.uiBarHeight + gameConfig.brickSpacing;
-    
-    // Make rows of bricks.
-    for (let r = 0; r < rows; r++) {
-      for (let i = 0; i < gameConfig.brickRowLength; i++) {
-        bricks.push(
-          makeGrayBrick(
-            gameConfig.brickSpacing + ((demoBrick.width + gameConfig.brickSpacing) * i),
-            yOffset
-          )
-        );
-      }
-      yOffset += demoBrick.height + gameConfig.brickSpacing;
-    }
-    
-    // Get the starting Y axis offset.
-    yOffset = gameConfig.uiBarHeight + gameConfig.brickSpacing + (demoBrick.height / 2);
-    let xOffset = (gameConfig.brickSpacing / 2) + (demoBrick.width / 2);
-    
-    // Make rows of bricks.
-    for (let r = 0; r < rows; r++) {
-      for (let i = 0; i < gameConfig.brickRowLength - 1; i++) {
-        bricks.push(
-          makeOrangeBrick(
-            gameConfig.brickSpacing + ((demoBrick.width + gameConfig.brickSpacing) * i) + xOffset,
-            yOffset + (gameConfig.brickSpacing / 2)
-          )
-        );
-      }
-      yOffset += demoBrick.height + gameConfig.brickSpacing;
-    }
-  }
-
-  Levels.push(level_0); */
-
   // >> LEVEL SECTION END
-  
+
 
 
   // >> ACTIVE LOADER SECTION
@@ -924,7 +877,7 @@ var breakout = function(sketch) {
     // The effect name and sound file are not optional.
     let effectName = sa[0];
     let soundFile = sa[1];
-    
+
 
     // Function to run upon success.
     function soundLoaded(sound) {
@@ -940,7 +893,7 @@ var breakout = function(sketch) {
 
       //console.log("File: " + sound.file);
       //console.log("volume: " + volume);
-     
+
       // Mark audio loading done.
       if (loadedAudioFiles == totalAudioFiles) {
         audioLoadingDone = true;
@@ -1076,73 +1029,16 @@ var breakout = function(sketch) {
 
 
   // >> END ACTIVE LOADER SECTION
- 
+
 
   sketch.preload = function() {
     // Set the inital scale.
     gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
-
-    // Need to load sound files before trying to use them.
-    //soundEffects.ballHitWall = sketch.loadSound('sounds/hitWall.ogg');
-    //soundEffects.ballHitBrick = sketch.loadSound('sounds/hitBrick.ogg');
-    //soundEffects.ballHitPaddle = sketch.loadSound('sounds/hitPaddle.ogg');
-
-    // Adjust the volume of the sound effects.
-    //soundEffects.ballHitWall.setVolume(0.2);
-    //soundEffects.ballHitBrick.setVolume(1.7);
-    //soundEffects.ballHitPaddle.setVolume(0.7);
-
-    // Also preload the base font.
-    //gameConfig.font = sketch.loadFont('fonts/FiraMono-Medium.otf');
-    //gameConfig.fontName = 'FiraMono-Medium';
-    
-    // Before we draw ANYTHING, create shape buffers for the game objects.
-    /*shapeBlueprints.push(makeEffectParticle(0,0));
-    shapeBlueprints.push(makeBombSpark(0,0));
-    shapeBlueprints.push(makeBrick(0,0));
-    shapeBlueprints.push(makeBlueBrick(0,0));
-    shapeBlueprints.push(makeGreenBrick(0,0));
-    shapeBlueprints.push(makeOrangeBrick(0,0));
-    shapeBlueprints.push(makeYellowBrick(0,0));
-    shapeBlueprints.push(makeWhiteBrick(0,0));
-    shapeBlueprints.push(makeGrayBrick(0,0));
-    shapeBlueprints.push(makeInvincibleBrick(0,0));
-    shapeBlueprints.push(makeBombBrick(0,0));
-    shapeBlueprints.push(makeBall(0,0));
-    shapeBlueprints.push(makePaddle(0,0));
-    shapeBlueprints.push(makePowerupGrowPaddle(0,0));
-    shapeBlueprints.push(makePowerupShrinkPaddle(0,0));
-
-    // Count the sprites.
-    totalSprites = shapeBlueprints.length;
-    
-    for (let i = 0; i < shapeBlueprints.length; i++) {
-      // Make the buffer
-      shapeBuffers[shapeBlueprints[i].shapeName] = sketch.createGraphics(shapeBlueprints[i].width, shapeBlueprints[i].height);
-
-      // Check if the shape has an image file. If so, preload it.
-      if (shapeBlueprints[i].sprite) {
-        shapeBuffers[shapeBlueprints[i].shapeName] = sketch.loadImage(shapeBlueprints[i].sprite);
-      }
-
-      else {
-        // If not, run its shape drawing function.
-        shapeBlueprints[i].makeShape(shapeBuffers[shapeBlueprints[i].shapeName]);
-      }
-    } */
-
-    // Also preload all level backgrounds.
-    /*for (let i = 0; i < Levels.length; i++) {
-      if (Levels[i].backgroundImage) {
-        let img = sketch.loadImage(Levels[i].backgroundImage);
-        Levels[i].background = img;
-      }
-    }*/
   }
 
   sketch.setup = function() {
     // put setup code here
-    
+
     // Limit framerate to 30.
     sketch.frameRate(gameConfig.fps);
 
@@ -1230,7 +1126,7 @@ var breakout = function(sketch) {
         totalLevelBackgrounds++;
       }
     }
-    
+
     for (let i = 0; i < Levels.length; i++) {
       if (Levels[i].backgroundImage) {
         levelBackgroundLoader(Levels[i]);
@@ -1295,12 +1191,12 @@ var breakout = function(sketch) {
       60,
       'all'
     );
-    
+
     fsBtn.mousePressed(toggleFS);
 
     // Add button to array
     buttons.push(fsBtn);
-   
+
     // Start button
     let startBtn = makeUiButton(
       'START',
@@ -1311,7 +1207,7 @@ var breakout = function(sketch) {
       'title',
       70
     );
-    
+
     startBtn.mousePressed(function() {
 
       // Set up the game
@@ -1337,9 +1233,9 @@ var breakout = function(sketch) {
       // Feed it to the game loop
       messages.push(demoText); */
     });
-    
+
     buttons.push(startBtn);
-   
+
     // Close the current tab/window
     let exitBtn = makeUiButton(
       'EXIT',
@@ -1350,13 +1246,13 @@ var breakout = function(sketch) {
       'title',
       70
     );
-    
+
     exitBtn.mousePressed(function() {
       window.location.href = 'https://www.robasonite.com/games/';
     });
-    
+
     buttons.push(exitBtn);
-   
+
 
     // Quit to title
     let quitBtn = makeUiButton(
@@ -1368,14 +1264,14 @@ var breakout = function(sketch) {
       'pause',
       70
     );
-    
+
     quitBtn.mousePressed(function() {
       //resetGame();
       switchScreen('title');
     });
-    
+
     buttons.push(quitBtn);
-    
+
     let resumeBtn = makeUiButton(
       'RESUME',
       (gameConfig.areaWidth / 2) - (340 / 2),
@@ -1385,14 +1281,14 @@ var breakout = function(sketch) {
       'pause',
       70
     );
-    
+
     resumeBtn.mousePressed(function() {
       switchScreen('play');
       makeResumeCountdown();
     });
-    
+
     buttons.push(resumeBtn);
-    
+
     let resultsOkBtn = makeUiButton(
       'OK',
       (gameConfig.areaWidth / 2) - (240 / 2),
@@ -1402,14 +1298,14 @@ var breakout = function(sketch) {
       'results',
       70
     );
-    
+
     resultsOkBtn.mousePressed(function() {
       resetGame();
       switchScreen('title');
     });
-    
+
     buttons.push(resultsOkBtn);
-    
+
     // makeUiButton(label, x, y, w, h, screen, fontSize)
     let pauseBtn = makeUiButton(
       //'&#9613;&#9613;',
@@ -1428,7 +1324,7 @@ var breakout = function(sketch) {
         switchScreen('pause');
       }
     });
-    
+
     buttons.push(pauseBtn);
 
     // Run the reset function to start the game at level 0
@@ -1442,26 +1338,26 @@ var breakout = function(sketch) {
   function resolveBrickDamage(brick, ball=false) {
     // Damage the brick if it can be dstroyed.
     brick.hp -= 1;
-    
+
     // Getting hit by the Super Ball means instant kill.
     if (ball) {
       if (ball.shapeName == 'superBall') {
         brick.hp -= 100;
       }
     }
-    
+
     // Destroy the brick if HP is less than 1
     if (brick.hp < 1) {
       // Brick is "destroyed"
       brick.visible = false;
       brick.alive = false;
-      
+
       // Play the sound effect
       if (soundEffects.ballHitBrick.isPlaying()) {
         soundEffects.ballHitBrick.stop();
       }
       soundEffects.ballHitBrick.play(0,1,0.5);
-      
+
       // Award points
       addPlayerScore(brick.points);
 
@@ -1482,7 +1378,7 @@ var breakout = function(sketch) {
         )
         powerups.push(pu);
       }
-      
+
       // If the brick is a bomb brick, trigger a bomb explosion.
       //console.log("bomb explosion triggered");
       if (brick.type == "bomb") {
@@ -1532,7 +1428,7 @@ var breakout = function(sketch) {
       if (gameConfig.level + 1 < Levels.length) {
         gameConfig.level++
         resetPlayer();
-        
+
         // Clear the the bricks to get rid of non-dstructable brick.
         bricks = [];
 
@@ -1565,7 +1461,7 @@ var breakout = function(sketch) {
       // If the bullet is onscreen, it's alive
       let bullet = bullets[x];
       bullet.move(gameConfig.scale, gameConfig.speedMultiplier);
-      
+
       if (
         bullet.x > 0 &&
         bullet.y > 0 &&
@@ -1610,7 +1506,7 @@ var breakout = function(sketch) {
           if (!ef.isPlaying()) {
             ef.play();
           }
-          
+
 
           // Send the ball back up.
           if (balls[x].vy > 0) {
@@ -1634,7 +1530,7 @@ var breakout = function(sketch) {
           if (midpointPercent > 1.0) {
             midpointPercent = sketch.floor(midpointPercent);
           }
-            
+
           // Adjust the X velocity of the ball.
           balls[x].vx = balls[x].speed * midpointPercent;
 
@@ -1685,7 +1581,7 @@ var breakout = function(sketch) {
 
     // Scrub dead balls.
     balls = aliveBalls;
-    
+
 
 
     // Now resolve explosionPoints
@@ -1702,25 +1598,25 @@ var breakout = function(sketch) {
     explosionPoints = [];
 
 
-    
+
     // Powerups
     alivePowerups = [];
     for (let p = 0; p < powerups.length; p++) {
-      
+
       // First check if the powerup is still on the screen.
       if (powerups[p].y < gameConfig.areaHeight) {
         // Check for a collision with the player.
         if (collider(powerups[p], player)) {
-         
+
           // Play the sound effect.
           soundEffects.powerupCollect.play();
-        
+
           // Update the score.
           addPlayerScore(powerups[p].points);
-          
+
           // Mark powerup as dead.
           powerups[p].alive = false;
-          
+
           // Apply the effect.
           powerups[p].effect();
         }
@@ -1749,13 +1645,13 @@ var breakout = function(sketch) {
     // Update the player
     player.boundsCheck();
     player.move(gameConfig.scale, gameConfig.speedMultiplier);
-    
+
     // Weapon handling
     aliveWeapons = [];
     for (let w = 0; w < weapons.length; w++) {
       let wep = weapons[w];
       // Place the weapon.
-      
+
       // The Y position will always be the same as the player.
       wep.y = player.y;
       let place = wep.placement;
@@ -1783,14 +1679,14 @@ var breakout = function(sketch) {
 
     weapons = aliveWeapons;
   }
-  
+
   function gameLoop() {
-    
+
     // Set the background color if there is no background for the level.
     if (Levels[gameConfig.level].background) {
       sketch.image(
         Levels[gameConfig.level].background,
-        0, 
+        0,
         0,
         gameConfig.areaWidth * gameConfig.scale,
         gameConfig.areaHeight * gameConfig.scale
@@ -1799,7 +1695,7 @@ var breakout = function(sketch) {
     else {
       sketch.background(90,90,255);
     }
-    
+
     /*if (mouseIsPressed) {
       fill(0);
     }
@@ -1826,7 +1722,7 @@ var breakout = function(sketch) {
 
     // All other updates that need to happen REGARDLESS of whether or not the
     // game is paused should happen here.
-    
+
     // Run special functions for the current level
     let cl = Levels[gameConfig.level];
     if (typeof cl.specialFunction === 'function') {
@@ -1834,7 +1730,7 @@ var breakout = function(sketch) {
       cl.specialFunction();
     }
 
-    
+
     // This part is mainly used for moving bricks, but it's also a good time to remove dead bricks.
     let aliveBricks = [];
     for (let x = 0; x < bricks.length; x++) {
@@ -1842,7 +1738,7 @@ var breakout = function(sketch) {
       if (bricks[x].alive) {
         // Is so, than it is alive and should be added to aliveBricks.
         aliveBricks.push(bricks[x]);
-       
+
         // Next check if the brick is visible.
         if (bricks[x].visible) {
 
@@ -1854,7 +1750,7 @@ var breakout = function(sketch) {
         }
       }
     }
-    
+
     // Remove bricks that are no longer alive.
     bricks = aliveBricks;
 
@@ -1864,7 +1760,7 @@ var breakout = function(sketch) {
       // Draw all objects according to their buffered shape names.
       balls[x].draw(gameConfig.scale, shapeBuffers[balls[x].shapeName]);
     }
-    
+
     // Draw the bricks.
     for (let x = 0; x < bricks.length; x++) {
       // Check if a brick is visible first
@@ -1872,7 +1768,7 @@ var breakout = function(sketch) {
         bricks[x].draw(gameConfig.scale, shapeBuffers[bricks[x].shapeName]);
       }
     }
-    
+
     // Iterate over particles.
     let aliveParticles = []
     for (let i = 0; i < particles.length; i++) {
@@ -1911,7 +1807,7 @@ var breakout = function(sketch) {
     for (let x = 0; x < particles.length; x++) {
       particles[x].draw(gameConfig.scale, shapeBuffers[particles[x].shapeName]);
     }
-   
+
     // Draw powerups
     for (let x = 0; x < powerups.length; x++) {
       powerups[x].draw(gameConfig.scale, shapeBuffers[powerups[x].shapeName]);
@@ -1921,7 +1817,7 @@ var breakout = function(sketch) {
     if (player.visible) {
       player.draw(gameConfig.scale, shapeBuffers.normalPaddle);
     }
-   
+
     // If the bullets are drawn BEFORE the weapons, then the weapons will cover the bullets as they spawn in. This is an easy way to make it looke like the bullets are coming out of the weapons.
     // Draw bullets
     for (let b = 0; b < bullets.length; b++) {
@@ -1933,7 +1829,7 @@ var breakout = function(sketch) {
     for (let w = 0; w < weapons.length; w++) {
       weapons[w].draw(gameConfig.scale, shapeBuffers[weapons[w].shapeName]);
     }
-    
+
 
     // Draw timed text messages with garbage collecting.
     let activeMessages = [];
@@ -1946,7 +1842,7 @@ var breakout = function(sketch) {
 
     messages = activeMessages;
 
-    
+
     // Draw the top and bottom bars AFTER drawing all of the game elements.
     // Top bar
     sketch.fill(0,90,0);
@@ -1957,7 +1853,7 @@ var breakout = function(sketch) {
       gameConfig.areaWidth * gameConfig.scale,
       gameConfig.uiBarHeight * gameConfig.scale
     );
-    
+
     // Bottom bar
     sketch.rect(
       0,
@@ -1967,7 +1863,7 @@ var breakout = function(sketch) {
     );
 
     let borderWidth = 4
-   
+
     // Top border
     sketch.fill(155);
     sketch.noStroke();
@@ -2017,7 +1913,7 @@ var breakout = function(sketch) {
     if (playerLives >= 0) {
       showNumber = playerLives;
     }
-   
+
     // If the player somehow gains more than 10 lives, show an X.
     if (playerLives >= 10) {
       showNumber = 'X';
@@ -2028,7 +1924,7 @@ var breakout = function(sketch) {
       420 * gameConfig.scale,
       1250 * gameConfig.scale
     );
-    
+
     // Tell the player what level we're on.
     showBarText(
       "Lvl: " + gameConfig.level,
@@ -2053,7 +1949,7 @@ var breakout = function(sketch) {
         player.vx = player.speed;
       }
     }
-    
+
     // Same thing for the arrow keys
     else if (sketch.keyIsPressed) {
       if (sketch.keyCode === sketch.LEFT_ARROW) {
@@ -2076,7 +1972,7 @@ var breakout = function(sketch) {
     for (let i = 0; i < buttons.length; i++) {
       buttons[i].hide();
     }
-    
+
     for (let i = 0; i < buttons.length; i++) {
       if (buttons[i].screen == screenName || buttons[i].screen == 'all') {
         buttons[i].show();
@@ -2086,7 +1982,7 @@ var breakout = function(sketch) {
     // Change the screen
     gameConfig.mode = screenName;
   }
- 
+
   // Show the player's final score.
   function resultsScreen() {
     sketch.fill(0,125,0);
@@ -2109,14 +2005,14 @@ var breakout = function(sketch) {
       (gameConfig.areaWidth / 2) * gameConfig.scale,
       (gameConfig.areaHeight * 0.15) * gameConfig.scale
     );
-    
+
     sketch.textSize(60 * gameConfig.scale);
     sketch.text(
       "Final score: ",
       (gameConfig.areaWidth / 2) * gameConfig.scale,
       (gameConfig.areaHeight * 0.30) * gameConfig.scale
     );
-   
+
     sketch.noStroke();
     sketch.fill(255,185,0);
     sketch.text(
@@ -2140,13 +2036,13 @@ var breakout = function(sketch) {
       (gameConfig.areaHeight * 0.58) * gameConfig.scale
     );
     sketch.noStroke();
-   
+
   }
 
   function titleScreen() {
     sketch.image(
       Levels[7].background,
-      0, 
+      0,
       0,
       gameConfig.areaWidth * gameConfig.scale,
       gameConfig.areaHeight * gameConfig.scale
@@ -2210,7 +2106,7 @@ var breakout = function(sketch) {
     );
     sketch.noStroke();
   }
-  
+
   function pauseScreen() {
     sketch.background(0);
     sketch.fill(90,90,200);
@@ -2290,7 +2186,7 @@ var breakout = function(sketch) {
 
     // Allow for forcing fullscreen exit
     if (forceExit) {
-      
+
       // Need to give the window a bit of time to un-fullscreen.
       setTimeout(() => {
         //gameConfig.scale = window.screen.height / gameConfig.areaHeight;
@@ -2298,7 +2194,7 @@ var breakout = function(sketch) {
         /*console.log("Fullscreen scale: " + gameConfig.scale);
         console.log("Fullscreen height: " + gameConfig.areaHeight * gameConfig.scale);
         console.log("Screen height: " + window.screen.height);*/
-        
+
         // Resize canvas to match screen dimensions.
         sketch.resizeCanvas(
           gameConfig.areaWidth * gameConfig.scale,
@@ -2318,7 +2214,7 @@ var breakout = function(sketch) {
           // Then adjust the scale value.
           //gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
           gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
-        
+
           // Resize canvas to match the window dimensions.
           sketch.resizeCanvas(
             gameConfig.areaWidth * gameConfig.scale,
@@ -2334,13 +2230,13 @@ var breakout = function(sketch) {
         setTimeout(() => {
           //gameConfig.scale = window.screen.height / gameConfig.areaHeight;
           gameConfig.scale = window.innerHeight / gameConfig.areaHeight;
-          
+
           // Resize canvas to match screen dimensions.
           sketch.resizeCanvas(
             gameConfig.areaWidth * gameConfig.scale,
             gameConfig.areaHeight * gameConfig.scale
           );
-       
+
           //console.log("Fullscreen scale: " + gameConfig.scale);
           //console.log("Fullscreen height: " + gameConfig.areaHeight * gameConfig.scale);
           //console.log("Screen height: " + window.screen.height);
@@ -2382,7 +2278,7 @@ var breakout = function(sketch) {
 
     // Some particles can damage bricks
     //myparticle.damageBricks = false;
-   
+
     // Standard attributes like X and Y positions, velocity, speed, and dimensions.
     myparticle.x = x;
     myparticle.y = y;
@@ -2406,12 +2302,12 @@ var breakout = function(sketch) {
         myparticle.height
       );
     }
-    
+
     myparticle.move = function(scale, multiplier) {
       myparticle.x += (myparticle.vx * multiplier);
       myparticle.y += (myparticle.vy * multiplier);
     }
-    
+
     myparticle.draw = function(scale, buffer) {
       sketch.image(
         buffer,
@@ -2459,11 +2355,11 @@ var breakout = function(sketch) {
 
     return mytitle;
   }
-  
+
 
 
   // Powerups
-  
+
 
   // Randomly pick a powerup
   function pickPowerup(x, y) {
@@ -2479,31 +2375,31 @@ var breakout = function(sketch) {
     else if (pick < 0.35) {
       powerup = makePowerupShrinkPaddle(x, y);
     }
-    
+
     else if (pick < 0.55) {
       powerup = makePowerupGive100(x, y);
     }
-    
+
     else if (pick < 0.60) {
       powerup = makePowerupGive200(x, y);
     }
-    
+
     else if (pick < 0.65) {
       powerup = makePowerupGive500(x, y);
     }
-    
+
     else if (pick < 0.70) {
       powerup = makePowerupGive1k(x, y);
     }
-    
+
     else if (pick < 0.80) {
       powerup = makePowerupCannons(x, y);
     }
-    
+
     else if (pick < 0.85) {
       powerup = makePowerupBallsX2(x, y);
     }
-    
+
     else if (pick < 0.90) {
       powerup = makePowerupSuperBall(x, y);
     }
@@ -2512,7 +2408,7 @@ var breakout = function(sketch) {
   }
 
 
-  
+
   // Grow the paddle.
   function makePowerupGrowPaddle(x, y) {
     let mypowerup = makeParticle(x, y);
@@ -2524,7 +2420,7 @@ var breakout = function(sketch) {
 
     // Also award the player some points.
     mypowerup.points = 150;
-    
+
     mypowerup.sprite = 'img/powerUpGrowPaddle.png';
     mypowerup.makeShape = function(buffer) {
       // This function should never run as long as the sprite file exists.
@@ -2537,7 +2433,7 @@ var breakout = function(sketch) {
         mypowerup.width,
         mypowerup.height
       );
-     
+
       // Draw inner frame.
       buffer.fill(0);
       buffer.rect(
@@ -2559,14 +2455,14 @@ var breakout = function(sketch) {
 
     return mypowerup;
   }
-  
+
   // Shrink the player paddle
   function makePowerupShrinkPaddle(x, y) {
     let mypowerup = makePowerupGrowPaddle(x, y);
     mypowerup.shapeName = 'shrinkPaddle';
     mypowerup.points = 250;
     mypowerup.sprite = 'img/powerUpShrinkPaddle.png';
-    
+
     mypowerup.effect = function() {
       let newsize = player.width - (player.width * 0.15);
       if (newsize > player.minWidth) {
@@ -2577,29 +2473,29 @@ var breakout = function(sketch) {
     return mypowerup;
 
   }
-  
+
   // Kill the player
   function makePowerupKillPaddle(x, y) {
     let mypowerup = makePowerupShrinkPaddle(x, y);
     mypowerup.shapeName = 'killPaddle';
     mypowerup.points = 1000;
     mypowerup.sprite = 'img/powerUpKillPaddle.png';
-    
+
     mypowerup.effect = function() {
       balls = [];
     }
 
     return mypowerup;
   }
- 
- 
+
+
   // Give the player a weapon.
   function makePowerupCannons(x, y) {
     let mypowerup = makePowerupGrowPaddle(x, y);
     mypowerup.shapeName = 'giveCannons';
     mypowerup.points = 300;
     mypowerup.sprite = 'img/powerUpCannons.png';
-    
+
     mypowerup.effect = function() {
       // Remove previous weapons
       weapons = []
@@ -2643,7 +2539,7 @@ var breakout = function(sketch) {
 
     return mypowerup;
   }
-  
+
 
   // The coveted and ultra rare super ball
   function makePowerupSuperBall(x, y) {
@@ -2662,14 +2558,14 @@ var breakout = function(sketch) {
     return mypowerup;
   }
 
-  
+
   // Give the player extra points
   function makePowerupGive100(x, y) {
     let mypowerup = makePowerupGrowPaddle(x, y);
     mypowerup.shapeName = 'give100';
     mypowerup.points = 100;
     mypowerup.sprite = 'img/powerUp100Points.png';
-    
+
     mypowerup.effect = function() {
       return false
     }
@@ -2684,7 +2580,7 @@ var breakout = function(sketch) {
     mypowerup.shapeName = 'give200';
     mypowerup.points = 200;
     mypowerup.sprite = 'img/powerUp200Points.png';
-    
+
     return mypowerup;
 
   }
@@ -2695,23 +2591,23 @@ var breakout = function(sketch) {
     mypowerup.shapeName = 'give500';
     mypowerup.points = 500;
     mypowerup.sprite = 'img/powerUp500Points.png';
-    
+
     return mypowerup;
 
   }
-  
+
 
   function makePowerupGive1k(x, y) {
     let mypowerup = makePowerupGive100(x, y);
     mypowerup.shapeName = 'give1k';
     mypowerup.points = 1000;
     mypowerup.sprite = 'img/powerUp1kPoints.png';
-    
+
     return mypowerup;
 
   }
 
-  
+
   // Special effect particles.
   // These particles are used for explosions and the like.
   function makeEffectParticle(x, y) {
@@ -2727,7 +2623,7 @@ var breakout = function(sketch) {
       }
       else {
         eparticle.alive = false;
-        
+
         // Optional function to run when the particle dies.
         if (eparticle.endAction) {
           eparticle.endAction();
@@ -2752,16 +2648,16 @@ var breakout = function(sketch) {
     // Make bomb sparks bigger.
     bspark.width = 8;
     bspark.height = 8;
-    
+
     // Make it travel faster.
     bspark.speed = 8;
-   
+
     // Adjust max distance.
     //bspark.maxDistance = 48;
 
     // Make the spark red.
     bspark.color = sketch.color(255, 0, 0);
-    
+
     // Make sparks trigger damage to other bricks upon death.
     bspark.endAction = function() {
       let ep = makeEffectParticle(
@@ -2810,10 +2706,10 @@ var breakout = function(sketch) {
     mycannon.width = 24;
 
     // Weapon specific variables
-    
+
     // Which side of the player is it on?
     mycannon.placement = 'center';
-    
+
     // This is how long the weapon will last.
     mycannon.timer = 300 * (gameConfig.speedMultiplier - 1);
 
@@ -2969,7 +2865,7 @@ var breakout = function(sketch) {
         soundEffects.ballHitWall.play();
       }
     }
-    
+
     return myball;
   }
 
@@ -2977,7 +2873,7 @@ var breakout = function(sketch) {
   function makeSuperBall(x, y) {
     let myball = makeBall(x, y);
     myball.shapeName = 'superBall';
-    
+
     myball.makeShape = function(buffer) {
       buffer.noStroke();
       buffer.ellipseMode(buffer.CORNER);
@@ -3019,7 +2915,7 @@ var breakout = function(sketch) {
     mybrick.width = 90;
 
     mybrick.shapeName = 'redBrick';
-    
+
     // And bricks award points to the player!
     mybrick.points = 10;
 
@@ -3038,12 +2934,12 @@ var breakout = function(sketch) {
       // Make absolutely sure we don't have a an outline
       // stroke.
       buffer.noStroke();
-      
+
       // If border is 0, don't draw 2 diamonds
       if (mybrick.border > 0) {
         // Fill with the border color.
         buffer.fill(mybrick.borderColor);
-       
+
         // Draw the border.
         buffer.quad(
 
@@ -3063,7 +2959,7 @@ var breakout = function(sketch) {
           mybrick.x + (mybrick.width / 2),
           mybrick.y + mybrick.height,
         );
-        
+
         // Make the diamond.
         buffer.fill(mybrick.color);
         buffer.quad(
@@ -3089,7 +2985,7 @@ var breakout = function(sketch) {
       else {
         // Fill with the border color.
         buffer.fill(mybrick.color);
-       
+
         // Draw the border.
         buffer.quad(
 
@@ -3112,11 +3008,11 @@ var breakout = function(sketch) {
       }
 
     }
-   
+
     // Or they could be "invincible".
     // This is just used to denote a brick with a crazy high HP, like 20. Such bricks DO NOT have to be destroyed to move to the next level.
     mybrick.noDie = false;
-    
+
     mybrick.bounds = {
       x: 0,
       y: gameConfig.uiBarHeight,
@@ -3155,28 +3051,28 @@ var breakout = function(sketch) {
     mybrick.shapeName = 'blueBrick';
     return mybrick;
   }
-  
+
   function makeGreenBrick(x, y) {
     let mybrick = makeBrick(x, y);
     mybrick.color = sketch.color(0,255,0);
     mybrick.shapeName = 'greenBrick';
     return mybrick;
   }
-  
+
   function makeOrangeBrick(x, y) {
     let mybrick = makeBrick(x, y);
     mybrick.color = sketch.color(255,114,0);
     mybrick.shapeName = 'orangeBrick';
     return mybrick;
   }
-  
+
   function makeYellowBrick(x, y) {
     let mybrick = makeBrick(x, y);
     mybrick.color = sketch.color(255,255,0);
     mybrick.shapeName = 'yellowBrick';
     return mybrick;
   }
-  
+
   function makeWhiteBrick(x, y) {
     let mybrick = makeBrick(x, y);
     mybrick.color = sketch.color(255,255,255);
@@ -3200,21 +3096,21 @@ var breakout = function(sketch) {
     mybrick.border = 0;
     return mybrick;
   }
-  
+
   function makeGrayBrick(x, y) {
     let mybrick = makeBrick(x, y);
     mybrick.color = sketch.color(90);
     mybrick.shapeName = 'grayBrick';
     return mybrick;
   }
-  
+
   function makeNoBorderGrayBrick(x, y) {
     let mybrick = makeGrayBrick(x, y);
     mybrick.shapeName = 'grayBrickNoBorder';
     mybrick.border = 0;
     return mybrick;
   }
-  
+
 
   // These bricks can not be destroyed.
   function makeInvincibleBrick(x, y) {
@@ -3226,14 +3122,14 @@ var breakout = function(sketch) {
     mybrick.border = 4;
     return mybrick;
   }
-  
+
   function makeNoBorderInvincibleBrick(x, y) {
     let mybrick = makeInvincibleBrick(x, y);
     mybrick.shapeName = 'invincibleBrickNoBorder';
     mybrick.border = 0;
     return mybrick;
   }
-  
+
   function makeNoBorderBrick(x, y) {
     let mybrick = makeBrick(x, y);
     mybrick.shapeName = 'redBrickNoBorder';
@@ -3254,7 +3150,7 @@ var breakout = function(sketch) {
     mybrick.border = 0;
     return mybrick;
   }
-  
+
 
   // These bricks blow up when destroyed.
   function makeBombBrick(x, y) {
@@ -3274,7 +3170,7 @@ var breakout = function(sketch) {
         mybrick.x * scale,
         mybrick.y * scale,
         mybrick.width * scale,
-        mybrick.height * scale 
+        mybrick.height * scale
       );
 
       // Next, define multipliers for rendering the inner diamond.
@@ -3294,7 +3190,7 @@ var breakout = function(sketch) {
     return mybrick;
   }
 
-  
+
   // These bricks take 3 hits to die and reuse existing shape buffers.
   function makeArmoredBrick(x, y) {
     let mybrick = makeGrayBrick(x, y);
@@ -3311,7 +3207,7 @@ var breakout = function(sketch) {
         mybrick.x * scale,
         mybrick.y * scale,
         mybrick.width * scale,
-        mybrick.height * scale 
+        mybrick.height * scale
       );
 
       // Next, define multipliers for rendering the inner diamond.
@@ -3333,7 +3229,7 @@ var breakout = function(sketch) {
       else if (mybrick.hp == 2) {
         innerBuffer = shapeBuffers.greenBrickNoBorder;
       }
-      
+
 
       // Only draw the inner diamond if the HP is greater than 1.
       if (mybrick.hp > 1) {
@@ -3346,7 +3242,7 @@ var breakout = function(sketch) {
         );
       }
     }
-    
+
     return mybrick;
   }
 
@@ -3376,12 +3272,12 @@ var breakout = function(sketch) {
   // These bricks only move back and forth.
   function makeMovingBrickHorizontal(brickMaker, x, y, distance) {
     let mybrick = makeMovingBrickDiagonal(brickMaker, x, y, distance);
-   
+
     mybrick.vy = 0;
-    
+
     return mybrick;
   }
- 
+
 
   // These bricks move in rectangular paths.
   function makeMovingBrickRectPath(brickMaker, x, y, distance) {
@@ -3390,7 +3286,7 @@ var breakout = function(sketch) {
     mybrick.speed = 0;
     mybrick.vx = 0;
     mybrick.vy = 0;
-    
+
     // To make this work right, this function must be overwritten.
     mybrick.boundsCheck = function () {
       let b = mybrick.bounds;
@@ -3423,7 +3319,7 @@ var breakout = function(sketch) {
         mybrick.vx = mybrick.speed;
       }
     }
-    
+
     return mybrick;
   }
 
@@ -3433,7 +3329,7 @@ var breakout = function(sketch) {
     // Borrow some functions from the Ball.
     // Paddles wil always spawn in the middle of the playing field, towards the bottom.
     let mypaddle = makeBall(x,y);
-    
+
     mypaddle.shapeName = 'normalPaddle';
 
     // Paddle doesn't move until the player tells it to.
@@ -3505,12 +3401,12 @@ var breakout = function(sketch) {
       particles.push(particle);
     }
   }
-  
+
   // Make an explosion of particles and deal damage to surrounding bricks.
   function makeBombExplosion(x, y) {
     // Make 8 sparks, one for each direction.
     // Upon death, each spark hits its target.
-    
+
     // Need a demo brick
     let demoBrick = makeBrick(0, 0);
 
@@ -3518,7 +3414,7 @@ var breakout = function(sketch) {
 
     // Each spark has a target
     let leftParticle = makeBombSpark(
-      x, 
+      x,
       y,
       x - demoBrick.width,
       y
@@ -3527,7 +3423,7 @@ var breakout = function(sketch) {
     leftParticle.vx = leftParticle.speed * -1;
     leftParticle.vy = 0;
     particles.push(leftParticle);
-    
+
     let upParticle = makeBombSpark(
       x,
       y,
@@ -3537,7 +3433,7 @@ var breakout = function(sketch) {
     upParticle.vx = 0;
     upParticle.vy = upParticle.speed * -1;
     particles.push(upParticle);
-    
+
     let rightParticle = makeBombSpark(
       x,
       y,
@@ -3547,7 +3443,7 @@ var breakout = function(sketch) {
     rightParticle.vx = rightParticle.speed;
     rightParticle.vy = 0;
     particles.push(rightParticle);
-    
+
     let downParticle = makeBombSpark(
       x,
       y,
@@ -3557,7 +3453,7 @@ var breakout = function(sketch) {
     downParticle.vx = 0;
     downParticle.vy = downParticle.speed;
     particles.push(downParticle);
-    
+
     let upperLeft = makeBombSpark(
       x,
       y,
@@ -3567,7 +3463,7 @@ var breakout = function(sketch) {
     upperLeft.vx = upperLeft.speed * -1;
     upperLeft.vy = upperLeft.speed * -1;
     particles.push(upperLeft);
-    
+
     let upperRight = makeBombSpark(
       x,
       y,
@@ -3577,7 +3473,7 @@ var breakout = function(sketch) {
     upperRight.vx = upperRight.speed;
     upperRight.vy = upperRight.speed * -1;
     particles.push(upperRight);
-    
+
     let lowerRight = makeBombSpark(
       x,
       y,
@@ -3587,7 +3483,7 @@ var breakout = function(sketch) {
     lowerRight.vx = lowerRight.speed;
     lowerRight.vy = lowerRight.speed;
     particles.push(lowerRight);
-    
+
     let lowerLeft = makeBombSpark(
       x,
       y,
@@ -3626,7 +3522,7 @@ var breakout = function(sketch) {
       mybutton.initWidth * gameConfig.scale,
       mybutton.initHeight * gameConfig.scale
     );
-    
+
     // Font size, family, and style.
     mybutton.style('font-size', (mybutton.initFontSize * gameConfig.scale) + 'px');
     mybutton.style('font-family', gameConfig.fontName);
@@ -3638,7 +3534,7 @@ var breakout = function(sketch) {
     //mybutton.setAttribute("unselectable", "on");
     //mybutton.style.MozUserSelect = "none";
     //mybutton.style.webkitUserSelect = "none";
-   
+
     // Attach a class for additional styling.
     mybutton.class('buttons');
 
@@ -3670,7 +3566,7 @@ var breakout = function(sketch) {
 
     // The text drawing function
     msg.showMessageText = function() {
-      
+
       // If time is less than maxTime, show the message
       if (msg.time < msg.maxTime) {
         sketch.textAlign(sketch.CENTER);
@@ -3772,7 +3668,7 @@ var breakout = function(sketch) {
   function killPlayer() {
     // Pause the game.
     gamePaused = true;
-    
+
     // Make the paddle "explode".
     player.visible = false;
 
@@ -3784,10 +3680,10 @@ var breakout = function(sketch) {
         player.y + (player.height / 2)
       );
     }
-    
+
     // Play the explosion sound effect.
     soundEffects.ballHitBrick.play(0,1,3);
-    
+
     // Player loses a life.
     playerLives--;
 
@@ -3820,17 +3716,17 @@ var breakout = function(sketch) {
 
   }
 
-  
+
   // Reset the balls and bricks. Used when moving to the next level.
   function resetPlayer() {
-    
+
     // Prepare level, starting with the player's paddle.
     player = makePaddle(
       (gameConfig.areaWidth / 2) - 70,
       1100
     );
     player.visible = true;
-    
+
     // Clear all onscreen powerups and effect items.
     powerups = [];
     particles = [];
@@ -3877,7 +3773,7 @@ var breakout = function(sketch) {
 
     // Reset player and ball
     resetPlayer();
-    
+
     // Set up the level
     levelReader(Levels[gameConfig.level]);
   }
