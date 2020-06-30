@@ -23,7 +23,7 @@ var breakout = function(sketch) {
 
 
   // Main game config
-  gameConfig = {
+  let gameConfig = {
     canvas: '',
     compStyle: '',
     buttonOffsetX: '',
