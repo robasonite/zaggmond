@@ -1770,7 +1770,7 @@ var breakout = function(sketch) {
     }
 
     // Iterate over particles.
-    let aliveParticles = []
+    //let aliveParticles = []
     for (let i = 0; i < particles.length; i++) {
 
       // Update each particle's distance life.
@@ -1778,35 +1778,18 @@ var breakout = function(sketch) {
 
       // If still alive, save it for next frame and resolve it.
       if (particles[i].alive) {
-        aliveParticles.push(particles[i]);
-
-        // If the spark damages bricks, resolve collisions.
-        // This causes continuous calls to makeBombExplosion!
-        // DO NOT UNCOMMENT!
-        /*if (particles[i].damageBricks) {
-          for (let b = 0; b < bricks.length; b++) {
-            if (collider(particles[i], bricks[b])) {
-              // Remove the particle.
-              particles[i].alive = false;
-
-              // Resolve brick damage
-              resolveBrickDamage(bricks[b]);
-            }
-          }
-        }*/
+        //aliveParticles.push(particles[i]);
 
         // Move the particle.
         particles[i].move(gameConfig.scale, gameConfig.speedMultiplier);
+
+        // Draw the particle.
+        particles[i].draw(gameConfig.scale, shapeBuffers[particles[i].shapeName]);
       }
     }
 
     // Remove dead particles.
-    particles = aliveParticles;
-
-    // Draw any particles that exist.
-    for (let x = 0; x < particles.length; x++) {
-      particles[x].draw(gameConfig.scale, shapeBuffers[particles[x].shapeName]);
-    }
+    //particles = aliveParticles;
 
     // Draw powerups
     for (let x = 0; x < powerups.length; x++) {
