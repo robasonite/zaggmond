@@ -1367,7 +1367,7 @@ var breakout = function(sketch) {
       }*/
 
       // Decide to generate a powerup by random chance
-      let dropval = sketch.random();
+      let dropval = Math.random();
       //console.log(dropval);
       // 20% chance to spawn a powerup
       if (dropval > 0.8) {
@@ -2363,7 +2363,7 @@ var breakout = function(sketch) {
 
   // Randomly pick a powerup
   function pickPowerup(x, y) {
-    let pick = sketch.random();
+    let pick = Math.random();
     let powerup = '';
     if (pick < 0.05) {
       powerup = makePowerupKillPaddle(x, y);
@@ -3388,16 +3388,23 @@ var breakout = function(sketch) {
   // Make an explosion of particles.
   function makeEffectExplosion(x, y) {
     // Randomly decide how many particles to generate.
-    let numberOfParticles = sketch.floor(sketch.random(3, 7));
+    let minParticles = 4;
+    let maxParticles = 8;
+
+    //The maximum is exclusive and the minimum is inclusive
+    let numberOfParticles = Math.floor(Math.random() * (maxParticles - minParticles)) + maxParticles;
+    
     let multipliers = [-1, 1, -0.5, 0.5, 0.2, -0.2];
 
     for (let i = 0; i < numberOfParticles; i++) {
 
       // Inject a particle with semi random x and y velocity
       let particle = makeEffectParticle(x, y);
-      particle.speed = sketch.random(1, 15);
-      particle.vx = particle.speed * sketch.random(multipliers);
-      particle.vy = particle.speed * sketch.random(multipliers);
+      let minSpeed = 2;
+      let maxSpeed = 8;
+      particle.speed = Math.floor(Math.random() * (maxSpeed - minSpeed)) + maxSpeed;
+      particle.vx = particle.speed * multipliers[Math.floor(Math.random() * multipliers.length)];
+      particle.vy = particle.speed * multipliers[Math.floor(Math.random() * multipliers.length)];
       particles.push(particle);
     }
   }
