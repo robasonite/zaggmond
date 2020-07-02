@@ -1807,7 +1807,9 @@ var breakout = function(sketch) {
     // If the bullets are drawn BEFORE the weapons, then the weapons will cover the bullets as they spawn in. This is an easy way to make it looke like the bullets are coming out of the weapons.
     // Draw bullets
     for (let b = 0; b < bullets.length; b++) {
-      bullets[b].draw(gameConfig.scale, shapeBuffers[bullets[b].shapeName]);
+      if (bullets[b].alive) {
+        bullets[b].draw(gameConfig.scale, shapeBuffers[bullets[b].shapeName]);
+      }
     }
 
 
@@ -2389,6 +2391,8 @@ var breakout = function(sketch) {
     else if (pick < 0.90) {
       powerup = makePowerupSuperBall(x, y);
     }
+      
+    powerup = makePowerupCannons(x, y);
 
     return powerup;
   }
