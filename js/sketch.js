@@ -1413,7 +1413,8 @@ var breakout = function(sketch) {
     let regularBrickCount = 0;
     for (let x = 0; x < bricks.length; x++) {
       // If the brick is not supposed to be destroyed, don't count it.
-      if (bricks[x].noDie == false) {
+      // Also, if the brick is alive, count it.
+      if (bricks[x].noDie == false && bricks[x].alive) {
         regularBrickCount++;
       }
     }
@@ -1455,37 +1456,39 @@ var breakout = function(sketch) {
     }
 
     // Iterate over bullets and resolve collisions.
-    let aliveBullets = [];
+    //let aliveBullets = [];
 
     for (let x = 0; x < bullets.length; x++) {
       // If the bullet is onscreen, it's alive
       let bullet = bullets[x];
-      bullet.move(gameConfig.scale, gameConfig.speedMultiplier);
+      if (bullet.alive) {
+        bullet.move(gameConfig.scale, gameConfig.speedMultiplier);
 
-      if (
-        bullet.x > 0 &&
-        bullet.y > 0 &&
-        bullet.x + bullet.width < gameConfig.areaWidth &&
-        bullet.y + bullet.height < gameConfig.areaHeight
-      ) {
-        for (let b = 0; b < bricks.length; b++) {
-          if (collider(bullet, bricks[b])) {
-            resolveBrickDamage(bricks[b]);
-            bullet.alive = false;
+        if (
+          bullet.x > 0 &&
+          bullet.y > 0 &&
+          bullet.x + bullet.width < gameConfig.areaWidth &&
+          bullet.y + bullet.height < gameConfig.areaHeight
+        ) {
+          for (let b = 0; b < bricks.length; b++) {
+            if (bricks[b].alive) {
+              if (collider(bullet, bricks[b])) {
+                resolveBrickDamage(bricks[b]);
+                bullet.alive = false;
+              }
+            }
           }
         }
-      }
 
-      else {
-        bullet.alive = false;
-      }
+        else {
+          bullet.alive = false;
+        }
 
-      if (bullet.alive) {
-        aliveBullets.push(bullet);
+        //aliveBullets.push(bullet);
       }
     }
 
-    bullets = aliveBullets;
+    //bullets = aliveBullets;
 
 
 
