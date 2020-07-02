@@ -1604,46 +1604,46 @@ var breakout = function(sketch) {
 
 
     // Powerups
-    alivePowerups = [];
+    //alivePowerups = [];
     for (let p = 0; p < powerups.length; p++) {
+      
+      if (powerups[p].alive) {
+        // First check if the powerup is still on the screen.
+        if (powerups[p].y < gameConfig.areaHeight) {
+          // Check for a collision with the player.
+          if (collider(powerups[p], player)) {
 
-      // First check if the powerup is still on the screen.
-      if (powerups[p].y < gameConfig.areaHeight) {
-        // Check for a collision with the player.
-        if (collider(powerups[p], player)) {
+            // Play the sound effect.
+            soundEffects.powerupCollect.play();
 
-          // Play the sound effect.
-          soundEffects.powerupCollect.play();
+            // Update the score.
+            addPlayerScore(powerups[p].points);
 
-          // Update the score.
-          addPlayerScore(powerups[p].points);
+            // Mark powerup as dead.
+            powerups[p].alive = false;
 
-          // Mark powerup as dead.
-          powerups[p].alive = false;
+            // Apply the effect.
+            powerups[p].effect();
+          }
 
-          // Apply the effect.
-          powerups[p].effect();
+          // Else, move the powerup.
+          else {
+            powerups[p].move(gameConfig.scale, gameConfig.speedMultiplier);
+          }
         }
 
-        // Else, move the powerup.
         else {
-          powerups[p].move(gameConfig.scale, gameConfig.speedMultiplier);
+          // Else, the powerup is no longer alive.
+          powerups[p].alive = false;
         }
-      }
-
-      else {
-        // Else, the powerup is no longer alive.
-        powerups[p].alive = false;
-      }
 
       // If the powerup is still alive, save it.
-      if (powerups[p].alive) {
-        alivePowerups.push(powerups[p]);
+        //alivePowerups.push(powerups[p]);
       }
     }
 
     // Scrub dead powerups
-    powerups = alivePowerups;
+    //powerups = alivePowerups;
 
 
     // Update the player
@@ -1797,7 +1797,9 @@ var breakout = function(sketch) {
 
     // Draw powerups
     for (let x = 0; x < powerups.length; x++) {
-      powerups[x].draw(gameConfig.scale, shapeBuffers[powerups[x].shapeName]);
+      if (powerups[x].alive) {
+        powerups[x].draw(gameConfig.scale, shapeBuffers[powerups[x].shapeName]);
+      }
     }
 
     // Draw the player.
