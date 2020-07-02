@@ -1449,8 +1449,9 @@ var breakout = function(sketch) {
       }
     }
 
-    // Next, check for balls.
-    if (balls.length == 0) {
+    // Next, check for alive balls.
+    const isDead = (ball) => ball.alive == false;
+    if (balls.every(isDead)) {
       // Kill the player
       killPlayer();
     }
@@ -1492,12 +1493,12 @@ var breakout = function(sketch) {
 
 
 
-    let aliveBalls = [];
+    //let aliveBalls = [];
     for (let x = 0; x < balls.length; x++) {
       // First, check if the ball is alive.
       if (balls[x].alive) {
         // If so, add it to aliveBalls.
-        aliveBalls.push(balls[x]);
+        //aliveBalls.push(balls[x]);
 
         // Take top and bottom bars into account for bounds checks.
         balls[x].boundsCheck();
@@ -1583,7 +1584,7 @@ var breakout = function(sketch) {
     }
 
     // Scrub dead balls.
-    balls = aliveBalls;
+    //balls = aliveBalls;
 
 
 
@@ -2392,7 +2393,7 @@ var breakout = function(sketch) {
       powerup = makePowerupSuperBall(x, y);
     }
       
-    powerup = makePowerupCannons(x, y);
+    powerup = makePowerupBallsX2(x, y);
 
     return powerup;
   }
@@ -2471,8 +2472,11 @@ var breakout = function(sketch) {
     mypowerup.points = 1000;
     mypowerup.sprite = 'img/powerUpKillPaddle.png';
 
+    // Mark every ball as dead
     mypowerup.effect = function() {
-      balls = [];
+      for (let i = 0; i++; i < balls.length) {
+        balls[i].alive = false;
+      }
     }
 
     return mypowerup;
