@@ -1732,12 +1732,12 @@ var breakout = function(sketch) {
 
 
     // This part is mainly used for moving bricks, but it's also a good time to remove dead bricks.
-    let aliveBricks = [];
+    //let aliveBricks = [];
     for (let x = 0; x < bricks.length; x++) {
       // Check if a brick is alive first
       if (bricks[x].alive) {
         // Is so, than it is alive and should be added to aliveBricks.
-        aliveBricks.push(bricks[x]);
+        //aliveBricks.push(bricks[x]);
 
         // Next check if the brick is visible.
         if (bricks[x].visible) {
@@ -1752,7 +1752,7 @@ var breakout = function(sketch) {
     }
 
     // Remove bricks that are no longer alive.
-    bricks = aliveBricks;
+    //bricks = aliveBricks;
 
 
     // Draw the balls.
