@@ -18,9 +18,6 @@
 
 
 var breakout = function(sketch) {
-  // Disable error system
-  p5.disableFriendlyErrors = true;
-
 
   // Main game config
   let gameConfig = {
@@ -43,6 +40,13 @@ var breakout = function(sketch) {
     debug: false,
     fps: 30
   };
+  
+
+  // Disable error system
+  if (gameConfig.debug) {
+    p5.disableFriendlyErrors = true;
+  }
+
 
   // Give gameConfig a function for getting the current style rules and the current buttonOffsetX.
   gameConfig.getCompStyle = function() {
