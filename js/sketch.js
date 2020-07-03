@@ -1819,20 +1819,23 @@ var breakout = function(sketch) {
 
     // Draw weapons
     for (let w = 0; w < weapons.length; w++) {
-      weapons[w].draw(gameConfig.scale, shapeBuffers[weapons[w].shapeName]);
-    }
-
-
-    // Draw timed text messages with garbage collecting.
-    let activeMessages = [];
-    for (let i = 0; i < messages.length; i++) {
-      if (messages[i].active) {
-        messages[i].showMessageText();
-        activeMessages.push(messages[i]);
+      // Only draw alive weapons.
+      if (weapons[w].alive) {
+        weapons[w].draw(gameConfig.scale, shapeBuffers[weapons[w].shapeName]);
       }
     }
 
-    messages = activeMessages;
+
+    // Draw timed text messages.
+    //let activeMessages = [];
+    for (let i = 0; i < messages.length; i++) {
+      if (messages[i].active) {
+        messages[i].showMessageText();
+        //activeMessages.push(messages[i]);
+      }
+    }
+
+    //messages = activeMessages;
 
 
     // Draw the top and bottom bars AFTER drawing all of the game elements.
