@@ -1651,37 +1651,38 @@ var breakout = function(sketch) {
     player.move(gameConfig.scale, gameConfig.speedMultiplier);
 
     // Weapon handling
-    aliveWeapons = [];
+    //aliveWeapons = [];
     for (let w = 0; w < weapons.length; w++) {
-      let wep = weapons[w];
-      // Place the weapon.
+      if (weapons[w].alive) {
+        let wep = weapons[w];
+        // Place the weapon.
 
-      // The Y position will always be the same as the player.
-      wep.y = player.y;
-      let place = wep.placement;
+        // The Y position will always be the same as the player.
+        wep.y = player.y;
+        let place = wep.placement;
 
-      // Find the X position.
-      if (place == 'center') {
-        wep.x = player.x + (player.width / 2) - (wep.width / 2);
-      }
+        // Find the X position.
+        if (place == 'center') {
+          wep.x = player.x + (player.width / 2) - (wep.width / 2);
+        }
 
-      else if (place == 'left') {
-        wep.x = player.x;
-      }
-      else if (place == 'right') {
-        wep.x = player.x + player.width - wep.width;
-      }
+        else if (place == 'left') {
+          wep.x = player.x;
+        }
+        else if (place == 'right') {
+          wep.x = player.x + player.width - wep.width;
+        }
 
-      // Run the fire method.
-      wep.fire();
+        // Run the fire method.
+        wep.fire();
 
       // If the weapon is still alive, add to aliveWeapons.
-      if (wep.alive) {
-        aliveWeapons.push(wep);
+      /*if (wep.alive) {
+        aliveWeapons.push(wep);*/
       }
     }
 
-    weapons = aliveWeapons;
+    //weapons = aliveWeapons;
   }
 
   function gameLoop() {
