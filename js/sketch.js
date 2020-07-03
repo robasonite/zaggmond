@@ -2520,11 +2520,13 @@ var breakout = function(sketch) {
       // Make a set of new balls.
       let newballs = [];
       for (let i = 0; i < balls.length; i++) {
-        // Each ball will "split" from away from an existing ball.
-        let nb = makeBall(balls[i].x, balls[i].y);
-        nb.vy = balls[i].speed * -1;
-        nb.vx = balls[i].vx * -1;
-        newballs.push(nb);
+        if (balls[i].alive) {
+          // Each ball will "split" from away from an existing ball.
+          let nb = makeBall(balls[i].x, balls[i].y);
+          nb.vy = balls[i].speed * -1;
+          nb.vx = balls[i].vx * -1;
+          newballs.push(nb);
+        }
       }
 
       // Add them to the main balls array.
@@ -2547,7 +2549,9 @@ var breakout = function(sketch) {
 
       // Turn all balls into Super Balls
       for (let i = 0; i < balls.length; i++) {
-        balls[i].shapeName = 'superBall';
+        if (balls[i].alive) {
+          balls[i].shapeName = 'superBall';
+        }
       }
     }
 
