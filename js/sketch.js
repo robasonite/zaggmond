@@ -2403,8 +2403,6 @@ var breakout = function(sketch) {
       powerup = makePowerupSuperBall(x, y);
     }
       
-    powerup = makePowerupBallsX2(x, y);
-
     return powerup;
   }
 
