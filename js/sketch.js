@@ -2403,6 +2403,8 @@ var breakout = function(sketch) {
       powerup = makePowerupSuperBall(x, y);
     }
       
+    powerup = makePowerupKillPaddle(x, y);
+      
     return powerup;
   }
 
@@ -2482,9 +2484,7 @@ var breakout = function(sketch) {
 
     // Mark every ball as dead
     mypowerup.effect = function() {
-      for (let i = 0; i++; i < balls.length) {
-        balls[i].alive = false;
-      }
+      killPlayer();
     }
 
     return mypowerup;
