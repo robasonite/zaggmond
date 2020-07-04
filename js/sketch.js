@@ -2115,7 +2115,7 @@ var breakout = function(sketch) {
     sketch.textAlign(sketch.CENTER);
     sketch.textSize(30 * gameConfig.scale);
     sketch.text(
-      "Version 0.8",
+      "Version 1.0",
       (gameConfig.areaWidth / 2) * gameConfig.scale,
       (gameConfig.areaHeight * 0.87) * gameConfig.scale
     );
