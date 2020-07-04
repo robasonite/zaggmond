@@ -1935,10 +1935,6 @@ var breakout = function(sketch) {
 
     // Input handling
     if (sketch.mouseIsPressed) {
-      //sketch.stroke(150);
-      //sketch.line(sketch.mouseX, 0, sketch.mouseX, gameConfig.areaHeight);
-      //console.log("Mouse down: " + sketch.mouseX);
-      //console.log((gameConfig.areaWidth * gameConfig.scale / 2));
       if (sketch.mouseX < (gameConfig.areaWidth * gameConfig.scale) / 2) {
         //console.log("LEFT");
         player.vx = player.speed * -1;
@@ -2402,8 +2398,6 @@ var breakout = function(sketch) {
     else if (pick < 0.90) {
       powerup = makePowerupSuperBall(x, y);
     }
-      
-    powerup = makePowerupKillPaddle(x, y);
       
     return powerup;
   }
