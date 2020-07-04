@@ -437,3 +437,14 @@ I fixed by by putting a call to 'resetGame()' directly after the "switchScreen('
 - Turns out that my modifications broke a few powerups and the whole lives mechanic. I needed to change the death condition, fix the "dead ball multiply" bug associated with the powerup 'BallsX2', and fix the 'killPaddle' powerup.
 
 - The ONLY array that MUST reset every frame is 'explosionPoints'. Otherwise, bomb brick explosions stop working as intended.
+
+- Fixed the "arrow swap" bug that affected keyboard input. Previously, if the player held down an arrow key (left or right) and then, while the paddle was in motion, held down the opposite arrow key, the paddle would immediately move in the opposite direction. After triggering, the bug would continue moving the paddle in that direction as long as either of the arrow keys remained held down. This caused unintended behavior.
+
+  I fixed the problem by writing a new function called 'getPlayerSpeed()', which reads the new 'playerKeys' object to determine whether player.vx should be 0, 'player.speed', or '-player.speed'. Right above that function, I have 2 testing blocks that use 'P5.keyPressed' and 'P5.keyReleased' set flip the key values between 'true' and 'false'. This setup replaces the 'if...else' blocks that used 'P5.keyIsPressed()'. NOW, if the player holds down both arrow keys at the same time, the paddle doesn't move at all. If the player then releases one of the arrow keys, the paddle moves in the correct direction.
+
+- Added mouse input handling directly into 'getPlayerSpeed()'.
+
+- Adjusted mouse input handling so that the pointer's Y position has to be above the bottom bar in order to register. This keeps the paddle from moving when the player clicks/taps the buttons at the bottom of the screen (specifically, Pause and Full Screen).
+
+- Bumped version to 1.0.
+
