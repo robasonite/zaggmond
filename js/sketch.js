@@ -154,6 +154,17 @@ var breakout = function(sketch) {
     if (keys.left) {
       speed -= player.speed;
     }
+    
+    if (sketch.mouseIsPressed) {
+      if (sketch.mouseX < (gameConfig.areaWidth * gameConfig.scale) / 2) {
+        //console.log("LEFT");
+        speed -= player.speed;
+      }
+      else {
+        //console.log("RIGHT");
+        speed += player.speed;
+      }
+    }
 
     return speed;
   }
