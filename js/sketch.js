@@ -156,13 +156,18 @@ var breakout = function(sketch) {
     }
     
     if (sketch.mouseIsPressed) {
-      if (sketch.mouseX < (gameConfig.areaWidth * gameConfig.scale) / 2) {
-        //console.log("LEFT");
-        speed -= player.speed;
-      }
-      else {
-        //console.log("RIGHT");
-        speed += player.speed;
+      // Don't do anything unless the mouse Y position is above the buttons at
+      // the bottom.
+      let yBoundary = (gameConfig.areaHeight - gameConfig.uiBarHeight) * gameConfig.scale;
+      if (sketch.mouseY < yBoundary) {
+        if (sketch.mouseX < (gameConfig.areaWidth * gameConfig.scale) / 2) {
+          //console.log("LEFT");
+          speed -= player.speed;
+        }
+        else {
+          //console.log("RIGHT");
+          speed += player.speed;
+        }
       }
     }
 
