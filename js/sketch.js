@@ -110,6 +110,62 @@ var breakout = function(sketch) {
   // Level building function get put into their own array.
   let Levels = [];
 
+
+  // >> INPUT SECTION START
+  
+  // Global key variables
+  let playerKeys = {
+    left: false,
+    right: false
+  }
+  
+
+  // Test for key press.
+  sketch.keyPressed = function() {
+    if (sketch.keyCode === sketch.LEFT_ARROW) {
+      playerKeys.left = true;
+    }
+
+    if (sketch.keyCode === sketch.RIGHT_ARROW) {
+      playerKeys.right = true;
+    }
+  }
+
+  // Test for key release.
+  sketch.keyReleased = function() {
+    if (sketch.keyCode === sketch.LEFT_ARROW) {
+      playerKeys.left = false;
+    }
+
+    if (sketch.keyCode === sketch.RIGHT_ARROW) {
+      playerKeys.right = false;
+    }
+
+    // Prevent default actions.
+    return false;
+  }
+
+  function getPlayerSpeed(keys) {
+    let speed = 0;
+    if (keys.right) {
+      speed += player.speed;
+    }
+
+    if (keys.left) {
+      speed -= player.speed;
+    }
+
+    return speed;
+  }
+  
+  // >> INPUT SECTION END
+
+
+
+
+
+
+
   // >> LEVEL SECTION START
 
   // Keep in mind that every other row is staggered!
@@ -1652,6 +1708,7 @@ var breakout = function(sketch) {
 
     // Update the player
     player.boundsCheck();
+    player.vx = getPlayerSpeed(playerKeys);
     player.move(gameConfig.scale, gameConfig.speedMultiplier);
 
     // Weapon handling
@@ -1930,35 +1987,6 @@ var breakout = function(sketch) {
       120 * gameConfig.scale,
       1250 * gameConfig.scale
     );
-
-
-
-    // Input handling
-    if (sketch.mouseIsPressed) {
-      if (sketch.mouseX < (gameConfig.areaWidth * gameConfig.scale) / 2) {
-        //console.log("LEFT");
-        player.vx = player.speed * -1;
-      }
-      else {
-        //console.log("RIGHT");
-        player.vx = player.speed;
-      }
-    }
-
-    // Same thing for the arrow keys
-    else if (sketch.keyIsPressed) {
-      if (sketch.keyCode === sketch.LEFT_ARROW) {
-        player.vx = player.speed * -1;
-      }
-      else if (sketch.keyCode === sketch.RIGHT_ARROW) {
-        player.vx = player.speed;
-      }
-    }
-
-    // If the player isn't holding the mouse button or a key down, don't move the paddle.
-    else {
-      player.vx = 0;
-    }
   }
 
   // Need a screen switching function to show and hide buttons
@@ -3784,6 +3812,35 @@ var breakout = function(sketch) {
     // Set up the level
     levelReader(Levels[gameConfig.level]);
   }
+
+
+  // Input handling
+  /*if (sketch.mouseIsPressed) {
+    if (sketch.mouseX < (gameConfig.areaWidth * gameConfig.scale) / 2) {
+      //console.log("LEFT");
+      player.vx = player.speed * -1;
+    }
+    else {
+      //console.log("RIGHT");
+      player.vx = player.speed;
+    }
+  }
+
+  // Same thing for the arrow keys
+  else if (sketch.keyIsPressed) {
+    if (sketch.keyCode === sketch.LEFT_ARROW) {
+      player.vx = player.speed * -1;
+    }
+    else if (sketch.keyCode === sketch.RIGHT_ARROW) {
+      player.vx = player.speed;
+    }
+  }
+
+  // If the player isn't holding the mouse button or a key down, don't move the paddle.
+  else {
+    player.vx = 0;
+  }*/
+
 }
 
 new p5(breakout, "canvas");
