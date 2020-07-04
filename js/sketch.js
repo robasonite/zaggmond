@@ -3828,35 +3828,6 @@ var breakout = function(sketch) {
     // Set up the level
     levelReader(Levels[gameConfig.level]);
   }
-
-
-  // Input handling
-  /*if (sketch.mouseIsPressed) {
-    if (sketch.mouseX < (gameConfig.areaWidth * gameConfig.scale) / 2) {
-      //console.log("LEFT");
-      player.vx = player.speed * -1;
-    }
-    else {
-      //console.log("RIGHT");
-      player.vx = player.speed;
-    }
-  }
-
-  // Same thing for the arrow keys
-  else if (sketch.keyIsPressed) {
-    if (sketch.keyCode === sketch.LEFT_ARROW) {
-      player.vx = player.speed * -1;
-    }
-    else if (sketch.keyCode === sketch.RIGHT_ARROW) {
-      player.vx = player.speed;
-    }
-  }
-
-  // If the player isn't holding the mouse button or a key down, don't move the paddle.
-  else {
-    player.vx = 0;
-  }*/
-
 }
 
 new p5(breakout, "canvas");
