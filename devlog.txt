@@ -423,3 +423,17 @@ I fixed by by putting a call to 'resetGame()' directly after the "switchScreen('
 2020-06-26:
 
 - Took the code that runs 'levelObject.specialFunction()' out of 'simUpdate()'. It now runs after 'simUpdate()', which means that the ring of moving bricks on the Crown level continues to spawn normally even if the player dies before spawning is complete.
+
+
+2020-07-02:
+
+- Started looking into ways to imrpove the performance of my game. I started with replacing 'P5.random()' with 'Math.random()'.
+
+- Stopped scrubbing arrays for bullets, bricks, etc. Every time I do that, the garbage collector activates.
+
+
+2020-07-03:
+
+- Turns out that my modifications broke a few powerups and the whole lives mechanic. I needed to change the death condition, fix the "dead ball multiply" bug associated with the powerup 'BallsX2', and fix the 'killPaddle' powerup.
+
+- The ONLY array that MUST reset every frame is 'explosionPoints'. Otherwise, bomb brick explosions stop working as intended.
