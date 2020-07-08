@@ -834,10 +834,10 @@ var breakout = function(sketch) {
 
     // > NORMAL BRICK HANDLING
     // Each outer element is an array.
-    for (let rowNum = levelBricks.length; rowNum--; ) {
+    for (let rowNum = 0; rowNum < levelBricks.length; rowNum++) {
 
       // Each element of an array is a brick number.
-      for (let brickNum = levelBricks[rowNum].length; brickNum--; ) {
+      for (let brickNum = 0; brickNum < levelBricks[rowNum].length; brickNum++) {
 
         // Set our x and y positions.
         // The Y position always goes up by half a brick height.
@@ -2003,6 +2003,8 @@ var breakout = function(sketch) {
       120 * gameConfig.scale,
       1250 * gameConfig.scale
     );
+
+    console.log(sketch.frameRate() / 1000);
   }
 
   // Need a screen switching function to show and hide buttons
