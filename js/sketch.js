@@ -373,7 +373,7 @@ var breakout = function(sketch) {
     let brickTotal = 8;
     let armored = true;
     let demoBrick = makeBrick(0,0);
-    for (let i = 0; i < brickTotal; i++) {
+    for ( var i = brickTotal; i--; ) {
 
       // Flip between armored and invincible bricks.
       let brickMaker;
@@ -834,10 +834,10 @@ var breakout = function(sketch) {
 
     // > NORMAL BRICK HANDLING
     // Each outer element is an array.
-    for (let rowNum = 0; rowNum < levelBricks.length; rowNum++) {
+    for (let rowNum = levelBricks.length; rowNum--; ) {
 
       // Each element of an array is a brick number.
-      for (let brickNum = 0; brickNum < levelBricks[rowNum].length; brickNum++) {
+      for (let brickNum = levelBricks[rowNum].length; brickNum--; ) {
 
         // Set our x and y positions.
         // The Y position always goes up by half a brick height.
@@ -923,7 +923,7 @@ var breakout = function(sketch) {
     // They run as soon as a level is started, when the rest of the bricks spawn in.
     if (level.specialBricks) {
       let sb = level.specialBricks;
-      for (let i = 0; i < sb.length; i++) {
+      for (let i = sb.length; i--; ) {
         // Run the special brick function.
         sb[i]();
       }
@@ -1147,7 +1147,7 @@ var breakout = function(sketch) {
     // Tell the program how many audi files there are.
     totalAudioFiles = audioArray.length;
 
-    for (let i = 0; i < totalAudioFiles; i++) {
+    for (let i = totalAudioFiles; i--; ) {
       audioLoader(audioArray[i]);
     }
 
@@ -1192,18 +1192,18 @@ var breakout = function(sketch) {
     // Count the sprites.
     totalSprites = shapeBlueprints.length;
 
-    for (let i = 0; i < totalSprites; i++) {
+    for (let i = totalSprites; i--; ) {
       spriteLoader(shapeBlueprints[i]);
     }
 
     // Count the level backgrounds
-    for (let i = 0; i < Levels.length; i++) {
+    for (let i = Levels.length; i--; ) {
       if (Levels[i].backgroundImage) {
         totalLevelBackgrounds++;
       }
     }
 
-    for (let i = 0; i < Levels.length; i++) {
+    for (let i = Levels.length; i--; ) {
       if (Levels[i].backgroundImage) {
         levelBackgroundLoader(Levels[i]);
       }
@@ -1487,7 +1487,7 @@ var breakout = function(sketch) {
   function simUpdate() {
     // Check for destructable bricks first.
     let regularBrickCount = 0;
-    for (let x = 0; x < bricks.length; x++) {
+    for (let x = bricks.length; x--; ) {
       // If the brick is not supposed to be destroyed, don't count it.
       // Also, if the brick is alive, count it.
       if (bricks[x].noDie == false && bricks[x].alive) {
@@ -1535,7 +1535,7 @@ var breakout = function(sketch) {
     // Iterate over bullets and resolve collisions.
     //let aliveBullets = [];
 
-    for (let x = 0; x < bullets.length; x++) {
+    for (let x = bullets.length; x--; ) {
       // If the bullet is onscreen, it's alive
       let bullet = bullets[x];
       if (bullet.alive) {
@@ -1547,7 +1547,7 @@ var breakout = function(sketch) {
           bullet.x + bullet.width < gameConfig.areaWidth &&
           bullet.y + bullet.height < gameConfig.areaHeight
         ) {
-          for (let b = 0; b < bricks.length; b++) {
+          for (let b = bricks.length; b--; ) {
             if (bricks[b].alive) {
               if (collider(bullet, bricks[b])) {
                 resolveBrickDamage(bricks[b]);
@@ -1570,7 +1570,7 @@ var breakout = function(sketch) {
 
 
     //let aliveBalls = [];
-    for (let x = 0; x < balls.length; x++) {
+    for (let x = balls.length; x--; ) {
       // First, check if the ball is alive.
       if (balls[x].alive) {
         // If so, add it to aliveBalls.
@@ -1621,7 +1621,7 @@ var breakout = function(sketch) {
         }
 
         // Ball and brick collisions
-        for (let b = 0; b < bricks.length; b++) {
+        for (let b = bricks.length; b--; ) {
           if (collider(balls[x], bricks[b]) && bricks[b].visible) {
             // Apply damage.
             resolveBrickDamage(bricks[b], balls[x]);
@@ -1665,8 +1665,8 @@ var breakout = function(sketch) {
 
 
     // Now resolve explosionPoints
-    for (let e = 0; e < explosionPoints.length; e++) {
-      for (let b = 0; b < bricks.length; b++) {
+    for (let e = explosionPoints.length; e--; ) {
+      for (let b = bricks.length; b--; ) {
         // Don't apply damage to bricks that no longer alive.
         if (collider(explosionPoints[e], bricks[b]) && bricks[b].alive == true) {
           resolveBrickDamage(bricks[b]);
@@ -1681,7 +1681,7 @@ var breakout = function(sketch) {
 
     // Powerups
     //alivePowerups = [];
-    for (let p = 0; p < powerups.length; p++) {
+    for (let p = powerups.length; p--; ) {
       
       if (powerups[p].alive) {
         // First check if the powerup is still on the screen.
@@ -1729,7 +1729,7 @@ var breakout = function(sketch) {
 
     // Weapon handling
     //aliveWeapons = [];
-    for (let w = 0; w < weapons.length; w++) {
+    for (let w = weapons.length; w--; ) {
       if (weapons[w].alive) {
         let wep = weapons[w];
         // Place the weapon.
@@ -1815,7 +1815,7 @@ var breakout = function(sketch) {
 
     // This part is mainly used for moving bricks, but it's also a good time to remove dead bricks.
     //let aliveBricks = [];
-    for (let x = 0; x < bricks.length; x++) {
+    for (let x = bricks.length; x--; ) {
       // Check if a brick is alive first
       if (bricks[x].alive) {
         // Is so, than it is alive and should be added to aliveBricks.
@@ -1838,13 +1838,13 @@ var breakout = function(sketch) {
 
 
     // Draw the balls.
-    for (let x = 0; x < balls.length; x++) {
+    for (let x = balls.length; x--; ) {
       // Draw all objects according to their buffered shape names.
       balls[x].draw(gameConfig.scale, shapeBuffers[balls[x].shapeName]);
     }
 
     // Draw the bricks.
-    for (let x = 0; x < bricks.length; x++) {
+    for (let x = bricks.length; x--; ) {
       // Check if a brick is visible first
       if (bricks[x].visible) {
         bricks[x].draw(gameConfig.scale, shapeBuffers[bricks[x].shapeName]);
@@ -1853,7 +1853,7 @@ var breakout = function(sketch) {
 
     // Iterate over particles.
     //let aliveParticles = []
-    for (let i = 0; i < particles.length; i++) {
+    for (let i = particles.length; i--; ) {
 
       // Update each particle's distance life.
       particles[i].checkDistance();
@@ -1874,7 +1874,7 @@ var breakout = function(sketch) {
     //particles = aliveParticles;
 
     // Draw powerups
-    for (let x = 0; x < powerups.length; x++) {
+    for (let x = powerups.length; x--; ) {
       if (powerups[x].alive) {
         powerups[x].draw(gameConfig.scale, shapeBuffers[powerups[x].shapeName]);
       }
@@ -1887,7 +1887,7 @@ var breakout = function(sketch) {
 
     // If the bullets are drawn BEFORE the weapons, then the weapons will cover the bullets as they spawn in. This is an easy way to make it looke like the bullets are coming out of the weapons.
     // Draw bullets
-    for (let b = 0; b < bullets.length; b++) {
+    for (let b = bullets.length; b--; ) {
       if (bullets[b].alive) {
         bullets[b].draw(gameConfig.scale, shapeBuffers[bullets[b].shapeName]);
       }
@@ -1895,7 +1895,7 @@ var breakout = function(sketch) {
 
 
     // Draw weapons
-    for (let w = 0; w < weapons.length; w++) {
+    for (let w = weapons.length; w--; ) {
       // Only draw alive weapons.
       if (weapons[w].alive) {
         weapons[w].draw(gameConfig.scale, shapeBuffers[weapons[w].shapeName]);
@@ -1905,7 +1905,7 @@ var breakout = function(sketch) {
 
     // Draw timed text messages.
     //let activeMessages = [];
-    for (let i = 0; i < messages.length; i++) {
+    for (let i = messages.length; i--; ) {
       if (messages[i].active) {
         messages[i].showMessageText();
         //activeMessages.push(messages[i]);
@@ -2008,11 +2008,11 @@ var breakout = function(sketch) {
   // Need a screen switching function to show and hide buttons
   function switchScreen(screenName) {
     // Hide and show the right buttons
-    for (let i = 0; i < buttons.length; i++) {
+    for ( let i = buttons.length; i--; ) {
       buttons[i].hide();
     }
 
-    for (let i = 0; i < buttons.length; i++) {
+    for ( let i = buttons.length; i--; ) {
       if (buttons[i].screen == screenName || buttons[i].screen == 'all') {
         buttons[i].show();
       }
@@ -2289,7 +2289,7 @@ var breakout = function(sketch) {
       gameConfig.getCompStyle();
 
       // Modify the buttons.
-      for (let i = 0; i < buttons.length; i++) {
+      for ( let i = buttons.length; i--; ) {
         buttons[i].position(
           (buttons[i].initX * gameConfig.scale) + gameConfig.buttonOffsetX,
           buttons[i].initY * gameConfig.scale
@@ -2300,7 +2300,7 @@ var breakout = function(sketch) {
         );
         buttons[i].style('font-size', (buttons[i].initFontSize * gameConfig.scale) + 'px');
       }
-    }, 600);
+    },600);
   }
 
   // Run this function when the user exits fullscreen mode through a method other than by pressing the button.
@@ -2563,7 +2563,7 @@ var breakout = function(sketch) {
 
       // Make a set of new balls.
       let newballs = [];
-      for (let i = 0; i < balls.length; i++) {
+      for ( let i = balls.length; i--; ) {
         if (balls[i].alive) {
           // Each ball will "split" from away from an existing ball.
           let nb = makeBall(balls[i].x, balls[i].y);
@@ -2574,7 +2574,7 @@ var breakout = function(sketch) {
       }
 
       // Add them to the main balls array.
-      for (let x = 0; x < newballs.length; x++) {
+      for ( let x = newballs.length; x--; ) {
         balls.push(newballs[x]);
       }
     }
@@ -2592,7 +2592,7 @@ var breakout = function(sketch) {
     mypowerup.effect = function() {
 
       // Turn all balls into Super Balls
-      for (let i = 0; i < balls.length; i++) {
+      for ( let i = balls.length; i--; ) {
         if (balls[i].alive) {
           balls[i].shapeName = 'superBall';
         }
@@ -3440,8 +3440,8 @@ var breakout = function(sketch) {
     
     let multipliers = [-1, 1, -0.5, 0.5, 0.2, -0.2];
 
-    for (let i = 0; i < numberOfParticles; i++) {
-
+    
+    for ( let i = numberOfParticles; i--; ) {
       // Inject a particle with semi random x and y velocity
       let particle = makeEffectParticle(x, y);
       let minSpeed = 2;
@@ -3803,7 +3803,7 @@ var breakout = function(sketch) {
   // Reset the level, balls, and bricks.
   function resetGame() {
     // Check for and run all level reset functions.
-    for (let i = 0; i < Levels.length; i++) {
+    for ( var i = Levels.length; i--; ) {
       let cl = Levels[i];
       if (typeof cl.resetSpecial === 'function') {
         cl.resetSpecial();
