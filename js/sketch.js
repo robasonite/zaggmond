@@ -1546,7 +1546,7 @@ var breakout = function(sketch) {
         gameOver.endAction = function() {
           switchScreen('results');
         }
-        gameOver.maxTime = 120;
+        gameOver.maxTime = gameConfig.msgMaxTime * 3;
         messages.push(gameOver);
       }
     }
