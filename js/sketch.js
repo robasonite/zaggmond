@@ -811,7 +811,6 @@ var breakout = function(sketch) {
   ];
 
 
-  Levels.push(level13);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
@@ -824,6 +823,7 @@ var breakout = function(sketch) {
   Levels.push(level10);
   Levels.push(level11);
   Levels.push(level12);
+  Levels.push(level13);
   Levels.push(level14);
   Levels.push(level15);
   Levels.push(level16);
@@ -2731,7 +2731,7 @@ var breakout = function(sketch) {
     bspark.speed = 16;
 
     // Adjust max distance.
-    //bspark.maxDistance = 48;
+    bspark.maxDistance = 48;
 
     // Make the spark red.
     bspark.color = sketch.color(255, 0, 0);
@@ -2867,9 +2867,9 @@ var breakout = function(sketch) {
     let myball = makeParticle(x, y);
     myball.x = x;
     myball.y = y;
-    myball.vx = 30;
-    myball.vy = 30;
-    myball.speed = 30;
+    myball.vx = 35;
+    myball.vy = 35;
+    myball.speed = 35;
     myball.width = 30;
     myball.height = 30;
 
@@ -3412,7 +3412,7 @@ var breakout = function(sketch) {
     mypaddle.vy = 0
 
     // Set a separate speed variable
-    mypaddle.speed = 40;
+    mypaddle.speed = 50;
 
     // Need to adjust the width and height
     mypaddle.width = 140;
