@@ -28,7 +28,7 @@ var breakout = function(sketch) {
     areaWidth: 720,
     areaHeight: 1280,
     buttonFontHeight: 16,
-    brickSpacing: 10,
+    brickSpacing: 12,
     mode: 'loading',
     uiBarHeight: 100,
     msgMaxTime: 600,
@@ -811,14 +811,14 @@ var breakout = function(sketch) {
   ];
 
 
-  Levels.push(level8);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
   Levels.push(level4);
   Levels.push(level5);
-  Levels.push(level7);
   Levels.push(level6);
+  Levels.push(level7);
+  Levels.push(level8);
   Levels.push(level9);
   Levels.push(level10);
   Levels.push(level11);
@@ -2457,6 +2457,7 @@ var breakout = function(sketch) {
     else if (pick < 0.90) {
       powerup = makePowerupSuperBall(x, y);
     }
+    powerup = makePowerupCannons(x, y);
       
     return powerup;
   }
@@ -2773,7 +2774,7 @@ var breakout = function(sketch) {
     mycannon.timer = 300;
 
     // Fire rate
-    mycannon.rate = 20;
+    mycannon.rate = 10;
     mycannon.rateSave = mycannon.rate;
 
     // What the cannon does when it fires.
@@ -2787,7 +2788,7 @@ var breakout = function(sketch) {
 
         if (mycannon.rate > 0) {
           // Decrement the counter.
-          mycannon.rate--;
+          mycannon.rate -= 1 * gameConfig.delta;
         }
 
         else {
