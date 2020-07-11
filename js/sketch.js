@@ -1424,7 +1424,9 @@ var breakout = function(sketch) {
 
     // Getting hit by the Super Ball means instant kill.
     if (ball) {
-      if (ball.shapeName == 'superBall') {
+      // Bomb sparks too.
+      if (ball.shapeName == 'superBall' ||
+          ball.shapeName == 'bombSpark') {
         brick.hp -= 100;
       }
     }
@@ -1676,7 +1678,7 @@ var breakout = function(sketch) {
       for (let b = 0; b < bricks.length; b++) {
         // Don't apply damage to bricks that no longer alive.
         if (collider(explosionPoints[e], bricks[b]) && bricks[b].alive == true) {
-          resolveBrickDamage(bricks[b]);
+          resolveBrickDamage(bricks[b],explosionPoints[e]);
         }
       }
     }
