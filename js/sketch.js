@@ -472,25 +472,23 @@ var breakout = function(sketch) {
 
   // Special properties required for the special function.
   // Max number of bricks to spawn
-  level8.maxBricks = 26;
+  level8.maxBricks = 24;
   level8.currentBricks = 0;
 
   // A reference model for normal bricks
   level8.demoBrick = makeBrick(0,0);
+  
+  // Another reference model to control brick spawning.
+  // This brick is never drawn, but it used with collider()
+  // to determine when the next brick spawns.
+  level8.bufferBrick = makeBrick(
+    0,
+    gameConfig.uiBarHeight + gameConfig.brickSpacing
+  );
+  level8.bufferBrick.width += (gameConfig.brickSpacing * 2);
 
   // Default brick speed
   level8.brickSpeed = 16;
-
-  // Brick step and delay values
-  level8.brickStep = gameConfig.brickSpacing + level8.demoBrick.width;
-
-  // Get the raw delay.
-  let rawDelay = level8.brickStep / level8.brickSpeed;
-
-  // Correct for framerate.
-  level8.spawnDelay = (rawDelay / 60) * 30;
-
-  level8.spawnDelaySave = level8.spawnDelay;
 
   // Whether to spawn an armored brick.
   level8.spawnArmored = false
@@ -501,39 +499,54 @@ var breakout = function(sketch) {
     level8.currentBricks = 0;
   }
 
+  // The last spawned brick.
+  level8.lastBrick = false;
+
   // This level has a special function that spawns a bunch of bricks that move
   // in a rectangle along the perimeter of the play area.
-  level8.specialFunction = function() {
-    if (level8.spawnDelay > 0) {
-      level8.spawnDelay--;
+  level8.guardBrickSpawner = function() {
+    let brickMaker;
+    if (level8.spawnArmored) {
+      brickMaker = makeArmoredBrick;
+      level8.spawnArmored = false;
     }
     else {
-      if (level8.currentBricks < level8.maxBricks) {
-        let brickMaker;
-        if (level8.spawnArmored) {
-          brickMaker = makeArmoredBrick;
-          level8.spawnArmored = false;
-        }
-        else {
-          brickMaker = makeBlueBrick;
-          level8.spawnArmored = true;
-        }
-        mybrick = makeMovingBrickRectPath(
-          brickMaker,
-          gameConfig.brickSpacing,
-          gameConfig.uiBarHeight + gameConfig.brickSpacing,
-          7
-        );
-        mybrick.bounds.height = ((mybrick.width + gameConfig.brickSpacing) * 7) - gameConfig.brickSpacing
-        mybrick.speed = 16;
-        mybrick.vx = mybrick.speed;
-        bricks.push(mybrick);
+      brickMaker = makeBlueBrick;
+      level8.spawnArmored = true;
+    }
+    mybrick = makeMovingBrickRectPath(
+      brickMaker,
+      gameConfig.brickSpacing,
+      gameConfig.uiBarHeight + gameConfig.brickSpacing,
+      7
+    );
+    mybrick.bounds.height = ((mybrick.width + gameConfig.brickSpacing) * 7) - gameConfig.brickSpacing
+    mybrick.speed = 16;
+    mybrick.vx = mybrick.speed;
 
-        // Make sure to increment this number to prevent infinite spawning
-        level8.currentBricks++;
+    // Add the finished brick to the main array.
+    bricks.push(mybrick);
+    
+    // Keep track of this brick to control spawning the next one.
+    level8.lastBrick = mybrick;
+    
+    // Make sure to increment this number to prevent infinite spawning
+    level8.currentBricks++;
+  }
+
+  // This function controls when to spawn a guardian brick.
+  level8.specialFunction = function() {
+    if (level8.currentBricks < level8.maxBricks) {
+      // If current brick count is 0, then we know that
+      // this is the first brick.
+      if (level8.currentBricks == 0) {
+        level8.guardBrickSpawner();
       }
 
-      level8.spawnDelay = level8.spawnDelaySave;
+      // Now we have to start checking for collisions.
+      else if (!collider(level8.lastBrick, level8.bufferBrick)){
+        level8.guardBrickSpawner();
+      }
     }
   }
 
@@ -798,14 +811,14 @@ var breakout = function(sketch) {
   ];
 
 
-  Levels.push(level6);
+  Levels.push(level8);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
   Levels.push(level4);
   Levels.push(level5);
   Levels.push(level7);
-  Levels.push(level8);
+  Levels.push(level6);
   Levels.push(level9);
   Levels.push(level10);
   Levels.push(level11);
