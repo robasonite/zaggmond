@@ -1718,9 +1718,11 @@ var breakout = function(sketch) {
 
 
     // Update the player
-    player.boundsCheck();
     player.vx = getPlayerSpeed(playerKeys);
+
+    //Move the player
     player.move(gameConfig.scale, sketch.deltaTime);
+    player.boundsCheck();
 
     // Weapon handling
     //aliveWeapons = [];
