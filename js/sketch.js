@@ -31,7 +31,7 @@ var breakout = function(sketch) {
     brickSpacing: 10,
     mode: 'loading',
     uiBarHeight: 100,
-    msgMaxTime: 30,
+    msgMaxTime: 600,
     extraPaddlePoints: 10000,
     currentPaddlePoints: 0,
     font: '',
@@ -1533,7 +1533,7 @@ var breakout = function(sketch) {
       // If the bullet is onscreen, it's alive
       let bullet = bullets[x];
       if (bullet.alive) {
-        bullet.move(gameConfig.scale, sketch.deltaTime);
+        bullet.move(gameConfig.scale);
 
         if (
           bullet.x > 0 &&
@@ -1649,7 +1649,7 @@ var breakout = function(sketch) {
         }
 
         // Finally, move the ball.
-        balls[x].move(gameConfig.scale, sketch.deltaTime);
+        balls[x].move(gameConfig.scale);
       }
     }
 
@@ -1698,7 +1698,7 @@ var breakout = function(sketch) {
 
           // Else, move the powerup.
           else {
-            powerups[p].move(gameConfig.scale, sketch.deltaTime);
+            powerups[p].move(gameConfig.scale);
           }
         }
 
@@ -1720,7 +1720,7 @@ var breakout = function(sketch) {
     player.vx = getPlayerSpeed(playerKeys);
 
     //Move the player
-    player.move(gameConfig.scale, sketch.deltaTime);
+    player.move(gameConfig.scale);
     player.boundsCheck();
 
     // Weapon handling
@@ -1824,7 +1824,7 @@ var breakout = function(sketch) {
           bricks[x].boundsCheck();
 
           // Then move the brick.
-          bricks[x].move(gameConfig.scale, sketch.deltaTime);
+          bricks[x].move(gameConfig.scale);
         }
       }
     }
@@ -1859,7 +1859,7 @@ var breakout = function(sketch) {
         //aliveParticles.push(particles[i]);
 
         // Move the particle.
-        particles[i].move(gameConfig.scale, sketch.deltaTime);
+        particles[i].move(gameConfig.scale);
 
         // Draw the particle.
         particles[i].draw(gameConfig.scale, shapeBuffers[particles[i].shapeName]);
@@ -2170,6 +2170,8 @@ var breakout = function(sketch) {
   sketch.draw = function() {
     // put drawing code here
 
+    // Get the current delta time
+    gameConfig.delta = sketch.deltaTime / 50;
 
     // If everything is loaded, run the game normally.
     let loaded = checkLoading();
@@ -2342,9 +2344,9 @@ var breakout = function(sketch) {
       );
     }
 
-    myparticle.move = function(scale, delta) {
-      myparticle.x += (myparticle.vx * scale) * (delta / 50);
-      myparticle.y += (myparticle.vy * scale) * (delta / 50);
+    myparticle.move = function(scale) {
+      myparticle.x += (myparticle.vx * scale) * gameConfig.delta;
+      myparticle.y += (myparticle.vy * scale) * gameConfig.delta;
     }
 
     myparticle.draw = function(scale, buffer) {
@@ -2663,7 +2665,7 @@ var breakout = function(sketch) {
     // When the particle travels far enough, it dies.
     eparticle.checkDistance = function() {
       if (eparticle.maxDistance > 0) {
-        eparticle.maxDistance -= eparticle.speed;
+        eparticle.maxDistance -= eparticle.speed * gameConfig.delta;
       }
       else {
         eparticle.alive = false;
@@ -2727,7 +2729,7 @@ var breakout = function(sketch) {
     mybullet.shapeName = 'regularBullet';
     mybullet.speed = 60;
     mybullet.height = 20;
-    mybullet.width = 10;
+    mybullet.width = 16;
     mybullet.makeShape = function(buffer) {
       buffer.fill(0,255,0);
       buffer.rect(
@@ -2745,7 +2747,7 @@ var breakout = function(sketch) {
     let mycannon = makeBullet(x, y);
 
     mycannon.shapeName = 'cannon';
-    mycannon.speed = 20;
+    mycannon.speed = 20 * gameConfig.delta;
     mycannon.height = 40;
     mycannon.width = 24;
 
@@ -3443,7 +3445,7 @@ var breakout = function(sketch) {
     for (let i = 0; i < numberOfParticles; i++) {
       // Inject a particle with semi random x and y velocity
       let particle = makeEffectParticle(x, y);
-      let minSpeed = 4;
+      let minSpeed = 8;
       let maxSpeed = 16;
       particle.speed = Math.floor(Math.random() * (maxSpeed - minSpeed)) + maxSpeed;
       particle.vx = particle.speed * multipliers[Math.floor(Math.random() * multipliers.length)];
@@ -3634,7 +3636,7 @@ var breakout = function(sketch) {
         sketch.noStroke();
 
         // Increment the time
-        msg.time++;
+        msg.time += sketch.deltaTime;
       }
 
       // Else, mark the msg object as inactive so that gets deleted.
@@ -3745,7 +3747,7 @@ var breakout = function(sketch) {
       gameOver.endAction = function() {
         switchScreen('results');
       }
-      gameOver.maxTime = 120;
+      gameOver.maxTime = gameConfig.msgMaxTime * 3;
       messages.push(gameOver);
       //console.log("You LOSE!");
 
@@ -3760,7 +3762,7 @@ var breakout = function(sketch) {
         resetPlayer();
         makeResumeCountdown();
       }
-      missMessage.maxTime = 60;
+      missMessage.maxTime = gameConfig.msgMaxTime * 3;
       messages.push(missMessage);
     }
 
