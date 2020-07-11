@@ -811,6 +811,7 @@ var breakout = function(sketch) {
   ];
 
 
+  Levels.push(level13);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
@@ -822,7 +823,6 @@ var breakout = function(sketch) {
   Levels.push(level9);
   Levels.push(level10);
   Levels.push(level11);
-  Levels.push(level13);
   Levels.push(level12);
   Levels.push(level14);
   Levels.push(level15);
@@ -857,7 +857,7 @@ var breakout = function(sketch) {
         let y = yOffset + (((demoBrick.height / 2) + (gameConfig.brickSpacing / 2)) * rowNum);
 
         // The X position depends on whether or not we're on a staggered row.
-          let x = gameConfig.brickSpacing + ((demoBrick.width + gameConfig.brickSpacing) * brickNum);
+          let x = (gameConfig.brickSpacing / 2) + ((demoBrick.width + gameConfig.brickSpacing) * brickNum);
         if (stagRow) {
           x += (demoBrick.width / 2) + (gameConfig.brickSpacing / 2);
         }
@@ -1418,26 +1418,70 @@ var breakout = function(sketch) {
   }
 
   // The damage resolution function for bricks
-  function resolveBrickDamage(brick, ball=false) {
-    // Damage the brick if it can be dstroyed.
-    brick.hp -= 1;
+  function resolveBrickDamage(brick, ball = false) {
+    function applyResults() {
+      // Destroy the brick if HP is less than 1
+      if (brick.hp < 1) {
+        // Brick is "destroyed"
+        brick.visible = false;
+        brick.alive = false;
 
-    // Getting hit by the Super Ball means instant kill.
-    if (ball) {
-      // Bomb sparks too.
-      if (ball.shapeName == 'superBall' ||
-          ball.shapeName == 'bombSpark') {
-        brick.hp -= 100;
+        // Play the sound effect
+        if (soundEffects.ballHitBrick.isPlaying()) {
+          soundEffects.ballHitBrick.stop();
+        }
+        soundEffects.ballHitBrick.play(0,1,0.5);
+
+        // Award points
+        addPlayerScore(brick.points);
+
+        // If the brick had a power up, spawn it.
+        /*if (brick.dropPowerup) {
+          brick.dropPowerup();
+        }*/
+
+        // Decide to generate a powerup by random chance
+        let dropval = Math.random();
+        //console.log(dropval);
+        // 20% chance to spawn a powerup
+        if (dropval > 0.8) {
+          // Drop a powerup
+          let pu = pickPowerup(
+            brick.x + (brick.width / 2),
+            brick.y + brick.height
+          )
+          powerups.push(pu);
+        }
+
+        // Else, trigger a regular particle explosion.
+        else {
+          makeEffectExplosion(
+            brick.x + (brick.width / 2),
+            brick.y + (brick.height / 2)
+          );
+        }
       }
+      // If the brick is not destroyed, play the normal wall hit sound.
+      else {
+        if (soundEffects.ballHitWall.isPlaying()) {
+          soundEffects.ballHitWall.stop();
+        }
+        soundEffects.ballHitWall.play();
+      }
+
     }
 
-    // Destroy the brick if HP is less than 1
-    if (brick.hp < 1) {
-      // Brick is "destroyed"
-      brick.visible = false;
+    // If the brick is a bomb brick, trigger a bomb explosion.
+    //console.log("bomb explosion triggered");
+    if (brick.shapeName == "bombBrick") {
+      makeBombExplosion(
+        brick.x + (brick.width / 2),
+        brick.y + (brick.height / 2)
+      );
+      brick.hp = 0;
       brick.alive = false;
+      brick.visible = false;
 
-      // Play the sound effect
       if (soundEffects.ballHitBrick.isPlaying()) {
         soundEffects.ballHitBrick.stop();
       }
@@ -1445,50 +1489,23 @@ var breakout = function(sketch) {
 
       // Award points
       addPlayerScore(brick.points);
-
-      // If the brick had a power up, spawn it.
-      /*if (brick.dropPowerup) {
-        brick.dropPowerup();
-      }*/
-
-      // Decide to generate a powerup by random chance
-      let dropval = Math.random();
-      //console.log(dropval);
-      // 20% chance to spawn a powerup
-      if (dropval > 0.8) {
-        // Drop a powerup
-        let pu = pickPowerup(
-          brick.x + (brick.width / 2),
-          brick.y + brick.height
-        )
-        powerups.push(pu);
-      }
-
-      // If the brick is a bomb brick, trigger a bomb explosion.
-      //console.log("bomb explosion triggered");
-      if (brick.type == "bomb") {
-        makeBombExplosion(
-          brick.x + (brick.width / 2),
-          brick.y + (brick.height / 2)
-        );
-      }
-
-      // Else, trigger a regular particle explosion.
-      else {
-        makeEffectExplosion(
-          brick.x + (brick.width / 2),
-          brick.y + (brick.height / 2)
-        );
-      }
-
+      return false;
     }
 
-    // If the brick is not destroyed, play the normal wall hit sound.
     else {
-      if (soundEffects.ballHitWall.isPlaying()) {
-        soundEffects.ballHitWall.stop();
+    
+      // Getting hit by the Super Ball means instant kill.
+      // Bomb sparks too.
+      if (ball.shapeName == 'superBall' ||
+          ball.shapeName == 'explosionPoint') {
+        brick.hp -= 100;
+        applyResults();
       }
-      soundEffects.ballHitWall.play();
+      
+      else {
+        brick.hp -= 1;
+        applyResults();
+      }
     }
   }
 
@@ -1674,11 +1691,13 @@ var breakout = function(sketch) {
 
 
     // Now resolve explosionPoints
-    for (let e = 0; e < explosionPoints.length; e++) {
-      for (let b = 0; b < bricks.length; b++) {
-        // Don't apply damage to bricks that no longer alive.
-        if (collider(explosionPoints[e], bricks[b]) && bricks[b].alive == true) {
-          resolveBrickDamage(bricks[b],explosionPoints[e]);
+    if (explosionPoints.length > 0) {
+      for (let e = 0; e < explosionPoints.length; e++) {
+        for (let b = 0; b < bricks.length; b++) {
+          // Don't apply damage to bricks that are no longer alive.
+          if (collider(explosionPoints[e], bricks[b]) && bricks[b].alive == true) {
+            resolveBrickDamage(bricks[b],explosionPoints[e]);
+          }
         }
       }
     }
@@ -1691,7 +1710,6 @@ var breakout = function(sketch) {
     // Powerups
     //alivePowerups = [];
     for (let p = 0; p < powerups.length; p++) {
-      
       if (powerups[p].alive) {
         // First check if the powerup is still on the screen.
         if (powerups[p].y < gameConfig.areaHeight) {
@@ -2456,10 +2474,9 @@ var breakout = function(sketch) {
       powerup = makePowerupBallsX2(x, y);
     }
 
-    else if (pick < 0.90) {
+    else if (pick < 0.97) {
       powerup = makePowerupSuperBall(x, y);
     }
-    powerup = makePowerupCannons(x, y);
       
     return powerup;
   }
@@ -2684,12 +2701,11 @@ var breakout = function(sketch) {
         eparticle.maxDistance -= eparticle.speed * gameConfig.delta;
       }
       else {
-        eparticle.alive = false;
-
         // Optional function to run when the particle dies.
-        if (eparticle.endAction) {
+        if (eparticle.endAction && eparticle.alive) {
           eparticle.endAction();
         }
+        eparticle.alive = false;
       }
     }
 
@@ -2730,6 +2746,7 @@ var breakout = function(sketch) {
       ep.height = bspark.height;
       ep.x -= ep.width / 2;
       ep.y -= ep.height / 2;
+      ep.shapeName = "explosionPoint";
       explosionPoints.push(ep);
 
       //console.log(explosionPoints);
@@ -3219,9 +3236,6 @@ var breakout = function(sketch) {
     mybrick.color = sketch.color(0);
     mybrick.shapeName = 'bombBrick';
     mybrick.border = 4;
-
-    // Make resolveBrickDamage() create explosionPoints.
-    mybrick.type = 'bomb';
 
     // These bricks are drawn differently.
     mybrick.draw = function(scale, buffer) {
