@@ -399,8 +399,8 @@ var breakout = function(sketch) {
       mybrick.bounds.x = gameConfig.brickSpacing;
 
       // Make them move faster
-      mybrick.vx = 16;
-      mybrick.speed = 16;
+      mybrick.vx = 26;
+      mybrick.speed = 26;
 
       // If we're over 7, reverse the direction and correct the initial X position.
       if (i > 6) {
@@ -798,12 +798,12 @@ var breakout = function(sketch) {
   ];
 
 
+  Levels.push(level6);
   Levels.push(level1);
   Levels.push(level2);
   Levels.push(level3);
   Levels.push(level4);
   Levels.push(level5);
-  Levels.push(level6);
   Levels.push(level7);
   Levels.push(level8);
   Levels.push(level9);
@@ -922,10 +922,9 @@ var breakout = function(sketch) {
     // These are special functions for non-standard bricks.
     // They run as soon as a level is started, when the rest of the bricks spawn in.
     if (level.specialBricks) {
-      let sb = level.specialBricks;
-      for (let i = 0; i < level.specialBricks; i++) {
+      for (let i = 0; i < level.specialBricks.length; i++) {
         // Run the special brick function.
-        sb[i]();
+        level.specialBricks[i]();
       }
       //console.log(sb.length);
     }
@@ -3299,7 +3298,7 @@ var breakout = function(sketch) {
     // Ball has to travel:
     // 300 pixels to right.
     // 150 down.
-    mybrick.speed = 2;
+    mybrick.speed = 4;
     mybrick.vx = mybrick.speed;
     mybrick.vy = mybrick.speed * ((gameConfig.brickSpacing + mybrick.height) / (mybrick.width + gameConfig.brickSpacing));
 
