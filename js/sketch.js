@@ -399,8 +399,8 @@ var breakout = function(sketch) {
       mybrick.bounds.x = gameConfig.brickSpacing;
 
       // Make them move faster
-      mybrick.vx = 8;
-      mybrick.speed = 8;
+      mybrick.vx = 16;
+      mybrick.speed = 16;
 
       // If we're over 7, reverse the direction and correct the initial X position.
       if (i > 6) {
@@ -479,7 +479,7 @@ var breakout = function(sketch) {
   level8.demoBrick = makeBrick(0,0);
 
   // Default brick speed
-  level8.brickSpeed = 8;
+  level8.brickSpeed = 16;
 
   // Brick step and delay values
   level8.brickStep = gameConfig.brickSpacing + level8.demoBrick.width;
@@ -525,7 +525,7 @@ var breakout = function(sketch) {
           7
         );
         mybrick.bounds.height = ((mybrick.width + gameConfig.brickSpacing) * 7) - gameConfig.brickSpacing
-        mybrick.speed = 8;
+        mybrick.speed = 16;
         mybrick.vx = mybrick.speed;
         bricks.push(mybrick);
 
@@ -1118,12 +1118,6 @@ var breakout = function(sketch) {
     // Limit framerate to 30.
     sketch.frameRate(gameConfig.fps);
 
-    // Try to modify speed values to fit the current FPS.
-    gameConfig.speedMultiplier = ((1 / 60) * gameConfig.fps) + 1;
-
-    // Adjust max time to smatch speed multiplier.
-    gameConfig.msgMaxTime *= (gameConfig.speedMultiplier - 1);
-
     // Create the canvas.
     gameConfig.canvas = sketch.createCanvas(
       gameConfig.areaWidth * gameConfig.scale,
@@ -1540,7 +1534,7 @@ var breakout = function(sketch) {
       // If the bullet is onscreen, it's alive
       let bullet = bullets[x];
       if (bullet.alive) {
-        bullet.move(gameConfig.scale, gameConfig.speedMultiplier);
+        bullet.move(gameConfig.scale, sketch.deltaTime);
 
         if (
           bullet.x > 0 &&
@@ -1656,7 +1650,7 @@ var breakout = function(sketch) {
         }
 
         // Finally, move the ball.
-        balls[x].move(gameConfig.scale, gameConfig.speedMultiplier);
+        balls[x].move(gameConfig.scale, sketch.deltaTime);
       }
     }
 
@@ -1705,7 +1699,7 @@ var breakout = function(sketch) {
 
           // Else, move the powerup.
           else {
-            powerups[p].move(gameConfig.scale, gameConfig.speedMultiplier);
+            powerups[p].move(gameConfig.scale, sketch.deltaTime);
           }
         }
 
@@ -1726,7 +1720,7 @@ var breakout = function(sketch) {
     // Update the player
     player.boundsCheck();
     player.vx = getPlayerSpeed(playerKeys);
-    player.move(gameConfig.scale, gameConfig.speedMultiplier);
+    player.move(gameConfig.scale, sketch.deltaTime);
 
     // Weapon handling
     //aliveWeapons = [];
@@ -1829,7 +1823,7 @@ var breakout = function(sketch) {
           bricks[x].boundsCheck();
 
           // Then move the brick.
-          bricks[x].move(gameConfig.scale, gameConfig.speedMultiplier);
+          bricks[x].move(gameConfig.scale, sketch.deltaTime);
         }
       }
     }
@@ -1864,7 +1858,7 @@ var breakout = function(sketch) {
         //aliveParticles.push(particles[i]);
 
         // Move the particle.
-        particles[i].move(gameConfig.scale, gameConfig.speedMultiplier);
+        particles[i].move(gameConfig.scale, sketch.deltaTime);
 
         // Draw the particle.
         particles[i].draw(gameConfig.scale, shapeBuffers[particles[i].shapeName]);
@@ -2007,8 +2001,7 @@ var breakout = function(sketch) {
       120 * gameConfig.scale,
       1250 * gameConfig.scale
     );
-
-    console.log(sketch.frameRate() / 1000);
+    //console.log(sketch.deltaTime / 50);
   }
 
   // Need a screen switching function to show and hide buttons
@@ -2329,7 +2322,7 @@ var breakout = function(sketch) {
     myparticle.y = y;
     myparticle.vx = 0;
     myparticle.vy = 0;
-    myparticle.speed = 2;
+    myparticle.speed = 4;
     myparticle.width = 4;
     myparticle.height = 4;
 
@@ -2348,9 +2341,9 @@ var breakout = function(sketch) {
       );
     }
 
-    myparticle.move = function(scale, multiplier) {
-      myparticle.x += (myparticle.vx * multiplier);
-      myparticle.y += (myparticle.vy * multiplier);
+    myparticle.move = function(scale, delta) {
+      myparticle.x += (myparticle.vx * scale) * (delta / 50);
+      myparticle.y += (myparticle.vy * scale) * (delta / 50);
     }
 
     myparticle.draw = function(scale, buffer) {
@@ -2458,7 +2451,7 @@ var breakout = function(sketch) {
   function makePowerupGrowPaddle(x, y) {
     let mypowerup = makeParticle(x, y);
     mypowerup.shapeName = 'growPaddle';
-    mypowerup.speed = 4;
+    mypowerup.speed = 16;
     mypowerup.vy = mypowerup.speed;
     mypowerup.height = 40;
     mypowerup.width = 90;
@@ -2664,7 +2657,7 @@ var breakout = function(sketch) {
     let eparticle = makeParticle(x, y);
 
     // Set a maximum travel distance.
-    eparticle.maxDistance = 80 * (gameConfig.speedMultiplier - 1);
+    eparticle.maxDistance = 80;
 
     // When the particle travels far enough, it dies.
     eparticle.checkDistance = function() {
@@ -2700,7 +2693,7 @@ var breakout = function(sketch) {
     bspark.height = 8;
 
     // Make it travel faster.
-    bspark.speed = 8;
+    bspark.speed = 16;
 
     // Adjust max distance.
     //bspark.maxDistance = 48;
@@ -2731,7 +2724,7 @@ var breakout = function(sketch) {
   function makeBullet(x, y) {
     let mybullet = makeParticle(x, y);
     mybullet.shapeName = 'regularBullet';
-    mybullet.speed = 10;
+    mybullet.speed = 60;
     mybullet.height = 20;
     mybullet.width = 10;
     mybullet.makeShape = function(buffer) {
@@ -2751,7 +2744,7 @@ var breakout = function(sketch) {
     let mycannon = makeBullet(x, y);
 
     mycannon.shapeName = 'cannon';
-    mycannon.speed = 10;
+    mycannon.speed = 20;
     mycannon.height = 40;
     mycannon.width = 24;
 
@@ -2761,10 +2754,10 @@ var breakout = function(sketch) {
     mycannon.placement = 'center';
 
     // This is how long the weapon will last.
-    mycannon.timer = 300 * (gameConfig.speedMultiplier - 1);
+    mycannon.timer = 300;
 
     // Fire rate
-    mycannon.rate = 20 * (gameConfig.speedMultiplier - 1);
+    mycannon.rate = 20;
     mycannon.rateSave = mycannon.rate;
 
     // What the cannon does when it fires.
@@ -2789,7 +2782,6 @@ var breakout = function(sketch) {
           bullet.x = mycannon.x + (mycannon.width / 2) - (bullet.width / 2);
 
           // Set the bullet to travel straight up.
-          bullet.speed = 8;
           bullet.vy = bullet.speed * -1;
 
           // Play the sound effect.
@@ -2839,9 +2831,9 @@ var breakout = function(sketch) {
     let myball = makeParticle(x, y);
     myball.x = x;
     myball.y = y;
-    myball.vx = 10;
-    myball.vy = 10;
-    myball.speed = 10;
+    myball.vx = 30;
+    myball.vy = 30;
+    myball.speed = 30;
     myball.width = 30;
     myball.height = 30;
 
@@ -3305,7 +3297,7 @@ var breakout = function(sketch) {
     // Ball has to travel:
     // 300 pixels to right.
     // 150 down.
-    mybrick.speed = 1;
+    mybrick.speed = 2;
     mybrick.vx = mybrick.speed;
     mybrick.vy = mybrick.speed * ((gameConfig.brickSpacing + mybrick.height) / (mybrick.width + gameConfig.brickSpacing));
 
@@ -3387,7 +3379,7 @@ var breakout = function(sketch) {
     mypaddle.vy = 0
 
     // Set a separate speed variable
-    mypaddle.speed = 12;
+    mypaddle.speed = 40;
 
     // Need to adjust the width and height
     mypaddle.width = 140;
@@ -3450,8 +3442,8 @@ var breakout = function(sketch) {
     for (let i = 0; i < numberOfParticles; i++) {
       // Inject a particle with semi random x and y velocity
       let particle = makeEffectParticle(x, y);
-      let minSpeed = 2;
-      let maxSpeed = 8;
+      let minSpeed = 4;
+      let maxSpeed = 16;
       particle.speed = Math.floor(Math.random() * (maxSpeed - minSpeed)) + maxSpeed;
       particle.vx = particle.speed * multipliers[Math.floor(Math.random() * multipliers.length)];
       particle.vy = particle.speed * multipliers[Math.floor(Math.random() * multipliers.length)];
