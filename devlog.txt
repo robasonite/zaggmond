@@ -7,14 +7,14 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 - Added a crude FPS counter that turns red whenever the FPS drops below 50. CPU usage consistantly reads between 65% and 70%.
 
-- The paddle, ball, and bricks are now all pre-rendered. No noticable increase in performance. FPS counter flash red about as much as it did before.
+- The paddle, ball, and bricks are now all pre-rendered. No noticable increase in performance. FPS counter flashed red about as much as it did before.
 
 - Adjusted things so that the canvas no longer takes up the entire page. There's no reason for it to consume the entire page because nothing is drawn outside the play area. Changed page background to black in index.html. FPS counter seems to turn red less often.
 
 
 2020-05-23:
 
-- Made several non-rendering specific changes to the code. I added a score counter and the Fira Mona font.
+- Made several non-rendering specific changes to the code. I added a score counter and the Fira Mono font.
 
 - Decided to merge this branch back into master and rename this file to 'devlog.txt'.
 
@@ -90,7 +90,7 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 - Added msgMaxTime property to the gameConfig object. makeMessage() now uses that property to determine the maximum amount of time a given message stays alive.
 
-- Wrote a new function called makeResumeCountdown(). I started my making the threeCountMessage() obj with makeMessage. In the endAction() method of threeCountMessage(), I make the next message object in the chain, give it the appropriate endAction(), and then add that object to messages array. The end result is a slightly confusing nested structure with functions defined inside of other functions, but it works. In a nutsehll, threeCountMessage() makes twoCountMessage() when it dies. Then twoCountMessage() makes oneCountMessage() when it dies. Then oneCountMessage() makes goMessage() when it dies. Finally, goMessage() unpauses the game when it dies. Looks fluid from the point of the player.
+- Wrote a new function called makeResumeCountdown(). I started my making the threeCountMessage() obj with makeMessage. In the endAction() method of threeCountMessage(), I make the next message object in the chain, give it the appropriate endAction(), and then add that object to messages array. The end result is a slightly confusing nested structure with functions defined inside of other functions, but it works. In a nutsehll, threeCountMessage() makes twoCountMessage() when it dies. Then twoCountMessage() makes oneCountMessage() when it dies. Then oneCountMessage() makes goMessage() when it dies. Finally, goMessage() unpauses the game when it dies. Looks fluid from the viewpoint of the player.
 
 - I think I solved it. The new makeResumeCountdown() function is running quite well. It works reliably when the player first starts the game, loses a ball, progresses to the next level, or unpauses the game. I think I can call this issue resolved. This branch will be merged into master.
 
@@ -130,14 +130,14 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 - The '<canvas>' element that the game runs in now appears in the center of the screen with 'margin-left' and 'margin-right' set to 'auto'. That worked fine for the canvas, but added a new problem to solve: The buttons were in the wrong spot. Since the buttons are just plain HTML '<button>' elements rendered by P5js, I had to figure out how to get the value of 'margin-left' to apply a proper X offset. Once I found the relevent documentation online, I added a 'getCompStyle()' method directly to the 'gameConfig' object.
 
-  That function uses either 'target.currentStyle' or 'window.getComputedStyle(target)' (whichever is available) to set 'gameConfig.compStyle'. It then sets 'gameConfig.buttonOffsetX' by running 'parseFloat(gameConfig.compStyle.marginLeft)'. The 'parseFloat()' call is necessary to remove the ".px" part and convert the string into a proper floating point value. Adding this value to the X position of a button fixes the problem. The buttons even move the correct spots when the browser window is resize.
+  That function uses either 'target.currentStyle' or 'window.getComputedStyle(target)' (whichever is available) to set 'gameConfig.compStyle'. It then sets 'gameConfig.buttonOffsetX' by running 'parseFloat(gameConfig.compStyle.marginLeft)'. The 'parseFloat()' call is necessary to remove the ".px" part and convert the string into a proper floating point value. Adding this value to the X position of a button fixes the problem. The buttons even move to the correct spots when the browser window is resized.
 
 
 2020-06-02:
 
 - Wrote a new function called 'killPaddle()'. If the player has any lives left, it makes the paddle invisible, triggers a "MISS!" message. The 'endAction()' of that message pauses the game, resets the player, and fires 'makeResumeCountdown()'. So player sees the paddle disappear, then they see the message "MISS!", and then the paddle respawns with a new ball along with a countdown.
 
-- Made the paddle "explode". Well, kind of. I added a call to 'makeEffectExplosion()', but the sparks didn't move when 'killPlayer()' was called. The problem turned out to be 'simUpdate()', which is resonsible for moving everything that appears on screen, particle effects included. So I had to rip out the entire "iterate over particles" section and put it after the 'if' statement that decides when to fire 'simUpdate()'. Now particle "explosions" display properly even if the game is paused, which is the first thing 'killPlayer()' does. The pause is necessary because the player and new ball shouldn't be allowed to move until *after* the whole "MISS!" -> respawn -> countdown sequence.
+- Made the paddle "explode". Well, kind of. I added a call to 'makeEffectExplosion()', but the sparks didn't move when 'killPlayer()' was called. The problem turned out to be 'simUpdate()', which is responsible for moving everything that appears on screen, particle effects included. So I had to rip out the entire "iterate over particles" section and put it after the 'if' statement that decides when to fire 'simUpdate()'. Now particle "explosions" display properly even if the game is paused, which is the first thing 'killPlayer()' does. The pause is necessary because the player and new ball shouldn't be allowed to move until *after* the whole "MISS!" -> respawn -> countdown sequence.
 
 - Made the paddle explosion a bit more flashy. Now the number of calls to 'makeEffectExplosion()' are determined by how long the paddle is. I messed with the step value in the 'for' loop until I arrived at a value of 35. That's one explosion for every 35 pixels of 'player.width'. It plays a sound effect too, but it's reusing the 'ballHitBrick' sound effect. Maybe I'll change it.
 
@@ -157,7 +157,7 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
   Each powerup object has a method called 'effect()', which will modify the necessary global variables. In this case, it makes the paddle 15% wider. Off course, powerups don't just "appear". They have to be spawned when a brick is destroyed. So I modified 'resolveBrickDamage()' to check for 'brick.dropPowerup()'. If found, it tries to run it. I currently have this tacked on to the white bricks for testing, but I will add some code to 'resolveBrickDamage()' to randomly generate a powerup.
 
-- Replaced the powerup drawing commands with a real PNG image! Had to modify the 'preload()' function to automaticly check whether or not a given shape had an image file to use as a sprite. If so, then it will now skip the 'makeShape()' function and load the image directly into the buffer.
+- Replaced the powerup drawing commands with a real PNG image! Had to modify the 'preload()' function to automatically check whether or not a given shape had an image file to use as a sprite. If so, then it will now skip the 'makeShape()' function and load the image directly into the buffer.
 
 - Gave the "grow paddle" powerup a yellow frame a green arrows to make it stand out more.
 
@@ -175,7 +175,7 @@ The purpose of this branch is to see if pre-rendered graphics perform better. Th
 
 - Today, I made a new branch called 'preloader'. As I start to transition more into making graphical sprites, it only makes sense to add a preloader animation to my program. Or I suppose I could be lazy and write a big "Loading..." message that the game will draw on top of. There are many ways I could spin this.
 
-- After viewing a neat video on a Coding Train YouTube Channel, I gave the convoluted "active loading" method a try. Now I have 3 new functions, 11 new global variables, and a new function called 'checkLoading()' just to check if everything is loaded. P5.draw()' calls 'checkLoading()' until it returns 'true'. Then the program plays just like before. If it returns 'false', then the loading screen is displayed over and over again. It's just a green screen with "Loading..." written across it. Maybe I'll jazz it up later with animation, but it will do for now.
+- After viewing a neat video on the Coding Train YouTube Channel, I gave the convoluted "active loading" method a try. Now I have 3 new functions, 11 new global variables, and a new function called 'checkLoading()' just to check if everything is loaded. P5.draw()' calls 'checkLoading()' until it returns 'true'. Then the program plays just like before. If it returns 'false', then the loading screen is displayed over and over again. It's just a green screen with "Loading..." written across it. Maybe I'll jazz it up later with animation, but it will do for now.
 
 
 ## END Preloader experiment (branch: preloader)
@@ -483,3 +483,12 @@ I fixed by by putting a call to 'resetGame()' directly after the "switchScreen('
 - Made the explosions happens a little bit faster.
 
 - Made the ball and paddle faster.
+
+
+# 2020-07-13:
+
+- Doubled the speed of the guardian bricks in the Crown level to get them back to normal.
+
+- Game now pauses automatically whenever the window/tab loses focus! Instead of using `sketch.focused`, I assigned `window.onblur` to a function that does the same thing as clicking/tapping the Pause button. Now when the user minimizes the window or switches to a new tab, the game activates the pause screen. This also solves the "pause teleport" problem I ran into.
+
+  RAF is supposed to stop when the user switches to another tab, and it does. But the loop still runs in the background, which means deltaTime still adds up. If the user switched to another tab/window for a few seconds and then switched back to the game, the time difference between frames was large enough to allow the ball to warp passed the entire field of bricks. With the new `window.onblur` event, the Pause screen "absorbs" the deltaTime difference and prevents the ball from teleporting.
