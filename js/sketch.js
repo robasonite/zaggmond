@@ -37,7 +37,7 @@ var breakout = function(sketch) {
     font: '',
     fontName: '',
     level: 0,
-    debug: true,
+    debug: false,
     fps: 30
   };
   
@@ -1092,6 +1092,13 @@ var breakout = function(sketch) {
     if (everythingLoaded) {
       if (preloaderStopped == false) {
         preloaderStopped = true;
+
+        // Make sure that these even handlers are created only once.
+        window.onblur = function() {
+          gamePaused = true;
+          switchScreen('pause');
+        }
+        //window.onfocus = sketch.loop();
         switchScreen('title');
       }
 
@@ -2035,7 +2042,6 @@ var breakout = function(sketch) {
       120 * gameConfig.scale,
       1250 * gameConfig.scale
     );
-    //console.log(sketch.deltaTime / 50);
   }
 
   // Need a screen switching function to show and hide buttons
@@ -2148,7 +2154,7 @@ var breakout = function(sketch) {
     sketch.textAlign(sketch.CENTER);
     sketch.textSize(30 * gameConfig.scale);
     sketch.text(
-      "Version 1.0",
+      "Version 1.2",
       (gameConfig.areaWidth / 2) * gameConfig.scale,
       (gameConfig.areaHeight * 0.87) * gameConfig.scale
     );
@@ -2252,6 +2258,7 @@ var breakout = function(sketch) {
       loadingScreen();
     }
   }
+  
 
   // Simple overlap collision test
   function collider(a,b) {
@@ -3825,6 +3832,7 @@ var breakout = function(sketch) {
     explosionPoints = [];
     bullets = [];
     weapons = [];
+    messages = [];
 
     // Make sure balls are cleared befor making a new one.
     balls = [];
