@@ -37,13 +37,13 @@ var breakout = function(sketch) {
     font: '',
     fontName: '',
     level: 0,
-    debug: false,
+    debug: true,
     fps: 30
   };
   
 
   // Disable error system
-  if (gameConfig.debug) {
+  if (!gameConfig.debug) {
     p5.disableFriendlyErrors = true;
   }
 
@@ -488,7 +488,7 @@ var breakout = function(sketch) {
   level8.bufferBrick.width += (gameConfig.brickSpacing * 2);
 
   // Default brick speed
-  level8.brickSpeed = 16;
+  level8.brickSpeed = 32;
 
   // Whether to spawn an armored brick.
   level8.spawnArmored = false
@@ -521,7 +521,7 @@ var breakout = function(sketch) {
       7
     );
     mybrick.bounds.height = ((mybrick.width + gameConfig.brickSpacing) * 7) - gameConfig.brickSpacing
-    mybrick.speed = 16;
+    mybrick.speed = level8.brickSpeed;
     mybrick.vx = mybrick.speed;
 
     // Add the finished brick to the main array.
@@ -2234,6 +2234,16 @@ var breakout = function(sketch) {
           500 * gameConfig.scale,
           50 * gameConfig.scale
         );
+
+        // Full Array report
+        /*console.log("Messages: " + messages.length);
+        console.log("Balls: " + balls.length);
+        console.log("Bricks: " + bricks.length);
+        console.log("Particles: " + particles.length);
+        console.log("Powerups: " + powerups.length);
+        console.log("Bullets: " + bullets.length);
+        console.log("Weapons: " + weapons.length);
+        console.log("Explosion points: " + explosionPoints.length);*/
       }
     }
 
