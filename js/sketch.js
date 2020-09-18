@@ -40,7 +40,7 @@ var breakout = function(sketch) {
     debug: false,
     fps: 30
   };
-  
+
 
   // Disable error system
   if (!gameConfig.debug) {
@@ -112,13 +112,13 @@ var breakout = function(sketch) {
 
 
   // >> INPUT SECTION START
-  
+
   // Global key variables
   let playerKeys = {
     left: false,
     right: false
   }
-  
+
 
   // Test for key press.
   sketch.keyPressed = function() {
@@ -154,7 +154,7 @@ var breakout = function(sketch) {
     if (keys.left) {
       speed -= player.speed;
     }
-    
+
     if (sketch.mouseIsPressed) {
       // Don't do anything unless the mouse Y position is above the buttons at
       // the bottom.
@@ -173,7 +173,7 @@ var breakout = function(sketch) {
 
     return speed;
   }
-  
+
   // >> INPUT SECTION END
 
 
@@ -477,7 +477,7 @@ var breakout = function(sketch) {
 
   // A reference model for normal bricks
   level8.demoBrick = makeBrick(0,0);
-  
+
   // Another reference model to control brick spawning.
   // This brick is never drawn, but it used with collider()
   // to determine when the next brick spawns.
@@ -526,10 +526,10 @@ var breakout = function(sketch) {
 
     // Add the finished brick to the main array.
     bricks.push(mybrick);
-    
+
     // Keep track of this brick to control spawning the next one.
     level8.lastBrick = mybrick;
-    
+
     // Make sure to increment this number to prevent infinite spawning
     level8.currentBricks++;
   }
@@ -1291,7 +1291,7 @@ var breakout = function(sketch) {
     let startBtn = makeUiButton(
       'START',
       (gameConfig.areaWidth / 2) - (270 / 2),
-      gameConfig.areaHeight * 0.4,
+      gameConfig.areaHeight * 0.25,
       270,
       140,
       'title',
@@ -1330,7 +1330,7 @@ var breakout = function(sketch) {
     let exitBtn = makeUiButton(
       'EXIT',
       (gameConfig.areaWidth / 2) - (270 / 2),
-      gameConfig.areaHeight * 0.6,
+      gameConfig.areaHeight * 0.4,
       270,
       140,
       'title',
@@ -1342,6 +1342,23 @@ var breakout = function(sketch) {
     });
 
     buttons.push(exitBtn);
+
+	  // Close the current tab/window
+    let sourceBtn = makeUiButton(
+      'Get the source!',
+      (gameConfig.areaWidth / 2) - (370 / 2),
+      gameConfig.areaHeight * 0.55,
+      370,
+      240,
+      'title',
+      70
+    );
+
+    sourceBtn.mousePressed(function() {
+      window.location.href = 'https://github.com/robasonite/zaggmond.git';
+    });
+
+    buttons.push(sourceBtn);
 
 
     // Quit to title
@@ -1500,7 +1517,7 @@ var breakout = function(sketch) {
     }
 
     else {
-    
+
       // Getting hit by the Super Ball means instant kill.
       // Bomb sparks too.
       if (ball.shapeName == 'superBall' ||
@@ -1508,7 +1525,7 @@ var breakout = function(sketch) {
         brick.hp -= 100;
         applyResults();
       }
-      
+
       else {
         brick.hp -= 1;
         applyResults();
@@ -2258,7 +2275,7 @@ var breakout = function(sketch) {
       loadingScreen();
     }
   }
-  
+
 
   // Simple overlap collision test
   function collider(a,b) {
@@ -2494,7 +2511,7 @@ var breakout = function(sketch) {
     else if (pick < 0.97) {
       powerup = makePowerupSuperBall(x, y);
     }
-      
+
     return powerup;
   }
 
@@ -3485,10 +3502,10 @@ var breakout = function(sketch) {
 
     //The maximum is exclusive and the minimum is inclusive
     let numberOfParticles = Math.floor(Math.random() * (maxParticles - minParticles)) + maxParticles;
-    
+
     let multipliers = [-1, 1, -0.5, 0.5, 0.2, -0.2];
 
-    
+
     for (let i = 0; i < numberOfParticles; i++) {
       // Inject a particle with semi random x and y velocity
       let particle = makeEffectParticle(x, y);
