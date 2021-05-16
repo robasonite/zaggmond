@@ -11,8 +11,8 @@ cp -r js build
 cp index.html build/
 
 # Compress game
-cd build/js
-terser sketch.js -c toplevel,sequences=false,drop_console=true --mangle > build.js
-cp build.js sketch.js
-rm build.js
-cd ..
+#cd build/js
+#terser sketch.js -c toplevel,sequences=false,drop_console=true --mangle > build.js
+#cp build.js sketch.js
+#rm build.js
+#cd ..

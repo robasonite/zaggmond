@@ -1,5 +1,5 @@
 // Robert's breakout, Zaggmond
-// Copyright 2020 Robasonite.com
+// Copyright 2020 Robasonite.xyz
 // License: MIT
 //
 // Built with P5js
@@ -1338,7 +1338,7 @@ var breakout = function(sketch) {
     );
 
     exitBtn.mousePressed(function() {
-      window.location.href = 'https://www.robasonite.com/games/';
+      window.location.href = 'https://www.robasonite.xyz/games/';
     });
 
     buttons.push(exitBtn);
