@@ -2,7 +2,7 @@
 
 This is an arcade style brick breaker similar to old-school classics like Breakout and Arkanoid. Written in client-side JavaScript, it's a single-player game that runs in a web browser. Uses the p5js [library](https://p5js.org/).
 
-Play now in your browser! <https://www.robasonite.com/games/zaggmond/assets/zaggmond/index.html>
+Play now in your browser! <https://www.robasonite.xyz/games/zaggmond/assets/zaggmond/index.html>
 
 
 ## Assets licenses
